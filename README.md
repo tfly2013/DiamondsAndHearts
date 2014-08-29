@@ -8,4 +8,7 @@ The target platform for the game is Android version >= 2.2.0.
 
 Check out the project using git, make sure Eclipse Integration Gradle and Android ADT plugin is installed, then follow these instructions from within Eclipse:
 
-File -> Import -> Gradle -> Gradle Project -> Finish.
+File -> Import -> Gradle -> Gradle Project
+Click Build Model.
+Select all project listed.
+Click Finish.
