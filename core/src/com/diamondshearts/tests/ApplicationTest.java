@@ -15,7 +15,7 @@ import com.diamondshearts.DiamondsHearts;
 public class ApplicationTest {
 
 	@Mock
-	DiamondsHearts listener;
+	DiamondsHearts game;
 
 	HeadlessApplication app;
 
@@ -23,7 +23,7 @@ public class ApplicationTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
 
-		app = new HeadlessApplication(listener);
+		app = new HeadlessApplication(game);
 
 		try {
 			Thread.sleep(100);
@@ -35,29 +35,29 @@ public class ApplicationTest {
 
 	@Test
 	public void renderMethodIsInvokedAtLeastOnce() {
-		verify(listener, atLeast(1)).render();
+		verify(game, atLeast(1)).render();
 	}
 
 	@Test
 	public void createMethodIsInvokedAtLeastOnce() {
-		verify(listener, atLeast(1)).create();
+		verify(game, atLeast(1)).create();
 	}
 
 	@Test
 	public void pauseIsNotInvoked() {
-		verify(listener, times(0)).pause();
+		verify(game, times(0)).pause();
 		app.exit();
 		try {
 			Thread.sleep(100);
 		}
 		catch (InterruptedException e) {
 		}
-		verify(listener, times(1)).pause();
+		verify(game, times(1)).pause();
 	}
 
 	@Test
 	public void disposeIsNotInvoked() {
-		verify(listener, times(0)).dispose();
+		verify(game, times(0)).dispose();
 		app.exit();
 		try {
 			Thread.sleep(100);
@@ -65,7 +65,7 @@ public class ApplicationTest {
 		catch (InterruptedException e) {
 		}
 
-		verify(listener, times(1)).dispose();
+		verify(game, times(1)).dispose();
 	}
 
 }
