@@ -54,10 +54,22 @@ project(":android") {
 
 project(":core") {
     apply plugin: "java"
-
+    
+    sourceSets.test.java.srcDirs = ["src/"]
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile 'junit:junit:4.+'
+        compile "org.mockito:mockito-all:1.9.5"
+
+        compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+
+        testCompile 'junit:junit:4.+'
+        testCompile "org.mockito:mockito-all:1.9.5"
+
+        testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }
 }
 
