@@ -6,20 +6,26 @@ The target platform for the game is Android version >= 2.2.0.
 
 ### Build Instructions ###
 
-Check out the project using git, make sure Eclipse Integration Gradle and Android ADT plugin are installed, then follow these instructions within Eclipse:
+Make sure Eclipse Android ADT and EGit plugin are installed, then follow these instructions within Eclipse:
 
-* File -> Import -> Gradle -> Gradle Project.
-* Click Build Model.
-* Select all project listed.
-* Click Finish.
+* File -> Import -> Git -> Projects from Git -> Clone URI
+* Enter URI of this project and authentications, then click Next
+* Select master, then click Next
+* Select location to put local git repo, then click Next
+* Select Import Existing Projects, then click Next
+* Select all projects listed, then click Finish
+
+To run the Project:
+* Select project DiamondsHearts
+* Run As -> Android Application
+* Select a phone to run with
+* Click OK
 
 ### Testing ###
 
-Test files are located at diamonds_hearts-core/src/com.diamondshearts.tests.
+Test files are in project DiamondHeartsTest, which is located at tests folder of project DiamondsHearts.
 For testing, make sure Eclipse Junit plugin is installed, then follow these instructions within Eclipse:
 
-* Select project diamonds_hearts-core
-* Run As -> Junit test
-* Tick Use configration specific settings
-* Select Eclipse Junit launcher
+* Select project DiamondHeartsTest
+* Run As -> Android Junit test
 * Click OK
