@@ -16,8 +16,8 @@ Make sure Eclipse Android ADT and EGit plugin are installed, then follow these i
 * Select all projects listed, then click Finish
 
 ### Running ###
-
 To run the Project:
+
 * Select project DiamondsHearts
 * Run As -> Android Application
 * Select a phone to run with
