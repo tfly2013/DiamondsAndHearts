@@ -4,7 +4,7 @@ Diamonds&Hearts is a social hybrid card game with a simple ruleset and turn base
 
 The target platform for the game is Android version >= 2.2.0.
 
-### Build Instructions ###
+### Building ###
 
 Make sure Eclipse Android ADT and EGit plugin are installed, then follow these instructions within Eclipse:
 
@@ -14,6 +14,8 @@ Make sure Eclipse Android ADT and EGit plugin are installed, then follow these i
 * Select location to put local git repo, then click Next
 * Select Import Existing Projects, then click Next
 * Select all projects listed, then click Finish
+
+### Running ###
 
 To run the Project:
 * Select project DiamondsHearts
