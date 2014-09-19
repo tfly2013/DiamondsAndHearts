@@ -19,8 +19,8 @@ public class MainMenuFragment extends Fragment {
 	final static int RC_SELECT_PLAYERS = 10000;
 	final static int RC_LOOK_AT_MATCHES = 10001;
 	
-	public MainMenuFragment(MainActivity activity) {
-		this.activity = activity;
+	public MainMenuFragment() {
+		this.activity = (MainActivity)getActivity();
 	}
 
 	@Override

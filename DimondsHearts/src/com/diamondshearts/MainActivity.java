@@ -76,8 +76,6 @@ public class MainActivity extends BaseGameActivity {
 
 					}
 				});
-		dataView = ((TextView) findViewById(R.id.data_view));
-		turnCounterView = ((TextView) findViewById(R.id.turn_counter_view));
 	}
 
 	// Displays all ongoing games
