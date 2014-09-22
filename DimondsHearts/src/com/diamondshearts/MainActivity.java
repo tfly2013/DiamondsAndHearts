@@ -16,14 +16,18 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesStatusCodes;
+import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
+import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameActivity;
 
-public class MainActivity extends BaseGameActivity {
+public class MainActivity extends BaseGameActivity implements
+		OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 	public static final String TAG = "DrawingActivity";
 
 	// Local convenience pointers
@@ -72,7 +76,8 @@ public class MainActivity extends BaseGameActivity {
 					@Override
 					public void onClick(View v) {
 						beginUserInitiatedSignIn();
-						findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+						findViewById(R.id.sign_in_button).setVisibility(
+								View.GONE);
 
 					}
 				});
@@ -209,8 +214,10 @@ public class MainActivity extends BaseGameActivity {
 			return;
 		}
 
-		((TextView) findViewById(R.id.name_field)).setText(getString(R.string.welcome) + Games.Players
-				.getCurrentPlayer(apiAgent).getDisplayName());
+		((TextView) findViewById(R.id.name_field))
+				.setText(getString(R.string.welcome)
+						+ Games.Players.getCurrentPlayer(getApiClient())
+								.getDisplayName());
 		findViewById(R.id.login_layout).setVisibility(View.GONE);
 
 		if (isDoingTurn) {
@@ -231,7 +238,8 @@ public class MainActivity extends BaseGameActivity {
 	public void onSignInSucceeded() {
 		if (mHelper.getTurnBasedMatch() != null) {
 			// GameHelper will cache any connection hint it gets. In this case,
-			// it can cache a TurnBasedMatch that it got from choosing a turn-based
+			// it can cache a TurnBasedMatch that it got from choosing a
+			// turn-based
 			// game notification. If that's the case, you should go straight
 			// into the game.
 			updateMatch(mHelper.getTurnBasedMatch());
@@ -240,12 +248,15 @@ public class MainActivity extends BaseGameActivity {
 
 		setViewVisibility();
 
-//		// Registering this activity as a handler for invitation and match events.
-//		Games.Invitations.registerInvitationListener(apiAgent, this);
-//
-//		// Registering the MatchUpdateListener, which will replace notifications players get.
-//		Games.TurnBasedMultiplayer.registerMatchUpdateListener(apiAgent,
-//				this);
+
+		// Registering this activity as a handler for invitation and match
+		// events.
+		Games.Invitations.registerInvitationListener(getApiClient(), this);
+
+		// Registering the MatchUpdateListener, which will replace notifications
+		// players get.
+		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
+				this);
 	}
 
 	// Switch to game play view.
@@ -320,7 +331,7 @@ public class MainActivity extends BaseGameActivity {
 	public void onActivityResult(int request, int response, Intent data) {
 		super.onActivityResult(request, response, data);
 		// Returning from the 'Select Match' dialog
-		if (request == RC_LOOK_AT_MATCHES) {			
+		if (request == RC_LOOK_AT_MATCHES) {
 
 			if (response != Activity.RESULT_OK) {
 				// user canceled
@@ -335,8 +346,8 @@ public class MainActivity extends BaseGameActivity {
 			}
 
 			Log.d(TAG, "Match = " + match);
-		// Returned from 'Select players to Invite' dialog
-		} else if (request == RC_SELECT_PLAYERS) {			
+			// Returned from 'Select players to Invite' dialog
+		} else if (request == RC_SELECT_PLAYERS) {
 
 			if (response != Activity.RESULT_OK) {
 				// user canceled
@@ -388,6 +399,7 @@ public class MainActivity extends BaseGameActivity {
 	// callback to OnTurnBasedMatchUpdated(), which will show the game
 	// UI.
 	public void startMatch(TurnBasedMatch match) {
+//		startActivity(new Intent(this, GameActivity.class));
 		turnData = new Turn();
 		// Some basic turn data
 		turnData.data = "First turn";
@@ -578,31 +590,31 @@ public class MainActivity extends BaseGameActivity {
 		setViewVisibility();
 	}
 
-//	// Handle notification events.
-//	@Override
-//	public void onInvitationReceived(Invitation invitation) {
-//		Toast.makeText(
-//				this,
-//				"An invitation has arrived from "
-//						+ invitation.getInviter().getDisplayName(), TOAST_DELAY)
-//				.show();
-//	}
-//
-//	@Override
-//	public void onInvitationRemoved(String invitationId) {
-//		Toast.makeText(this, "An invitation was removed.", TOAST_DELAY).show();
-//	}
-//
-//	@Override
-//	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
-//		Toast.makeText(this, "A match was updated.", TOAST_DELAY).show();
-//	}
-//
-//	@Override
-//	public void onTurnBasedMatchRemoved(String matchId) {
-//		Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
-//
-//	}
+	// Handle notification events.
+	@Override
+	public void onInvitationReceived(Invitation invitation) {
+		Toast.makeText(
+				this,
+				"An invitation has arrived from "
+						+ invitation.getInviter().getDisplayName(), TOAST_DELAY)
+				.show();
+	}
+
+	@Override
+	public void onInvitationRemoved(String invitationId) {
+		Toast.makeText(this, "An invitation was removed.", TOAST_DELAY).show();
+	}
+
+	@Override
+	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
+		Toast.makeText(this, "A match was updated.", TOAST_DELAY).show();
+	}
+
+	@Override
+	public void onTurnBasedMatchRemoved(String matchId) {
+		Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
+
+	}
 
 	public void showErrorMessage(TurnBasedMatch match, int statusCode,
 			int stringId) {
