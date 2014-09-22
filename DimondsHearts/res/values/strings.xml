@@ -20,5 +20,8 @@
     <string name="check_games">Check Games</string>    
     <string name="sign_out">Sign Out</string>
     <string name="welcome">Welcome,&#160;</string>
+    <string name="diamond_label">"&#9830;: "</string>
+    <string name="heart_label">"&#9829;: "</string>
+    <string name="hand_label">"H: "</string>
     
 </resources>
