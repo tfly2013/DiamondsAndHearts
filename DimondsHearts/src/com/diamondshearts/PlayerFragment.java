@@ -21,19 +21,24 @@ public class PlayerFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_player, container,
-				false);
+				false);		
 		return rootView;
+	}
 
+	@Override
+	public void onStart() {
+		update();
+		super.onStart();
 	}
 
 	public void update() {
-		((TextView) getActivity().findViewById(R.id.diamond_view))
-				.setText(player.getName());
+		TextView mTextView =(TextView) getActivity().findViewById(R.id.player_name_view);
+		mTextView.setText(player.getName());
 		((TextView) getActivity().findViewById(R.id.diamond_view))
 				.setText(player.getDiamond().toString());
-		((TextView) getActivity().findViewById(R.id.diamond_view))
+		((TextView) getActivity().findViewById(R.id.heart_view))
 				.setText(player.getHeart().toString());
-		((TextView) getActivity().findViewById(R.id.diamond_view))
+		((TextView) getActivity().findViewById(R.id.hand_view))
 				.setText(player.getHand().size() + "");
 	}
 }

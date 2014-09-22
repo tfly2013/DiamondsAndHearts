@@ -15,12 +15,12 @@ public class Event {
 		// select an event based on the given distribution
 		ArrayList<EventType> selection = new ArrayList<EventType>();
 		for (int i = 0; i < allTypes.length; i++) {
-			for (int j = 0; j < allTypes[i].frequency; j++)
+			for (int j = 0; j < allTypes[i].getFrequency(); j++)
 				selection.add(allTypes[i]);
 		}
 		int choice = gen.nextInt(allTypes.length);
-		setName(selection.get(choice).name);
-		setDescription(selection.get(choice).description);
+		setName(selection.get(choice).getName());
+		setDescription(selection.get(choice).getDescription());
 	}
 
 	public String getName() {

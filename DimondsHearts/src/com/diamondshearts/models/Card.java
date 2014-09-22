@@ -8,23 +8,40 @@ public class Card {
 	private static Random gen = new Random();
 	private Integer cost;
 
-	List<Action> actions = new ArrayList<Action>();
-	List<Event> events = new ArrayList<Event>();
+	private List<Action> actions = new ArrayList<Action>();
+	private List<Event> events = new ArrayList<Event>();
 	
 	public Card() {
 		// add new actions/events
 		for (int i=0; i<gen.nextInt(3) + 1; i++)
-			actions.add(new Action());
+			getActions().add(new Action());
 		for (int i=0; i<gen.nextInt(3) + 1; i++)
-			events.add(new Event());
+			getEvents().add(new Event());
+		
 		cost = 0;
+		for (Action action : getActions()) {
+			if (action.getSuit() == Suit.Diamond)
+				cost = action.getRank();
+		}
 	}
 
 	public Integer getCost() {
 		return cost;
 	}
 
-	public void setCost(Integer cost) {
-		this.cost = cost;
+	public List<Action> getActions() {
+		return actions;
+	}
+
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
+	}
+
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events = events;
 	}
 }

@@ -1,11 +1,20 @@
 package com.diamondshearts.models;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 
 public class Table {
-	private Player[] players;
+	private Player currentPlayer;
+	private ArrayList<Player> players;
 	private Integer playsThisTurn;	
 	private Integer diamond;
+	
+	public Table(){
+		players = new ArrayList<Player>();
+		for (int i = 0; i < 6; i++)
+			players.add(new Player());
+		setCurrentPlayer(players.get(0));
+		playsThisTurn = 0;
+	}
 
 	@SuppressWarnings("unused")
 	private void executeCard(Player player, Card card) {
@@ -15,10 +24,8 @@ public class Table {
 
 		player.pay(this, card.getCost());
 
-		Iterator<Action> iterator = card.actions.iterator();
-		while (iterator.hasNext()) {
-			Action current = iterator.next();
-			switch (current.getSuit()) {
+		for (Action action : card.getActions()) {
+			switch (action.getSuit()) {
 			case Spade:
 				//TODO
 				break;
@@ -61,15 +68,23 @@ public class Table {
 		this.diamond = diamond;
 	}
 
-	public Player[] getPlayers() {
+	public ArrayList<Player> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(Player[] players) {
+	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
 	
 	public Player getPlayerThisTurn(){
-		return players[playsThisTurn];
+		return players.get(playsThisTurn);
+	}
+
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
 	}
 }
