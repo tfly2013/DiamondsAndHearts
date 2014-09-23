@@ -11,7 +11,8 @@ import com.google.example.games.basegameutils.BaseGameActivity;
 public class GameActivity extends BaseGameActivity {
 
 	private Table table;
-	// private LinearLayout playersLayout;
+	private LinearLayout playersUpLayout;
+	private LinearLayout playersDownLayout;
 	private LinearLayout handLayout;
 	private Player currentPlayer;
 
@@ -19,14 +20,19 @@ public class GameActivity extends BaseGameActivity {
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
-		// playersLayout = (LinearLayout)findViewById(R.id.players_layout);
+		playersUpLayout = (LinearLayout)findViewById(R.id.players_up_layout);
+		playersDownLayout = (LinearLayout)findViewById(R.id.players_down_layout);
 		handLayout = (LinearLayout)findViewById(R.id.hand_layout);
 		table = new Table();
 		currentPlayer = table.getCurrentPlayer();
-		for (Player player : table.getPlayers())
-			getSupportFragmentManager().beginTransaction()
-					.add(R.id.players_layout, new PlayerFragment(player))
-					.commit();
+		for (int i = 1; i< table.getPlayers().size(); i++){
+			PlayerView playerView = new PlayerView(this);
+			playerView.setPlayer(table.getPlayers().get(i));
+			if (i < 3)
+				playersUpLayout.addView(playerView);
+			else
+				playersDownLayout.addView(playerView);
+		}
 		for (Card card : currentPlayer.getHand()){
 			CardView cardView = new CardView(this);
 			cardView.setCard(card);

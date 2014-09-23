@@ -117,4 +117,12 @@ public class Player {
 			hand.add(new Card());
 		}
 	}
+
+	public ArrayList<String> getLabels() {
+		ArrayList<String> labels = new ArrayList<String>();
+		labels.add("♦: "+ diamond);
+		labels.add("♥: "+ heart);
+		labels.add("H: "+ hand.size());
+		return labels;
+	}
 }

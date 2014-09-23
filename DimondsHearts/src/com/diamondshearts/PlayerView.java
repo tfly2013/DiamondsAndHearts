@@ -6,14 +6,11 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.view.View;
 
-import com.diamondshearts.models.Action;
-import com.diamondshearts.models.Card;
-import com.diamondshearts.models.Event;
+import com.diamondshearts.models.Player;
 
-public class CardView extends View {
+public class PlayerView extends View {
 
-	private Card card;
-
+	private Player player;
 	private Paint textPaint;
 	private Paint borderPaint;
 	private float textHeight = 0;
@@ -22,7 +19,7 @@ public class CardView extends View {
 	private RectF border;
 	private float density;
 
-	public CardView(Context context) {
+	public PlayerView(Context context) {
 		super(context);
 		init();
 	}
@@ -34,20 +31,10 @@ public class CardView extends View {
 				resolveSize(height, heightMeasureSpec));
 	}
 
-	public Card getCard() {
-		return card;
-	}
-
-	public void setCard(Card card) {
-		this.card = card;
-		invalidate();
-		requestLayout();
-	}
-
 	private void init() {
 		density = getResources().getDisplayMetrics().density;
-		width = (int) density * 100;
-		height = (int) density * 120;
+		width = (int) density * 150;
+		height = (int) density * 50;
 		float boarderWith = 2 * density;
 		border = new RectF(boarderWith, boarderWith, width - boarderWith,
 				height - boarderWith);
@@ -66,29 +53,29 @@ public class CardView extends View {
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		// Draw actions
-		assert (card != null);
-		String actions = "";
-		for (Action action : card.getActions())
-			actions += action.getSuit().getName() + action.getRank() + " ";
-		actions = actions.trim();
+		// Draw name
+		assert (player != null);
+		String name = player.getName();
 
-		float actionsX = (width - getTextWidth(actions)) / 2;
-		float actionsY = 20 * density;
-		canvas.drawText(actions, actionsX, actionsY, textPaint);
+		float nameX = (width - getTextWidth(name)) / 2;
+		float nameY = 10 * density + textHeight / 2;
+		canvas.drawText(name, nameX, nameY, textPaint);
 
-		// Draw events
-		float inteval = 2 * density;
-		float eventHeight = (textHeight + inteval) * card.getEvents().size()
-				- inteval;
-		float eventY = (height - actionsY - textHeight - eventHeight) / 2
-				+ actionsY + textHeight;
-		for (Event event : card.getEvents()) {
-			String text = event.getName();
-			float eventX = (width - getTextWidth(text)) / 2;
-			canvas.drawText(text, eventX, eventY, textPaint);
-			eventY += textHeight + inteval;
-		}
+		// Draw line
+		float startX, startY, stopX, stopY;
+		startY = stopY = nameY + textHeight / 2;
+		startX = 2 * density;
+		stopX = width - 2 * density;
+		canvas.drawLine(startX, startY, stopX, stopY, borderPaint);
+
+		// Draw labels
+		String label = "";
+		for (String text : player.getLabels())
+			label += text + " ";
+		label = label.trim();
+		float labelX = (width - getTextWidth(label)) / 2;
+		float labelY = startY + textHeight / 2 + 8 * density;
+		canvas.drawText(label, labelX, labelY, textPaint);
 		canvas.drawRoundRect(border, 10 * density, 10 * density, borderPaint);
 	}
 
@@ -100,5 +87,13 @@ public class CardView extends View {
 		for (float i : widths)
 			totalWidth += i;
 		return totalWidth;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 }

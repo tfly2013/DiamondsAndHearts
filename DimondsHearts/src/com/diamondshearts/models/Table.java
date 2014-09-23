@@ -10,7 +10,7 @@ public class Table {
 	
 	public Table(){
 		players = new ArrayList<Player>();
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 5; i++)
 			players.add(new Player());
 		setCurrentPlayer(players.get(0));
 		playsThisTurn = 0;
