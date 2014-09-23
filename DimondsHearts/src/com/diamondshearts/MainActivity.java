@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.diamondshearts.models.Player;
+import com.diamondshearts.models.Table;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.games.Games;
@@ -19,23 +21,25 @@ import com.google.android.gms.games.GamesStatusCodes;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.multiplayer.OnInvitationReceivedListener;
+import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.realtime.RoomConfig;
 import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameActivity;
+import com.google.gson.Gson;
 
 public class MainActivity extends BaseGameActivity implements
 		OnInvitationReceivedListener, OnTurnBasedMatchUpdateReceivedListener {
 	public static final String TAG = "DrawingActivity";
 
 	// Local convenience pointers
-	public TextView dataView;
-	public TextView turnCounterView;
 	public GoogleApiClient apiAgent;
 
 	private AlertDialog alertDialog;
+
+	private static final String TURN_BASED_MATCH_KEY = "com.diamondshearts.match";
 
 	// Intents handling
 	final static int RC_SELECT_PLAYERS = 10000;
@@ -53,13 +57,15 @@ public class MainActivity extends BaseGameActivity implements
 	// This is the current match data after being unpersisted.
 	// Do not retain references to match data once you have
 	// taken an action on the match, such as takeTurn()
-	public Turn turnData;
+	public Table table;
+
+	private Gson gson;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		apiAgent = getApiClient();
 		// Setup sign in and sign out button
 		findViewById(R.id.sign_out_button).setOnClickListener(
@@ -81,124 +87,50 @@ public class MainActivity extends BaseGameActivity implements
 
 					}
 				});
+		gson = new Gson();
 	}
 
 	// Displays all ongoing games
 	public void onCheckGamesClicked(View view) {
-		Intent intent = Games.TurnBasedMultiplayer
-				.getInboxIntent(apiAgent);
+		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
 		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
 	}
 
 	// Open the player invitation UI
 	public void onNewGameClicked(View view) {
-		Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(apiAgent, 1, 5, true);
+		Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
+				apiAgent, 1, 4, true);
 		startActivityForResult(intent, RC_SELECT_PLAYERS);
 	}
 
 	// Create a one-on-one auto-match game (2 players game)
 	public void onQuickGameClicked(View view) {
-		
-		Intent intent = new Intent(this,GameActivity.class);
-		startActivity(intent);
-//		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
-//
-//		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-//				.setAutoMatchCriteria(autoMatchCriteria).build();
-//
-//		showSpinner();
-//
-//		// Start the match
-//		ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-//			@Override
-//			public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-//				processResult(result);
-//			}
-//		};
-//		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
-//				.setResultCallback(cb);
+
+		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+
+		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+				.setAutoMatchCriteria(autoMatchCriteria).build();
+
+		showSpinner();
+
+		// Start the match
+		ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+			@Override
+			public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+				processResult(result);
+			}
+		};
+		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
+				.setResultCallback(cb);
 	}
 
-	// In-game controls
-
-	// Cancel the game. Should possibly wait until the game is canceled before
-	// giving up on the view.
-	public void onCancelClicked(View view) {
-		showSpinner();
-		Games.TurnBasedMultiplayer.cancelMatch(apiAgent,
-				match.getMatchId()).setResultCallback(
-				new ResultCallback<TurnBasedMultiplayer.CancelMatchResult>() {
-					@Override
-					public void onResult(
-							TurnBasedMultiplayer.CancelMatchResult result) {
-						processResult(result);
-					}
-				});
-		isDoingTurn = false;
-		setViewVisibility();
-	}
-
-	// Leave the game during your turn. Note that there is a separate
-	// Games.TurnBasedMultiplayer.leaveMatch() if you want to leave NOT on your
-	// turn.
-	public void onLeaveClicked(View view) {
-		showSpinner();
-		String nextParticipantId = getNextParticipantId();
-
-		Games.TurnBasedMultiplayer.leaveMatchDuringTurn(apiAgent,
-				match.getMatchId(), nextParticipantId).setResultCallback(
-				new ResultCallback<TurnBasedMultiplayer.LeaveMatchResult>() {
-					@Override
-					public void onResult(
-							TurnBasedMultiplayer.LeaveMatchResult result) {
-						processResult(result);
-					}
-				});
-		setViewVisibility();
-	}
-
-	// Finish the game. Sometimes, this is your only choice.
-	public void onFinishClicked(View view) {
-		showSpinner();
-		Games.TurnBasedMultiplayer.finishMatch(apiAgent,
-				match.getMatchId()).setResultCallback(
-				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-					@Override
-					public void onResult(
-							TurnBasedMultiplayer.UpdateMatchResult result) {
-						processResult(result);
-					}
-				});
-
-		isDoingTurn = false;
-		setViewVisibility();
-	}
-
-	// Upload your new gamestate, then take a turn, and pass it on to the next
-	// player.
-	public void onDoneClicked(View view) {
-		showSpinner();
-
-		String nextParticipantId = getNextParticipantId();
-		// Create the next turn
-		turnData.turnCounter += 1;
-		turnData.data = dataView.getText().toString();
-
-		showSpinner();
-
-		Games.TurnBasedMultiplayer
-				.takeTurn(apiAgent, match.getMatchId(),
-						turnData.persist(), nextParticipantId)
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.UpdateMatchResult result) {
-								processResult(result);
-							}
-						});
-
-		turnData = null;
+	public void showGameActivity() {
+		if (isDoingTurn) {
+			Intent intent = new Intent(this, GameActivity.class);
+			intent.putExtra(TURN_BASED_MATCH_KEY, match);
+			isDoingTurn = false;
+			startActivity(intent);
+		}
 	}
 
 	// Sign-in, Sign out behavior
@@ -207,8 +139,7 @@ public class MainActivity extends BaseGameActivity implements
 		if (!isSignedIn()) {
 			findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
 			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-			findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-			findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
+			findViewById(R.id.menu_layout).setVisibility(View.GONE);
 
 			if (alertDialog != null) {
 				alertDialog.dismiss();
@@ -221,14 +152,7 @@ public class MainActivity extends BaseGameActivity implements
 						+ Games.Players.getCurrentPlayer(getApiClient())
 								.getDisplayName());
 		findViewById(R.id.login_layout).setVisibility(View.GONE);
-
-		if (isDoingTurn) {
-			findViewById(R.id.matchup_layout).setVisibility(View.GONE);
-			findViewById(R.id.gameplay_layout).setVisibility(View.VISIBLE);
-		} else {
-			findViewById(R.id.matchup_layout).setVisibility(View.VISIBLE);
-			findViewById(R.id.gameplay_layout).setVisibility(View.GONE);
-		}
+		findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
 	}
 
 	@Override
@@ -250,7 +174,6 @@ public class MainActivity extends BaseGameActivity implements
 
 		setViewVisibility();
 
-
 		// Registering this activity as a handler for invitation and match
 		// events.
 		Games.Invitations.registerInvitationListener(getApiClient(), this);
@@ -259,14 +182,6 @@ public class MainActivity extends BaseGameActivity implements
 		// players get.
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
-	}
-
-	// Switch to game play view.
-	public void setGameplayUI() {
-		isDoingTurn = true;
-		setViewVisibility();
-		dataView.setText(turnData.data);
-		turnCounterView.setText("Turn " + turnData.turnCounter);
 	}
 
 	// Spinner dialogs
@@ -401,20 +316,29 @@ public class MainActivity extends BaseGameActivity implements
 	// callback to OnTurnBasedMatchUpdated(), which will show the game
 	// UI.
 	public void startMatch(TurnBasedMatch match) {
-//		startActivity(new Intent(this, GameActivity.class));
-		turnData = new Turn();
-		// Some basic turn data
-		turnData.data = "First turn";
-
+		// startActivity(new Intent(this, GameActivity.class));
 		this.match = match;
 
+		table = new Table();
+		// Set players
+		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Participant> participants = match.getParticipants();
+		for (Participant participant : participants)
+			players.add(new Player(participant.getParticipantId(), participant
+					.getDisplayName()));
+		table.setPlayers(players);
+
+		// Set current player
 		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
-		String myParticipantId = match.getParticipantId(playerId);
-
+		String currnetParticipantId = match.getParticipantId(playerId);
+		String currentPlayerName = match.getParticipant(currnetParticipantId)
+				.getDisplayName();
+		table.setCurrentPlayer(new Player(currnetParticipantId,
+				currentPlayerName));
 		showSpinner();
-
 		Games.TurnBasedMultiplayer.takeTurn(apiAgent, match.getMatchId(),
-				turnData.persist(), myParticipantId).setResultCallback(
+				gson.toJson(table, Table.class).getBytes(),
+				currnetParticipantId).setResultCallback(
 				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
 					@Override
 					public void onResult(
@@ -422,6 +346,7 @@ public class MainActivity extends BaseGameActivity implements
 						processResult(result);
 					}
 				});
+
 	}
 
 	// If you choose to rematch, then call it and wait for a response.
@@ -439,43 +364,6 @@ public class MainActivity extends BaseGameActivity implements
 						});
 		match = null;
 		isDoingTurn = false;
-	}
-
-	/**
-	 * Get the next participant. In this function, we assume that we are
-	 * round-robin, with all known players going before all automatch players.
-	 * This is not a requirement; players can go in any order. However, you can
-	 * take turns in any order.
-	 * 
-	 * @return participantId of next player, or null if automatching
-	 */
-	public String getNextParticipantId() {
-
-		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
-		String myParticipantId = match.getParticipantId(playerId);
-
-		ArrayList<String> participantIds = match.getParticipantIds();
-
-		int desiredIndex = -1;
-
-		for (int i = 0; i < participantIds.size(); i++) {
-			if (participantIds.get(i).equals(myParticipantId)) {
-				desiredIndex = i + 1;
-			}
-		}
-
-		if (desiredIndex < participantIds.size()) {
-			return participantIds.get(desiredIndex);
-		}
-
-		if (match.getAvailableAutoMatchSlots() <= 0) {
-			// You've run out of automatch slots, so we start over.
-			return participantIds.get(0);
-		} else {
-			// You have not yet fully automatched, so null will find a new
-			// person to play against.
-			return null;
-		}
 	}
 
 	// This is the main function that gets called when players choose a match
@@ -514,8 +402,10 @@ public class MainActivity extends BaseGameActivity implements
 		// OK, it's active. Check on turn status.
 		switch (turnStatus) {
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
-			turnData = Turn.unpersist(match.getData());
-			setGameplayUI();
+			String tableData = new String(match.getData());
+			table = gson.fromJson(tableData, Table.class);
+			isDoingTurn = true;
+			showGameActivity();
 			return;
 		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
 			// Should return results.
@@ -526,22 +416,9 @@ public class MainActivity extends BaseGameActivity implements
 					"Still waiting for invitations.\n\nBe patient!");
 		}
 
-		turnData = null;
+		table = null;
 
 		setViewVisibility();
-	}
-
-	public void processResult(TurnBasedMultiplayer.CancelMatchResult result) {
-		dismissSpinner();
-
-		if (!checkStatusCode(null, result.getStatus().getStatusCode())) {
-			return;
-		}
-
-		isDoingTurn = false;
-
-		showWarning("Match",
-				"This match is canceled.  All other players will have their game ended.");
 	}
 
 	public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
@@ -561,17 +438,6 @@ public class MainActivity extends BaseGameActivity implements
 		startMatch(match);
 	}
 
-	public void processResult(TurnBasedMultiplayer.LeaveMatchResult result) {
-		TurnBasedMatch match = result.getMatch();
-		dismissSpinner();
-		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-			return;
-		}
-		isDoingTurn = false;
-		showWarning("Left", "You've left this match.");
-		setViewVisibility();
-	}
-
 	public void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
 		TurnBasedMatch match = result.getMatch();
 		dismissSpinner();
@@ -588,8 +454,8 @@ public class MainActivity extends BaseGameActivity implements
 			updateMatch(match);
 			return;
 		}
-
-		setViewVisibility();
+		showGameActivity();
+		;
 	}
 
 	// Handle notification events.

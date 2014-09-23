@@ -32,7 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/done" />
+        android:text="@string/done"
+        android:onClick="onDoneClicked" />
 
     <HorizontalScrollView
         android:id="@+id/horizontalScrollView1"
