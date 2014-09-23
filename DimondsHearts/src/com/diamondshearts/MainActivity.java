@@ -335,10 +335,19 @@ public class MainActivity extends BaseGameActivity implements
 				.getDisplayName();
 		table.setCurrentPlayer(new Player(currnetParticipantId,
 				currentPlayerName));
+		
+		String pendingParticipantId = null;
+		if (match.getAvailableAutoMatchSlots() > 0) {
+			Toast.makeText(this,
+					"Match initialed, waiting for auto matching... ",
+					TOAST_DELAY).show();
+		} else {
+			pendingParticipantId = currnetParticipantId;
+		}
 		showSpinner();
 		Games.TurnBasedMultiplayer.takeTurn(apiAgent, match.getMatchId(),
 				gson.toJson(table, Table.class).getBytes(),
-				currnetParticipantId).setResultCallback(
+				pendingParticipantId).setResultCallback(
 				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
 					@Override
 					public void onResult(
@@ -346,7 +355,6 @@ public class MainActivity extends BaseGameActivity implements
 						processResult(result);
 					}
 				});
-
 	}
 
 	// If you choose to rematch, then call it and wait for a response.
