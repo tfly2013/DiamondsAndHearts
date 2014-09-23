@@ -1,10 +1,10 @@
 package com.diamondshearts.models;
 
 public enum Suit {
-	Diamond("D", "", 3),
-	Heart("H", "", 1),
-	Club("C", "", 3),
-	Spade("S", "", 1);
+	Diamond("♦", "", 3),
+	Heart("♥", "", 1),
+	Club("♣", "", 3),
+	Spade("♠", "", 1);
 
 	private String name;
 	private String description;

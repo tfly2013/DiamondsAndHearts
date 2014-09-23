@@ -1,22 +1,25 @@
 package com.diamondshearts.models;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Card {
 	private static Random gen = new Random();
 	private Integer cost;
 
-	private List<Action> actions = new ArrayList<Action>();
-	private List<Event> events = new ArrayList<Event>();
+	private HashSet<Action> actions = new HashSet<Action>();
+	private ArrayList<Event> events = new ArrayList<Event>();
 	
 	public Card() {
-		// add new actions/events
-		for (int i=0; i<gen.nextInt(3) + 1; i++)
-			getActions().add(new Action());
-		for (int i=0; i<gen.nextInt(3) + 1; i++)
-			getEvents().add(new Event());
+		// add new actions
+		Integer actionsCount = gen.nextInt(3) + 1;
+		while (actions.size() < actionsCount)
+			actions.add(new Action());
+		// add new events
+		Integer eventsCount = gen.nextInt(3) + 1;
+		while (events.size() < eventsCount)
+			events.add(new Event());
 		
 		cost = 0;
 		for (Action action : getActions()) {
@@ -29,19 +32,19 @@ public class Card {
 		return cost;
 	}
 
-	public List<Action> getActions() {
+	public HashSet<Action> getActions() {
 		return actions;
 	}
 
-	public void setActions(List<Action> actions) {
+	public void setActions(HashSet<Action> actions) {
 		this.actions = actions;
 	}
 
-	public List<Event> getEvents() {
+	public ArrayList<Event> getEvents() {
 		return events;
 	}
 
-	public void setEvents(List<Event> events) {
+	public void setEvents(ArrayList<Event> events) {
 		this.events = events;
 	}
 }

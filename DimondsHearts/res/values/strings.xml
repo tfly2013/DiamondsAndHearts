@@ -23,5 +23,9 @@
     <string name="diamond_label">"&#9830;: "</string>
     <string name="heart_label">"&#9829;: "</string>
     <string name="hand_label">"H: "</string>
+    <string name="diamond">"&#9830;"</string>
+    <string name="heart">"&#9829;"</string>
+    <string name="spade">"&#9824;"</string>
+    <string name="club">"&#9827;"</string>
     
 </resources>

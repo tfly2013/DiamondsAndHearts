@@ -31,6 +31,15 @@ public class Action {
 		setRank(rankDistribution[choice]);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() == Action.class) {
+			Action tar = (Action) o;
+			return (tar.getRank() == rank) && (tar.getSuit() == suit);
+		}
+		return false;
+	}
+
 	public Integer getRank() {
 		return rank;
 	}

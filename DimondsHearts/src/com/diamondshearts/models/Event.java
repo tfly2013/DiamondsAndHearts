@@ -6,10 +6,12 @@ import java.util.Random;
 public class Event {
 	private static Random gen = new Random();
 	private String name;
+	private EventType type;
 	private String description;
 
 	// define statistical distribution of types
-	public static final EventType[] allTypes = EventType.class.getEnumConstants();
+	public static final EventType[] allTypes = EventType.class
+			.getEnumConstants();
 
 	public Event() {
 		// select an event based on the given distribution
@@ -20,7 +22,17 @@ public class Event {
 		}
 		int choice = gen.nextInt(allTypes.length);
 		setName(selection.get(choice).getName());
+		setType(selection.get(choice));
 		setDescription(selection.get(choice).getDescription());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() == Event.class) {
+			Event tar = (Event) o;
+			return (tar.getName() == name && tar.getType() == type);
+		}
+		return false;
 	}
 
 	public String getName() {
@@ -37,5 +49,13 @@ public class Event {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public EventType getType() {
+		return type;
+	}
+
+	public void setType(EventType type) {
+		this.type = type;
 	}
 }
