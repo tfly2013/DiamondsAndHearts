@@ -18,37 +18,47 @@ import com.google.example.games.basegameutils.BaseGameActivity;
 import com.google.gson.Gson;
 
 public class GameActivity extends BaseGameActivity {
-
-	private static final String TURN_BASED_MATCH_KEY = "com.diamondshearts.match";
-
+	/** Player Layout (Up) */
 	private LinearLayout playersUpLayout;
+	/** Player Layout (Down) */
 	private LinearLayout playersDownLayout;
+	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
+	/** Layout of current player's hand */
 	private LinearLayout handLayout;
+	/** The text view to show round */
 	private TextView roundView;
-
+	
+	/** The table state of game */
 	private Table table;
+	/** Current Player */
 	private Player currentPlayer;
+	/** The match */
 	private TurnBasedMatch match;
-
+	/** The Gson object */
 	private Gson gson;
 
 	@Override
+	/**
+	 * Initialize the activity and match data.
+	 */
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
-
+		
+		// Retrive match data from MainActivity
 		gson = new Gson();
-		if (getIntent().hasExtra(TURN_BASED_MATCH_KEY)
+		if (getIntent().hasExtra("com.diamondshearts.match")
 				&& (match = getIntent()
-						.getParcelableExtra(TURN_BASED_MATCH_KEY)) != null) {
+						.getParcelableExtra("com.diamondshearts.match")) != null) {
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
 		} else {
 			// ERROR!!
-			table = new Table("test");
+			table = new Table(true);
 		}
-
+		
+		// Get layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
@@ -114,9 +124,12 @@ public class GameActivity extends BaseGameActivity {
 	}
 
 	@Override
+	/**
+	 * Warn player when back button pressed.
+	 * Perform leave game if get positive result.
+	 */
 	public void onBackPressed() {
-
-		if (table.getCurrentPlayer().getName().equals("TestPlayerName")) {
+		if (table.debug) {
 			finish();
 			return;
 		}
@@ -132,6 +145,7 @@ public class GameActivity extends BaseGameActivity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
+								// Leave Match
 								String nextParticipantId = table
 										.getNextParticipantId(match
 												.getAvailableAutoMatchSlots());
@@ -145,14 +159,18 @@ public class GameActivity extends BaseGameActivity {
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
+						// Do Nothing
 					}
 				});
 		alertDialogBuilder.show();
 	}
-
+	
+	/**
+	 * Save table state and end current turn.
+	 * @param View the done button.
+	 */
 	public void onDoneClicked(View view) {
-
-		if (table.getCurrentPlayer().getName().equals("TestPlayerName")) {
+		if (table.debug) {
 			finish();
 			return;
 		}

@@ -18,7 +18,7 @@ public class Event {
 			for (int j = 0; j < allTypes[i].getFrequency(); j++)
 				selection.add(allTypes[i]);
 		}
-		int choice = gen.nextInt(allTypes.length);
+		int choice = gen.nextInt(selection.size());
 		type = selection.get(choice);
 	}
 

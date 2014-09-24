@@ -24,7 +24,7 @@ public class Player {
 	public boolean equals(Object o) {
 		if (o.getClass() == Player.class) {
 			Player tar = (Player) o;
-			return (tar.getId() == getId());
+			return (tar.getId().equals(getId()));
 		}
 		return false;
 	}

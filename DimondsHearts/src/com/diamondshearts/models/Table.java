@@ -6,36 +6,36 @@ public class Table {
 	private Player currentPlayer;
 	private ArrayList<Player> players;
 	private Integer playsThisTurn;
-	private Integer diamond;	
+	private Integer diamond;
 	private Integer turnCounter;
 
+	public boolean debug;
+
 	public Table() {
-		turnCounter = 0;
+		this(false);
 	}
 
-	// Test only
-	public Table(String test) {
-		players = new ArrayList<Player>();
-		for (int i = 0; i < 5; i++)
-			players.add(new Player(this, i + "", "TestPlayer" + i));
-		currentPlayer = players.get(3);
-		playsThisTurn = 3;
+	public Table(boolean debug) {
+		this.debug = debug;
 		turnCounter = 0;
+		if (debug) {
+			players = new ArrayList<Player>();
+			for (int i = 0; i < 5; i++)
+				players.add(new Player(this, i + "", "TestPlayer" + i));
+			currentPlayer = players.get(3);
+			playsThisTurn = 3;
+		}
 	}
 
 	/**
-	 * Get the next participant. In this function, we assume that we are
-	 * round-robin, with all known players going before all automatch players.
-	 * This is not a requirement; players can go in any order. However, you can
-	 * take turns in any order.
+	 * Get the next participant.
 	 * 
 	 * @return participantId of next player, or null if automatching
 	 */
 	public String getNextParticipantId(Integer autoMatchSlots) {
 		int desiredIndex = -1;
 		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).getId()
-					.equals(currentPlayer.getId())) {
+			if (players.get(i).getId().equals(currentPlayer.getId())) {
 				desiredIndex = i + 1;
 			}
 		}
@@ -82,21 +82,15 @@ public class Table {
 		this.currentPlayer = currentPlayer;
 	}
 
-	/**
-	 * @return the turnCounter
-	 */
 	public Integer getTurnCounter() {
 		return turnCounter;
 	}
 
-	/**
-	 * @param turnCounter the turnCounter to set
-	 */
 	public void setTurnCounter(Integer turnCounter) {
 		this.turnCounter = turnCounter;
 	}
 
-	public Integer getRound() {		
+	public Integer getRound() {
 		return turnCounter / players.size() + 1;
 	}
 }

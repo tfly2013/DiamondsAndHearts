@@ -12,6 +12,11 @@ import android.view.ViewGroup;
 import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
 
+/**
+ * Custom View that contains UI of a player.
+ * 
+ * @author Fei Tang
+ */
 public class PlayerView extends View {
 
 	private Player player;
@@ -25,8 +30,14 @@ public class PlayerView extends View {
 	private RectF border;
 	private float density;
 
+	/**
+	 * Initialize a player view.
+	 * @param context
+	 *            The context that view is in.
+	 */
 	public PlayerView(Context context) {
 		super(context);
+		// Initialize fields
 		density = getResources().getDisplayMetrics().density;
 		width = (int) density * 150;
 		height = (int) density * 50;
@@ -35,21 +46,25 @@ public class PlayerView extends View {
 				height - boarderWith);
 		backgroundColor = Color.WHITE;
 
+		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
-		textHeight = 15 * density;
+		textHeight = 15 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
 
+		// Initialize border paint
 		borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint.setStyle(Paint.Style.STROKE);
 		borderPaint.setTextSize(textHeight);
 		borderPaint.setStrokeWidth(boarderWith);
 
+		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		backgroundPaint.setColor(backgroundColor);
 		backgroundPaint.setStyle(Paint.Style.FILL);
 		backgroundPaint.setTextSize(textHeight);
 
+		// Setup OnDragListener to handle card drag to player
 		setOnDragListener(new OnDragListener() {
 
 			@Override
@@ -58,7 +73,7 @@ public class PlayerView extends View {
 				case DragEvent.ACTION_DRAG_STARTED:
 					return event.getLocalState().getClass() == CardView.class;
 				case DragEvent.ACTION_DRAG_ENTERED:
-					v.setBackgroundColor(Color.RED);
+					v.setBackgroundColor(Color.BLUE);
 					v.invalidate();
 					return true;
 				case DragEvent.ACTION_DRAG_LOCATION:
@@ -68,18 +83,17 @@ public class PlayerView extends View {
 					v.invalidate();
 					return true;
 				case DragEvent.ACTION_DROP:
-					CardView cardView = (CardView)event.getLocalState();
+					CardView cardView = (CardView) event.getLocalState();
 					Card card = cardView.getCard();
-					ViewGroup hand = (ViewGroup)cardView.getParent();
+					ViewGroup hand = (ViewGroup) cardView.getParent();
 					hand.removeView(cardView);
-					player.getHand().remove(card);	
+					player.getHand().remove(card);
 					card.play(player);
-					
 					v.setBackgroundColor(Color.WHITE);
-					v.invalidate();					
+					v.invalidate();
 					return true;
 				case DragEvent.ACTION_DRAG_ENDED:
-					cardView = (CardView)event.getLocalState();
+					cardView = (CardView) event.getLocalState();
 					cardView.setVisibility(VISIBLE);
 				default:
 					// Error!!
@@ -90,6 +104,9 @@ public class PlayerView extends View {
 		});
 	}
 
+	/**
+	 * Change the background Color of player view
+	 */
 	public void setBackgroundColor(int color) {
 		backgroundColor = color;
 	}
@@ -135,6 +152,13 @@ public class PlayerView extends View {
 		canvas.drawText(label, labelX, labelY, textPaint);
 	}
 
+	/**
+	 * Return the text width of a string
+	 * 
+	 * @param string
+	 *            The string to test
+	 * @return The text width
+	 */
 	public float getTextWidth(String string) {
 		float[] widths;
 		widths = new float[string.length()];

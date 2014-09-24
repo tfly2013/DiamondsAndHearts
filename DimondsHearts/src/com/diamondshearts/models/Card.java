@@ -1,6 +1,5 @@
 package com.diamondshearts.models;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -10,7 +9,7 @@ public class Card {
 	private Integer cost;
 
 	private HashSet<Action> actions = new HashSet<Action>();
-	private ArrayList<Event> events = new ArrayList<Event>();
+	private HashSet<Event> events = new HashSet<Event>();
 	
 	public Card(Player owner) {
 		// add new actions
@@ -41,11 +40,11 @@ public class Card {
 		this.actions = actions;
 	}
 
-	public ArrayList<Event> getEvents() {
+	public HashSet<Event> getEvents() {
 		return events;
 	}
 
-	public void setEvents(ArrayList<Event> events) {
+	public void setEvents(HashSet<Event> events) {
 		this.events = events;
 	}
 
