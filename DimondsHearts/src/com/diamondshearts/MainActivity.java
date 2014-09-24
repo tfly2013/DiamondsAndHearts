@@ -76,7 +76,7 @@ public class MainActivity extends BaseGameActivity implements
 						setViewVisibility();
 					}
 				});
-
+ 
 		findViewById(R.id.sign_in_button).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
