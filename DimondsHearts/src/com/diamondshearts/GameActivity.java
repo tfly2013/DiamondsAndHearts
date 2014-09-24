@@ -43,6 +43,7 @@ public class GameActivity extends BaseGameActivity {
 			// ERROR!!
 			table = new Table("test");
 		}
+		
 
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
