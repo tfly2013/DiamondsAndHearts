@@ -27,5 +27,6 @@
     <string name="heart">"&#9829;"</string>
     <string name="spade">"&#9824;"</string>
     <string name="club">"&#9827;"</string>
+    <string name="test_game">Test Game</string>
     
 </resources>

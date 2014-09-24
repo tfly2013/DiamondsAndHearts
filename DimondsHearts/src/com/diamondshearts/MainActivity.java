@@ -105,28 +105,27 @@ public class MainActivity extends BaseGameActivity implements
 
 	// Create a one-on-one auto-match game (2 players game)
 	public void onQuickGameClicked(View view) {
+		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+
+		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+				.setAutoMatchCriteria(autoMatchCriteria).build();
+
+		showSpinner();
+
+		// Start the match
+		ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+			@Override
+			public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+				processResult(result);
+			}
+		};
+		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
+				.setResultCallback(cb);
+	}
+	
+	public void onTestGameClicked(View view){
 		Intent intent = new Intent(this, GameActivity.class);
 		startActivity(intent);
-
-		// Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1,
-		// 0);
-		//
-		// TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-		// .setAutoMatchCriteria(autoMatchCriteria).build();
-		//
-		// showSpinner();
-		//
-		// // Start the match
-		// ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new
-		// ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-		// @Override
-		// public void onResult(TurnBasedMultiplayer.InitiateMatchResult result)
-		// {
-		// processResult(result);
-		// }
-		// };
-		// Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
-		// .setResultCallback(cb);
 	}
 
 	public void showGameActivity() {

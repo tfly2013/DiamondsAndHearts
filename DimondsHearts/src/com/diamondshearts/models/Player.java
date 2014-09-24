@@ -11,7 +11,8 @@ public class Player {
 	private Integer heart;
 	private ArrayList<Card> hand;	
 	private Table table;
-
+	
+	// Test only
 	public Player(Table table) {
 		this.name = "TestPlayerName";
 		diamond = 30;

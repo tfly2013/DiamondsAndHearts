@@ -64,6 +64,7 @@ public class GameActivity extends BaseGameActivity {
 			cardView.setCard(card);
 			handLayout.addView(cardView);
 		}
+		
 	}
 
 	@Override

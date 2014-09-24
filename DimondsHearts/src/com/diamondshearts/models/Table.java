@@ -10,7 +10,8 @@ public class Table {
 
 	public Table() {
 	}
-
+	
+	// Test only
 	public Table(String test) {
 		players = new ArrayList<Player>();
 		for (int i = 0; i < 5; i++)
