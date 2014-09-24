@@ -21,6 +21,7 @@ public class GameActivity extends BaseGameActivity {
 	private Table table;
 	private LinearLayout playersUpLayout;
 	private LinearLayout playersDownLayout;
+	private LinearLayout currentPlayerLayout;
 	private LinearLayout handLayout;
 	private Player currentPlayer;
 	private TurnBasedMatch match;
@@ -45,6 +46,7 @@ public class GameActivity extends BaseGameActivity {
 
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
+		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		currentPlayer = table.getCurrentPlayer();
 
@@ -57,6 +59,9 @@ public class GameActivity extends BaseGameActivity {
 			else
 				playersDownLayout.addView(playerView);
 		}
+		PlayerView currentPlayerView = new PlayerView(this);
+		currentPlayerView.setPlayer(currentPlayer);
+		currentPlayerLayout.addView(currentPlayerView);
 
 		// Show Cards in hand
 		for (Card card : currentPlayer.getHand()) {
