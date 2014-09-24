@@ -1,10 +1,13 @@
 package com.diamondshearts;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
@@ -18,11 +21,13 @@ public class GameActivity extends BaseGameActivity {
 
 	private static final String TURN_BASED_MATCH_KEY = "com.diamondshearts.match";
 
-	private Table table;
 	private LinearLayout playersUpLayout;
 	private LinearLayout playersDownLayout;
 	private LinearLayout currentPlayerLayout;
 	private LinearLayout handLayout;
+	private TextView roundView;
+
+	private Table table;
 	private Player currentPlayer;
 	private TurnBasedMatch match;
 
@@ -43,7 +48,6 @@ public class GameActivity extends BaseGameActivity {
 			// ERROR!!
 			table = new Table("test");
 		}
-		
 
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
@@ -52,13 +56,17 @@ public class GameActivity extends BaseGameActivity {
 		currentPlayer = table.getCurrentPlayer();
 
 		// Show players
-		for (int i = 1; i < table.getPlayers().size(); i++) {
-			PlayerView playerView = new PlayerView(this);
-			playerView.setPlayer(table.getPlayers().get(i));
-			if (i < 3)
-				playersUpLayout.addView(playerView);
-			else
-				playersDownLayout.addView(playerView);
+		Integer count = 0;
+		for (Player player : table.getPlayers()) {
+			if (!player.equals(currentPlayer)) {
+				PlayerView playerView = new PlayerView(this);
+				playerView.setPlayer(player);
+				if (count < 2)
+					playersUpLayout.addView(playerView);
+				else
+					playersDownLayout.addView(playerView);
+				count++;
+			}
 		}
 		PlayerView currentPlayerView = new PlayerView(this);
 		currentPlayerView.setPlayer(currentPlayer);
@@ -70,7 +78,27 @@ public class GameActivity extends BaseGameActivity {
 			cardView.setCard(card);
 			handLayout.addView(cardView);
 		}
-		
+
+		// Show Round
+		roundView = (TextView) findViewById(R.id.round_view);
+		roundView.setVisibility(View.VISIBLE);
+		roundView.setAlpha(0f);
+		roundView.setText("Round " + table.getRound());
+		// Add a fade in fade out animation
+		roundView.animate().alpha(1f).setDuration(2000)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						roundView.animate().alpha(0f).setDuration(2000).setStartDelay(2000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										roundView.setVisibility(View.GONE);
+									}
+								});
+					}
+				});
 	}
 
 	@Override
@@ -87,10 +115,10 @@ public class GameActivity extends BaseGameActivity {
 
 	@Override
 	public void onBackPressed() {
-		
-		if (table.getCurrentPlayer().getName().equals("TestPlayerName")){
+
+		if (table.getCurrentPlayer().getName().equals("TestPlayerName")) {
 			finish();
-			return;			
+			return;
 		}
 
 		// Dialog to leave match
@@ -123,10 +151,10 @@ public class GameActivity extends BaseGameActivity {
 	}
 
 	public void onDoneClicked(View view) {
-		
-		if (table.getCurrentPlayer().getName().equals("TestPlayerName")){
+
+		if (table.getCurrentPlayer().getName().equals("TestPlayerName")) {
 			finish();
-			return;			
+			return;
 		}
 
 		String nextParticipantId = table.getNextParticipantId(match

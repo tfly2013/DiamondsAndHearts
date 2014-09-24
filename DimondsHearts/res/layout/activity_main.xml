@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_large"
             android:text="@string/instruction"
-            android:textAppearance="@style/GuessWordText" />
+            android:textAppearance="@style/MainText" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"

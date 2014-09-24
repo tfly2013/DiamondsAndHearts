@@ -48,17 +48,7 @@ public class Card {
 	public void setEvents(ArrayList<Event> events) {
 		this.events = events;
 	}
-	
-	public boolean needTarget(){
-		for (Action action : getActions())
-			if (action.needTarget())
-				return true;
-		for (Event event : getEvents())
-			if (event.needTarget())
-				return true;
-		return false;
-	}
-	
+
 	public void play(Player target) {
 		for (Action action : getActions())
 			action.play(target);		

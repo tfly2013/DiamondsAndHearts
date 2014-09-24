@@ -11,21 +11,22 @@ public class Player {
 	private Integer heart;
 	private ArrayList<Card> hand;	
 	private Table table;
-	
-	// Test only
-	public Player(Table table) {
-		this.name = "TestPlayerName";
+
+	public Player(Table table, String participantId, String displayName) {
+		this.setId(participantId);
+		this.name = displayName;
 		diamond = 30;
 		heart = 20;
 		initialHand();
 	}
 
-	public Player(Table table, String participantId, String displayName) {
-		this.setParticipantId(participantId);
-		this.name = displayName;
-		diamond = 30;
-		heart = 20;
-		initialHand();
+	@Override
+	public boolean equals(Object o) {
+		if (o.getClass() == Player.class) {
+			Player tar = (Player) o;
+			return (tar.getId() == getId());
+		}
+		return false;
 	}
 
 	public String getName() {
@@ -112,11 +113,11 @@ public class Player {
 		return labels;
 	}
 
-	public String getParticipantId() {
+	public String getId() {
 		return participantId;
 	}
 
-	public void setParticipantId(String participantId) {
+	public void setId(String participantId) {
 		this.participantId = participantId;
 	}
 

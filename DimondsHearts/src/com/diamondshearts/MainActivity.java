@@ -122,8 +122,8 @@ public class MainActivity extends BaseGameActivity implements
 		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
 				.setResultCallback(cb);
 	}
-	
-	public void onTestGameClicked(View view){
+
+	public void onTestGameClicked(View view) {
 		Intent intent = new Intent(this, GameActivity.class);
 		startActivity(intent);
 	}
@@ -416,6 +416,13 @@ public class MainActivity extends BaseGameActivity implements
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
+			String playerId = Games.Players.getCurrentPlayerId(apiAgent);
+			String currnetParticipantId = match.getParticipantId(playerId);
+			String currentPlayerName = match.getParticipant(
+					currnetParticipantId).getDisplayName();
+			table.setCurrentPlayer(new Player(table, currnetParticipantId,
+					currentPlayerName));
+			table.setTurnCounter(table.getTurnCounter() + 1);
 			isDoingTurn = true;
 			showGameActivity();
 			return;

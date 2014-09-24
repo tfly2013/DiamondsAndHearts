@@ -43,11 +43,6 @@ public class Event {
 		return type;
 	}
 
-	public boolean needTarget() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public void play(Player target) {
 		// TODO Auto-generated method stub
 		

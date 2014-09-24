@@ -6,18 +6,21 @@ public class Table {
 	private Player currentPlayer;
 	private ArrayList<Player> players;
 	private Integer playsThisTurn;
-	private Integer diamond;
+	private Integer diamond;	
+	private Integer turnCounter;
 
 	public Table() {
+		turnCounter = 0;
 	}
-	
+
 	// Test only
 	public Table(String test) {
 		players = new ArrayList<Player>();
 		for (int i = 0; i < 5; i++)
-			players.add(new Player(this));
-		currentPlayer = players.get(0);
-		playsThisTurn = 0;
+			players.add(new Player(this, i + "", "TestPlayer" + i));
+		currentPlayer = players.get(3);
+		playsThisTurn = 3;
+		turnCounter = 0;
 	}
 
 	/**
@@ -31,19 +34,19 @@ public class Table {
 	public String getNextParticipantId(Integer autoMatchSlots) {
 		int desiredIndex = -1;
 		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).getParticipantId()
-					.equals(currentPlayer.getParticipantId())) {
+			if (players.get(i).getId()
+					.equals(currentPlayer.getId())) {
 				desiredIndex = i + 1;
 			}
 		}
 
 		if (desiredIndex < players.size()) {
-			return players.get(desiredIndex).getParticipantId();
+			return players.get(desiredIndex).getId();
 		}
 
 		if (autoMatchSlots <= 0) {
 			// You've run out of automatch slots, so we start over.
-			return players.get(0).getParticipantId();
+			return players.get(0).getId();
 		} else {
 			// You have not yet fully automatched, so null will find a new
 			// person to play against.
@@ -77,5 +80,23 @@ public class Table {
 
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
+	}
+
+	/**
+	 * @return the turnCounter
+	 */
+	public Integer getTurnCounter() {
+		return turnCounter;
+	}
+
+	/**
+	 * @param turnCounter the turnCounter to set
+	 */
+	public void setTurnCounter(Integer turnCounter) {
+		this.turnCounter = turnCounter;
+	}
+
+	public Integer getRound() {		
+		return turnCounter / players.size() + 1;
 	}
 }
