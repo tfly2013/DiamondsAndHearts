@@ -5,9 +5,7 @@ import java.util.Random;
 
 public class Event {
 	private static Random gen = new Random();
-	private String name;
 	private EventType type;
-	private String description;
 
 	// define statistical distribution of types
 	public static final EventType[] allTypes = EventType.class
@@ -21,41 +19,37 @@ public class Event {
 				selection.add(allTypes[i]);
 		}
 		int choice = gen.nextInt(allTypes.length);
-		setName(selection.get(choice).getName());
-		setType(selection.get(choice));
-		setDescription(selection.get(choice).getDescription());
+		type = selection.get(choice);
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (o.getClass() == Event.class) {
 			Event tar = (Event) o;
-			return (tar.getName() == name && tar.getType() == type);
+			return (tar.getName().equals(getName()));
 		}
 		return false;
 	}
 
 	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		return type.getName();
 	}
 
 	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
+		return type.getDescription();
 	}
 
 	public EventType getType() {
 		return type;
 	}
 
-	public void setType(EventType type) {
-		this.type = type;
+	public boolean needTarget() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void play(Player target) {
+		// TODO Auto-generated method stub
+		
 	}
 }

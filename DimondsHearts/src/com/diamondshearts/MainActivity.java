@@ -105,23 +105,28 @@ public class MainActivity extends BaseGameActivity implements
 
 	// Create a one-on-one auto-match game (2 players game)
 	public void onQuickGameClicked(View view) {
+		Intent intent = new Intent(this, GameActivity.class);
+		startActivity(intent);
 
-		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
-
-		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-				.setAutoMatchCriteria(autoMatchCriteria).build();
-
-		showSpinner();
-
-		// Start the match
-		ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-			@Override
-			public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-				processResult(result);
-			}
-		};
-		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
-				.setResultCallback(cb);
+		// Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1,
+		// 0);
+		//
+		// TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+		// .setAutoMatchCriteria(autoMatchCriteria).build();
+		//
+		// showSpinner();
+		//
+		// // Start the match
+		// ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new
+		// ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+		// @Override
+		// public void onResult(TurnBasedMultiplayer.InitiateMatchResult result)
+		// {
+		// processResult(result);
+		// }
+		// };
+		// Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
+		// .setResultCallback(cb);
 	}
 
 	public void showGameActivity() {
@@ -324,8 +329,8 @@ public class MainActivity extends BaseGameActivity implements
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();
 		for (Participant participant : participants)
-			players.add(new Player(participant.getParticipantId(), participant
-					.getDisplayName()));
+			players.add(new Player(table, participant.getParticipantId(),
+					participant.getDisplayName()));
 		table.setPlayers(players);
 
 		// Set current player
@@ -333,9 +338,9 @@ public class MainActivity extends BaseGameActivity implements
 		String currnetParticipantId = match.getParticipantId(playerId);
 		String currentPlayerName = match.getParticipant(currnetParticipantId)
 				.getDisplayName();
-		table.setCurrentPlayer(new Player(currnetParticipantId,
+		table.setCurrentPlayer(new Player(table, currnetParticipantId,
 				currentPlayerName));
-		
+
 		String pendingParticipantId = null;
 		if (match.getAvailableAutoMatchSlots() > 0) {
 			Toast.makeText(this,

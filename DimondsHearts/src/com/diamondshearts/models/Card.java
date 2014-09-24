@@ -6,12 +6,13 @@ import java.util.Random;
 
 public class Card {
 	private static Random gen = new Random();
+	private Player owner;
 	private Integer cost;
 
 	private HashSet<Action> actions = new HashSet<Action>();
 	private ArrayList<Event> events = new ArrayList<Event>();
 	
-	public Card() {
+	public Card(Player owner) {
 		// add new actions
 		Integer actionsCount = gen.nextInt(3) + 1;
 		while (actions.size() < actionsCount)
@@ -46,5 +47,30 @@ public class Card {
 
 	public void setEvents(ArrayList<Event> events) {
 		this.events = events;
+	}
+	
+	public boolean needTarget(){
+		for (Action action : getActions())
+			if (action.needTarget())
+				return true;
+		for (Event event : getEvents())
+			if (event.needTarget())
+				return true;
+		return false;
+	}
+	
+	public void play(Player target) {
+		for (Action action : getActions())
+			action.play(target);		
+		for (Event event : getEvents())
+			event.play(target);		
+	}
+
+	public Player getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Player owner) {
+		this.owner = owner;
 	}
 }

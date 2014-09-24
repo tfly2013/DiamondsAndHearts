@@ -9,13 +9,21 @@ public class Player {
 	private String name;
 	private Integer diamond;
 	private Integer heart;
-	private ArrayList<Card> hand;
+	private ArrayList<Card> hand;	
+	private Table table;
 
-	public Player(String participantId, String displayName) {
+	public Player(Table table) {
+		this.name = "TestPlayerName";
+		diamond = 30;
+		heart = 20;
+		initialHand();
+	}
+
+	public Player(Table table, String participantId, String displayName) {
 		this.setParticipantId(participantId);
 		this.name = displayName;
 		diamond = 30;
-		heart = 20;		
+		heart = 20;
 		initialHand();
 	}
 
@@ -87,19 +95,19 @@ public class Player {
 		table.setDiamond(table.getDiamond() + amount);
 		return;
 	}
-	
+
 	public void initialHand() {
 		hand = new ArrayList<Card>();
-		for (int i = 0; i < INITIALHAND; i++){
-			hand.add(new Card());
+		for (int i = 0; i < INITIALHAND; i++) {
+			hand.add(new Card(this));
 		}
 	}
 
 	public ArrayList<String> getLabels() {
 		ArrayList<String> labels = new ArrayList<String>();
-		labels.add("♦: "+ diamond);
-		labels.add("♥: "+ heart);
-		labels.add("H: "+ hand.size());
+		labels.add("♦: " + diamond);
+		labels.add("♥: " + heart);
+		labels.add("H: " + hand.size());
 		return labels;
 	}
 
@@ -109,5 +117,19 @@ public class Player {
 
 	public void setParticipantId(String participantId) {
 		this.participantId = participantId;
+	}
+
+	/**
+	 * @return the table
+	 */
+	public Table getTable() {
+		return table;
+	}
+
+	/**
+	 * @param table the table to set
+	 */
+	public void setTable(Table table) {
+		this.table = table;
 	}
 }

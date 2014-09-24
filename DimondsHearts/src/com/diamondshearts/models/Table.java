@@ -6,11 +6,17 @@ public class Table {
 	private Player currentPlayer;
 	private ArrayList<Player> players;
 	private Integer playsThisTurn;
-	private Integer diamond;	
-	//private TurnBasedMatch match;
-	
-	public Table(){
-		//this.setMatch(match);
+	private Integer diamond;
+
+	public Table() {
+	}
+
+	public Table(String test) {
+		players = new ArrayList<Player>();
+		for (int i = 0; i < 5; i++)
+			players.add(new Player(this));
+		currentPlayer = players.get(0);
+		playsThisTurn = 0;
 	}
 
 	/**
@@ -24,7 +30,8 @@ public class Table {
 	public String getNextParticipantId(Integer autoMatchSlots) {
 		int desiredIndex = -1;
 		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).getParticipantId().equals(currentPlayer.getParticipantId())) {
+			if (players.get(i).getParticipantId()
+					.equals(currentPlayer.getParticipantId())) {
 				desiredIndex = i + 1;
 			}
 		}
@@ -58,8 +65,8 @@ public class Table {
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
-	
-	public Player getPlayerThisTurn(){
+
+	public Player getPlayerThisTurn() {
 		return players.get(playsThisTurn);
 	}
 
@@ -70,57 +77,4 @@ public class Table {
 	public void setCurrentPlayer(Player currentPlayer) {
 		this.currentPlayer = currentPlayer;
 	}
-
-//	public TurnBasedMatch getMatch() {
-//		return match;
-//	}
-//
-//	public void setMatch(TurnBasedMatch match) {
-//		this.match = match;
-//	}
-	
-	
-//	private void executeCard(Player player, Card card) {
-//		if (!player.canAfford(card.getCost())) {
-//			//ERROR
-//		}
-//
-//		player.pay(this, card.getCost());
-//
-//		for (Action action : card.getActions()) {
-//			switch (action.getSuit()) {
-//			case Spade:
-//
-//				break;
-//			case Heart:
-//				
-//				break;
-//			case Diamond:
-//				
-//				break;
-//			case Club:
-//				
-//				break;
-//			}
-//			/*
-//			current = iterator.next();
-//			if (current.suit == 0) {
-//				current.target.hp -= current.rank;
-//			}
-//			if (current.suit == 1) {
-//				player.hp += current.rank;
-//			}				
-//			if (current.suit == 2) {
-//				if (current.target.dp < current.rank) {
-//					player.dp += current.target.dp
-//					current.target.dp = 0;
-//				} else {
-//					player.dp += current.rank;
-//					current.target.dp -= current.rank;
-//				}
-//			}
-//			*/
-//		}
-//	}
-
 }

@@ -40,6 +40,7 @@ public class GameActivity extends BaseGameActivity {
 			table = gson.fromJson(tableData, Table.class);
 		} else {
 			// ERROR!!
+			table = new Table("test");
 		}
 
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
@@ -79,6 +80,11 @@ public class GameActivity extends BaseGameActivity {
 
 	@Override
 	public void onBackPressed() {
+		
+		if (table.getCurrentPlayer().getName().equals("TestPlayerName")){
+			finish();
+			return;			
+		}
 
 		// Dialog to leave match
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -110,6 +116,11 @@ public class GameActivity extends BaseGameActivity {
 	}
 
 	public void onDoneClicked(View view) {
+		
+		if (table.getCurrentPlayer().getName().equals("TestPlayerName")){
+			finish();
+			return;			
+		}
 
 		String nextParticipantId = table.getNextParticipantId(match
 				.getAvailableAutoMatchSlots());
