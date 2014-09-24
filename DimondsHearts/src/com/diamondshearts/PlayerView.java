@@ -73,7 +73,7 @@ public class PlayerView extends View {
 				case DragEvent.ACTION_DRAG_STARTED:
 					return event.getLocalState().getClass() == CardView.class;
 				case DragEvent.ACTION_DRAG_ENTERED:
-					v.setBackgroundColor(Color.BLUE);
+					v.setBackgroundColor(0xFF33B5E5);
 					v.invalidate();
 					return true;
 				case DragEvent.ACTION_DRAG_LOCATION:

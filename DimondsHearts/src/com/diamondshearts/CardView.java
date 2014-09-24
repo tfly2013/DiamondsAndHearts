@@ -71,7 +71,7 @@ public class CardView extends View {
 			@Override
 			public boolean onLongClick(View v) {
 				startDrag(null, new DragShadowBuilder(v), v, 0);
-				v.setVisibility(GONE);
+				v.setVisibility(INVISIBLE);
 				return false;
 			}
 		});
