@@ -135,14 +135,16 @@ public class MainActivity extends BaseGameActivity implements
 
 		// Start the match
 		showSpinner();
-		ResultCallback<TurnBasedMultiplayer.InitiateMatchResult> cb = new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-			@Override
-			public void onResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-				processResult(result);
-			}
-		};
-		Games.TurnBasedMultiplayer.createMatch(apiAgent, tbmc)
-				.setResultCallback(cb);
+		Games.TurnBasedMultiplayer
+				.createMatch(apiAgent, tbmc)
+				.setResultCallback(
+						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+							@Override
+							public void onResult(
+									TurnBasedMultiplayer.InitiateMatchResult result) {
+								processResult(result);
+							}
+						});
 	}
 
 	/**
@@ -159,6 +161,8 @@ public class MainActivity extends BaseGameActivity implements
 	public void showGameActivity() {
 		Intent intent = new Intent(this, GameActivity.class);
 		intent.putExtra("com.diamondshearts.match", match);
+		intent.putExtra("com.diamondshearts.playerid",
+				Games.Players.getCurrentPlayerId(apiAgent));
 		startActivity(intent);
 	}
 
@@ -367,11 +371,25 @@ public class MainActivity extends BaseGameActivity implements
 	 *            The match.
 	 */
 	public void startMatch(TurnBasedMatch match) {
-		// startActivity(new Intent(this, GameActivity.class));
 		this.match = match;
 
 		table = new Table();
-		String currnetParticipantId = setUpPlayers(match);
+		// Set players
+		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Participant> participants = match.getParticipants();
+		for (Participant participant : participants)
+			players.add(new Player(table, participant.getParticipantId(),
+					participant.getDisplayName()));
+		table.setPlayers(players);
+
+		// Set current player
+		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
+		String currnetParticipantId = match.getParticipantId(playerId);
+		String currentPlayerName = match.getParticipant(currnetParticipantId)
+				.getDisplayName();
+		table.setCurrentPlayer(new Player(table, currnetParticipantId,
+				currentPlayerName));
+
 		String pendingParticipantId = null;
 		if (match.getAvailableAutoMatchSlots() > 0) {
 			Toast.makeText(this,
@@ -391,32 +409,6 @@ public class MainActivity extends BaseGameActivity implements
 						processResult(result);
 					}
 				});
-	}
-
-	/**
-	 * Assign players and current player to table.
-	 * 
-	 * @param match
-	 *            The match.
-	 * @return Current player Participant Id.
-	 */
-	private String setUpPlayers(TurnBasedMatch match) {
-		// Set players
-		ArrayList<Player> players = new ArrayList<Player>();
-		ArrayList<Participant> participants = match.getParticipants();
-		for (Participant participant : participants)
-			players.add(new Player(table, participant.getParticipantId(),
-					participant.getDisplayName()));
-		table.setPlayers(players);
-
-		// Set current player
-		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
-		String currnetParticipantId = match.getParticipantId(playerId);
-		String currentPlayerName = match.getParticipant(currnetParticipantId)
-				.getDisplayName();
-		table.setCurrentPlayer(new Player(table, currnetParticipantId,
-				currentPlayerName));
-		return currnetParticipantId;
 	}
 
 	/**
@@ -448,7 +440,7 @@ public class MainActivity extends BaseGameActivity implements
 		this.match = match;
 		int status = match.getStatus();
 		int turnStatus = match.getTurnStatus();
-		
+
 		// Handling errors
 		switch (status) {
 		case TurnBasedMatch.MATCH_STATUS_CANCELED:
@@ -477,8 +469,6 @@ public class MainActivity extends BaseGameActivity implements
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
-			setUpPlayers(match);
-			table.setTurnCounter(table.getTurnCounter() + 1);
 			showGameActivity();
 			return;
 		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
@@ -494,7 +484,9 @@ public class MainActivity extends BaseGameActivity implements
 
 	/**
 	 * Handle server result when player initiate a match.
-	 * @param result Result from server.
+	 * 
+	 * @param result
+	 *            Result from server.
 	 */
 	public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 		TurnBasedMatch match = result.getMatch();
@@ -509,13 +501,14 @@ public class MainActivity extends BaseGameActivity implements
 			updateMatch(match);
 			return;
 		}
-
 		startMatch(match);
 	}
-	
+
 	/**
 	 * Handle server result when player update a match.
-	 * @param result Result from server.
+	 * 
+	 * @param result
+	 *            Result from server.
 	 */
 	public void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
 		TurnBasedMatch match = result.getMatch();
@@ -530,7 +523,6 @@ public class MainActivity extends BaseGameActivity implements
 			updateMatch(match);
 			return;
 		}
-		showGameActivity();
 	}
 
 	@Override
@@ -569,12 +561,16 @@ public class MainActivity extends BaseGameActivity implements
 		Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
 
 	}
-	
+
 	/**
 	 * Handling error message from checkStatusCode
-	 * @param match The match.
-	 * @param statusCode The statusCode.
-	 * @param stringId The error message.
+	 * 
+	 * @param match
+	 *            The match.
+	 * @param statusCode
+	 *            The statusCode.
+	 * @param stringId
+	 *            The error message.
 	 */
 	public void showErrorMessage(TurnBasedMatch match, int statusCode,
 			int stringId) {
@@ -582,11 +578,13 @@ public class MainActivity extends BaseGameActivity implements
 		showWarning("Warning", getResources().getString(stringId));
 	}
 
-
 	/**
 	 * Handling Game status from server.
-	 * @param match The match.
-	 * @param statusCode The statusCode.
+	 * 
+	 * @param match
+	 *            The match.
+	 * @param statusCode
+	 *            The statusCode.
 	 * @return If there is something wrong
 	 */
 	private boolean checkStatusCode(TurnBasedMatch match, int statusCode) {

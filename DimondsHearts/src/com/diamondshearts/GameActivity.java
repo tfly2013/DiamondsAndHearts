@@ -1,5 +1,7 @@
 package com.diamondshearts;
 
+import java.util.ArrayList;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
@@ -13,6 +15,7 @@ import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
 import com.diamondshearts.models.Table;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.multiplayer.Participant;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameActivity;
 import com.google.gson.Gson;
@@ -28,7 +31,7 @@ public class GameActivity extends BaseGameActivity {
 	private LinearLayout handLayout;
 	/** The text view to show round */
 	private TextView roundView;
-	
+
 	/** The table state of game */
 	private Table table;
 	/** Current Player */
@@ -45,19 +48,41 @@ public class GameActivity extends BaseGameActivity {
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
-		
+
 		// Retrive match data from MainActivity
 		gson = new Gson();
-		if (getIntent().hasExtra("com.diamondshearts.match")
-				&& (match = getIntent()
-						.getParcelableExtra("com.diamondshearts.match")) != null) {
+		String matchKey = "com.diamondshearts.match";
+		if (getIntent().hasExtra(matchKey)
+				&& (match = getIntent().getParcelableExtra(matchKey)) != null) {
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
 		} else {
 			// ERROR!!
 			table = new Table(true);
 		}
-		
+		String playerId = null;
+		String playerIdKey = "com.diamondshearts.playerid";
+		if (getIntent().hasExtra(playerIdKey))
+			playerId = getIntent().getStringExtra(playerIdKey);
+
+		if (!table.debug) {
+			// Update Table data
+			ArrayList<Player> players = new ArrayList<Player>();
+			ArrayList<Participant> participants = match.getParticipants();
+			for (Participant participant : participants)
+				players.add(new Player(table, participant.getParticipantId(),
+						participant.getDisplayName()));
+			table.setPlayers(players);
+
+			// Set current player
+			String currnetParticipantId = match.getParticipantId(playerId);
+			String currentPlayerName = match.getParticipant(
+					currnetParticipantId).getDisplayName();
+			table.setCurrentPlayer(new Player(table, currnetParticipantId,
+					currentPlayerName));
+			table.setTurnCounter(table.getTurnCounter() + 1);
+		}		
+
 		// Get layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
@@ -99,7 +124,8 @@ public class GameActivity extends BaseGameActivity {
 				.setListener(new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd(Animator animation) {
-						roundView.animate().alpha(0f).setDuration(2000).setStartDelay(2000)
+						roundView.animate().alpha(0f).setDuration(2000)
+								.setStartDelay(2000)
 								.setListener(new AnimatorListenerAdapter() {
 									@Override
 									public void onAnimationEnd(
@@ -164,10 +190,12 @@ public class GameActivity extends BaseGameActivity {
 				});
 		alertDialogBuilder.show();
 	}
-	
+
 	/**
 	 * Save table state and end current turn.
-	 * @param View the done button.
+	 * 
+	 * @param View
+	 *            the done button.
 	 */
 	public void onDoneClicked(View view) {
 		if (table.debug) {
@@ -177,8 +205,8 @@ public class GameActivity extends BaseGameActivity {
 
 		String nextParticipantId = table.getNextParticipantId(match
 				.getAvailableAutoMatchSlots());
-		// Create the next turn
 
+		// Create the next turn
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				gson.toJson(table, Table.class).getBytes(), nextParticipantId);
 		finish();
