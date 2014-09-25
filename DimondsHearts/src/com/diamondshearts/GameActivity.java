@@ -49,7 +49,7 @@ public class GameActivity extends BaseGameActivity {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
 
-		// Retrive match data from MainActivity
+		// Retrieve match data from MainActivity
 		gson = new Gson();
 		String matchKey = "com.diamondshearts.match";
 		if (getIntent().hasExtra(matchKey)
@@ -57,96 +57,28 @@ public class GameActivity extends BaseGameActivity {
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
 		} else {
-			// ERROR!!
+			//  Table for debugging
 			table = new Table(true);
 		}
+		// Retrieve current logged in player Id
 		String playerId = null;
 		String playerIdKey = "com.diamondshearts.playerid";
 		if (getIntent().hasExtra(playerIdKey))
 			playerId = getIntent().getStringExtra(playerIdKey);
-
 		if (!table.debug) {
-			// Update Table data
-			ArrayList<Player> players = new ArrayList<Player>();
-			ArrayList<Participant> participants = match.getParticipants();
-			for (Participant participant : participants)
-				players.add(new Player(table, participant.getParticipantId(),
-						participant.getDisplayName()));
-			table.setPlayers(players);
-
-			// Set current player
-			String currnetParticipantId = match.getParticipantId(playerId);
-			String currentPlayerName = match.getParticipant(
-					currnetParticipantId).getDisplayName();
-			table.setCurrentPlayer(new Player(table, currnetParticipantId,
-					currentPlayerName));
-			table.setTurnCounter(table.getTurnCounter() + 1);
+			updateTable(playerId);
 		}		
 
-		// Get layouts
+		// Set up layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
-		currentPlayer = table.getCurrentPlayer();
-
-		// Show players
-		Integer count = 0;
-		for (Player player : table.getPlayers()) {
-			if (!player.equals(currentPlayer)) {
-				PlayerView playerView = new PlayerView(this);
-				playerView.setPlayer(player);
-				if (count < 2)
-					playersUpLayout.addView(playerView);
-				else
-					playersDownLayout.addView(playerView);
-				count++;
-			}
-		}
-		PlayerView currentPlayerView = new PlayerView(this);
-		currentPlayerView.setPlayer(currentPlayer);
-		currentPlayerLayout.addView(currentPlayerView);
-
-		// Show Cards in hand
-		for (Card card : currentPlayer.getHand()) {
-			CardView cardView = new CardView(this);
-			cardView.setCard(card);
-			handLayout.addView(cardView);
-		}
-
-		// Show Round
-		roundView = (TextView) findViewById(R.id.round_view);
-		roundView.setVisibility(View.VISIBLE);
-		roundView.setAlpha(0f);
-		roundView.setText("Round " + table.getRound());
-		// Add a fade in fade out animation
-		roundView.animate().alpha(1f).setDuration(2000)
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						roundView.animate().alpha(0f).setDuration(2000)
-								.setStartDelay(2000)
-								.setListener(new AnimatorListenerAdapter() {
-									@Override
-									public void onAnimationEnd(
-											Animator animation) {
-										roundView.setVisibility(View.GONE);
-									}
-								});
-					}
-				});
-	}
-
-	@Override
-	public void onSignInFailed() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onSignInSucceeded() {
-		// TODO Auto-generated method stub
-
+		
+		// Load UI
+		loadPlayers();
+		loadHands();
+		showRoundView();
 	}
 
 	@Override
@@ -171,15 +103,7 @@ public class GameActivity extends BaseGameActivity {
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								// Leave Match
-								String nextParticipantId = table
-										.getNextParticipantId(match
-												.getAvailableAutoMatchSlots());
-								Games.TurnBasedMultiplayer
-										.leaveMatchDuringTurn(getApiClient(),
-												match.getMatchId(),
-												nextParticipantId);
-								finish();
+								leaveMatch();
 							}
 						})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -210,5 +134,115 @@ public class GameActivity extends BaseGameActivity {
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				gson.toJson(table, Table.class).getBytes(), nextParticipantId);
 		finish();
+	}
+
+	@Override
+	public void onSignInFailed() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSignInSucceeded() {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * 	Player leaves match in their turn
+	 */
+	private void leaveMatch() {
+		String nextParticipantId = table
+				.getNextParticipantId(match
+						.getAvailableAutoMatchSlots());
+		Games.TurnBasedMultiplayer
+				.leaveMatchDuringTurn(getApiClient(),
+						match.getMatchId(),
+						nextParticipantId);
+		finish();
+	}
+
+	/**
+	 *  Load cardViews for cards in current player's hand
+	 */
+	private void loadHands() {
+		// Show Cards in hand
+		for (Card card : currentPlayer.getHand()) {
+			CardView cardView = new CardView(this);
+			cardView.setCard(card);
+			handLayout.addView(cardView);
+		}
+	}
+
+	/**
+	 *  Load playerViews for players
+	 */
+	private void loadPlayers() {
+		// Show players
+		Integer count = 0;
+		for (Player player : table.getPlayers()) {
+			if (!player.equals(currentPlayer)) {
+				PlayerView playerView = new PlayerView(this);
+				playerView.setPlayer(player);
+				if (count < 2)
+					playersUpLayout.addView(playerView);
+				else
+					playersDownLayout.addView(playerView);
+				count++;
+			}
+		}
+		PlayerView currentPlayerView = new PlayerView(this);
+		currentPlayerView.setPlayer(currentPlayer);
+		currentPlayerLayout.addView(currentPlayerView);
+	}
+
+	/**
+	 * Show a round counter at the start of each turn.
+	 * The round counter will fade in and fade out.
+	 */
+	private void showRoundView() {
+		// Show Round
+		roundView = (TextView) findViewById(R.id.round_view);
+		roundView.setVisibility(View.VISIBLE);
+		roundView.setAlpha(0f);
+		roundView.setText("Round " + table.getRound());
+		// Add a fade in fade out animation
+		roundView.animate().alpha(1f).setDuration(2000)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						roundView.animate().alpha(0f).setDuration(2000)
+								.setStartDelay(2000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										roundView.setVisibility(View.GONE);
+									}
+								});
+					}
+				});
+	}
+
+	/**
+	 * @param playerId
+	 */
+	private void updateTable(String playerId) {
+		// Update Table data
+		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Participant> participants = match.getParticipants();
+		for (Participant participant : participants)
+			players.add(new Player(table, participant.getParticipantId(),
+					participant.getDisplayName()));
+		table.setPlayers(players);
+
+		// Set current player
+		String currnetParticipantId = match.getParticipantId(playerId);
+		String currentPlayerName = match.getParticipant(
+				currnetParticipantId).getDisplayName();
+		currentPlayer = new Player(table, currnetParticipantId,
+				currentPlayerName);
+		table.setCurrentPlayer(currentPlayer);
+		table.setTurnCounter(table.getTurnCounter() + 1);
 	}
 }

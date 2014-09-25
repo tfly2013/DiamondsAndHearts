@@ -12,8 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:gravity="center"
-        android:orientation="horizontal" >
-    </LinearLayout>
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/players_down_layout"
@@ -23,8 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:orientation="horizontal" >
-    </LinearLayout>
+        android:orientation="horizontal" />
 
     <Button
         android:id="@+id/done_button"
@@ -51,8 +49,7 @@
             android:id="@+id/hand_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            android:orientation="horizontal" />
     </HorizontalScrollView>
 
     <LinearLayout
@@ -62,8 +59,7 @@
         android:layout_above="@id/horizontalScrollView"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:orientation="horizontal" >
-    </LinearLayout>
+        android:orientation="horizontal" />
 
     <RelativeLayout
         android:id="@+id/game_field_layout"

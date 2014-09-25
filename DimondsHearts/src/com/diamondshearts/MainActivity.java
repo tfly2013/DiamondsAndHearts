@@ -99,167 +99,6 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Displays all ongoing games .
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onCheckGamesClicked(View view) {
-		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
-		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
-	}
-
-	/**
-	 * Open the player invitation UI.
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onNewGameClicked(View view) {
-		Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
-				apiAgent, 1, 4, true);
-		startActivityForResult(intent, RC_SELECT_PLAYERS);
-	}
-
-	/**
-	 * Create a one-on-one auto-match game (2 players game)
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onQuickGameClicked(View view) {
-		// Create a auto match criteria
-		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
-		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-				.setAutoMatchCriteria(autoMatchCriteria).build();
-
-		// Start the match
-		showSpinner();
-		Games.TurnBasedMultiplayer
-				.createMatch(apiAgent, tbmc)
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.InitiateMatchResult result) {
-								processResult(result);
-							}
-						});
-	}
-
-	/**
-	 * DEBUG ONLY. Start a test game.
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onTestGameClicked(View view) {
-		Intent intent = new Intent(this, GameActivity.class);
-		startActivity(intent);
-	}
-
-	/**
-	 * Set menu visibility base on user sign in and sign out
-	 */
-	public void setViewVisibility() {
-		// Not Signed in
-		if (!isSignedIn()) {
-			findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
-			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-			findViewById(R.id.menu_layout).setVisibility(View.GONE);
-
-			if (alertDialog != null) {
-				alertDialog.dismiss();
-			}
-			return;
-		}
-		// Signed in
-		((TextView) findViewById(R.id.name_field))
-				.setText(getString(R.string.welcome)
-						+ Games.Players.getCurrentPlayer(getApiClient())
-								.getDisplayName());
-		findViewById(R.id.login_layout).setVisibility(View.GONE);
-		findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
-	}
-
-	@Override
-	/**
-	 * Show sign in layout when sign in failed
-	 */
-	public void onSignInFailed() {
-		setViewVisibility();
-	}
-
-	@Override
-	/**
-	 * Check match data and initialize when sign in succeed
-	 */
-	public void onSignInSucceeded() {
-		setViewVisibility();
-
-//		 if (mHelper.getTurnBasedMatch() != null) {
-//		 // Handle players that come from a notification click. Go striaght
-//		 // into game.
-//		 updateMatch(mHelper.getTurnBasedMatch());
-//		 return;
-//		 }
-
-		// Registering this activity as a handler for invitation and match
-		// events.
-		Games.Invitations.registerInvitationListener(getApiClient(), this);
-
-		// Registering the MatchUpdateListener, which will replace notifications
-		// players get.
-		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
-				this);
-	}
-
-	/**
-	 * Show a waiting spinner.
-	 */
-	public void showSpinner() {
-		findViewById(R.id.progressLayout).setVisibility(View.VISIBLE);
-	}
-
-	/**
-	 * Dismiss the spinner showed.
-	 */
-	public void dismissSpinner() {
-		findViewById(R.id.progressLayout).setVisibility(View.GONE);
-	}
-
-	/**
-	 * Show a Warning dialog.
-	 * 
-	 * @param title
-	 *            The title of the dialog.
-	 * @param message
-	 *            The message to show in the dialog.
-	 */
-	public void showWarning(String title, String message) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set title
-		alertDialogBuilder.setTitle(title).setMessage(message);
-
-		// set dialog message
-		alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						// if this button is clicked, maybe close current
-						// activity
-					}
-				});
-
-		// create alert dialog
-		alertDialog = alertDialogBuilder.create();
-
-		// show dialog
-		alertDialog.show();
-	}
-
-	/**
 	 * Show a dialog that ask player for rematch.
 	 */
 	public void askForRematch() {
@@ -284,6 +123,13 @@ public class MainActivity extends BaseGameActivity implements
 						});
 
 		alertDialogBuilder.show();
+	}
+
+	/**
+	 * Dismiss the spinner showed.
+	 */
+	public void dismissSpinner() {
+		findViewById(R.id.progressLayout).setVisibility(View.GONE);
 	}
 
 	@Override
@@ -356,170 +202,14 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Set up table and start a new match. It there are any auto match player,
-	 * then the game will wait until all players available. If all players are
-	 * available, then the first player start his turn.
+	 * Displays all ongoing games .
 	 * 
-	 * @param match
-	 *            The match.
+	 * @param view
+	 *            The button.
 	 */
-	public void startMatch(TurnBasedMatch match) {
-		this.match = match;
-
-		table = new Table();
-		// Set players
-		ArrayList<Player> players = new ArrayList<Player>();
-		ArrayList<Participant> participants = match.getParticipants();
-		for (Participant participant : participants)
-			players.add(new Player(table, participant.getParticipantId(),
-					participant.getDisplayName()));
-		table.setPlayers(players);
-
-		// Set current player
-		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
-		String currnetParticipantId = match.getParticipantId(playerId);
-		String currentPlayerName = match.getParticipant(currnetParticipantId)
-				.getDisplayName();
-		table.setCurrentPlayer(new Player(table, currnetParticipantId,
-				currentPlayerName));
-
-		String pendingParticipantId = null;
-		if (match.getAvailableAutoMatchSlots() > 0) {
-			Toast.makeText(this,
-					"Match initialed, waiting for auto matching... ",
-					TOAST_DELAY).show();
-		} else {
-			pendingParticipantId = currnetParticipantId;
-		}
-		showSpinner();
-		Games.TurnBasedMultiplayer.takeTurn(apiAgent, match.getMatchId(),
-				gson.toJson(table, Table.class).getBytes(),
-				pendingParticipantId).setResultCallback(
-				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-					@Override
-					public void onResult(
-							TurnBasedMultiplayer.UpdateMatchResult result) {
-						processResult(result);
-					}
-				});
-	}
-
-	/**
-	 * Call for rematch and wait for a response.
-	 */
-	public void rematch() {
-		showSpinner();
-		Games.TurnBasedMultiplayer
-				.rematch(apiAgent, match.getMatchId())
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.InitiateMatchResult result) {
-								processResult(result);
-							}
-						});
-		match = null;
-	}
-
-	/**
-	 * This is the main function that gets called when players choose a match
-	 * from the inbox, or else create a match and want to start it.
-	 * 
-	 * @param match
-	 *            The match.
-	 */
-	public void updateMatch(TurnBasedMatch match) {
-		this.match = match;
-		int status = match.getStatus();
-		int turnStatus = match.getTurnStatus();
-
-		// Handling errors
-		switch (status) {
-		case TurnBasedMatch.MATCH_STATUS_CANCELED:
-			showWarning("Canceled!", "This game was canceled!");
-			return;
-		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
-			showWarning("Expired!", "This game is expired.  So sad!");
-			return;
-		case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
-			showWarning("Waiting for auto-match...",
-					"We're still waiting for an automatch partner.");
-			return;
-		case TurnBasedMatch.MATCH_STATUS_COMPLETE:
-			if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE) {
-				showWarning(
-						"Complete!",
-						"This game is over; someone finished it, and so did you!  There is nothing to be done.");
-				break;
-			}
-			showWarning("Complete!",
-					"This game is over; someone finished it!  You can only finish it now.");
-		}
-
-		// Check on turn status.
-		switch (turnStatus) {
-		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
-			String tableData = new String(match.getData());
-			table = gson.fromJson(tableData, Table.class);
-			Intent intent = new Intent(this, GameActivity.class);
-			intent.putExtra("com.diamondshearts.match", match);
-			intent.putExtra("com.diamondshearts.playerid",
-					Games.Players.getCurrentPlayerId(apiAgent));
-			startActivity(intent);
-			return;
-		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
-			// Should return results.
-			showWarning("Alas...", "It's not your turn.");
-			break;
-		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
-			showWarning("Good inititative!",
-					"Still waiting for invitations.\n\nBe patient!");
-		}
-		table = null;
-	}
-
-	/**
-	 * Handle server result when player initiate a match.
-	 * 
-	 * @param result
-	 *            Result from server.
-	 */
-	public void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
-		TurnBasedMatch match = result.getMatch();
-		dismissSpinner();
-
-		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-			return;
-		}
-
-		if (match.getData() != null) {
-			// This is a game that has already started, so I'll just start
-			updateMatch(match);
-			return;
-		}
-		startMatch(match);
-	}
-
-	/**
-	 * Handle server result when player update a match.
-	 * 
-	 * @param result
-	 *            Result from server.
-	 */
-	public void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-		TurnBasedMatch match = result.getMatch();
-		dismissSpinner();
-		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-			return;
-		}
-		if (match.canRematch()) {
-			askForRematch();
-		}
-		if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-			updateMatch(match);
-			return;
-		}
+	public void onCheckGamesClicked(View view) {
+		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
+		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
 	}
 
 	@Override
@@ -542,6 +232,87 @@ public class MainActivity extends BaseGameActivity implements
 		Toast.makeText(this, "An invitation was removed.", TOAST_DELAY).show();
 	}
 
+	/**
+	 * Open the player invitation UI.
+	 * 
+	 * @param view
+	 *            The button.
+	 */
+	public void onNewGameClicked(View view) {
+		Intent intent = Games.TurnBasedMultiplayer.getSelectOpponentsIntent(
+				apiAgent, 1, 4, true);
+		startActivityForResult(intent, RC_SELECT_PLAYERS);
+	}
+
+	/**
+	 * Create a one-on-one auto-match game (2 players game)
+	 * 
+	 * @param view
+	 *            The button.
+	 */
+	public void onQuickGameClicked(View view) {
+		// Create a auto match criteria
+		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
+				.setAutoMatchCriteria(autoMatchCriteria).build();
+
+		// Start the match
+		showSpinner();
+		Games.TurnBasedMultiplayer
+				.createMatch(apiAgent, tbmc)
+				.setResultCallback(
+						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+							@Override
+							public void onResult(
+									TurnBasedMultiplayer.InitiateMatchResult result) {
+								processResult(result);
+							}
+						});
+	}
+
+	@Override
+	/**
+	 * Show sign in layout when sign in failed
+	 */
+	public void onSignInFailed() {
+		setViewVisibility();
+	}
+
+	@Override
+	/**
+	 * Check match data and initialize when sign in succeed
+	 */
+	public void onSignInSucceeded() {
+		setViewVisibility();
+
+		// if (mHelper.getTurnBasedMatch() != null) {
+		// // Handle players that come from a notification click. Go striaght
+		// // into game.
+		// updateMatch(mHelper.getTurnBasedMatch());
+		// return;
+		// }
+
+		// Registering this activity as a handler for invitation and match
+		// events.
+		Games.Invitations.registerInvitationListener(getApiClient(), this);
+
+		// Registering the MatchUpdateListener, which will replace notifications
+		// players get.
+		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
+				this);
+	}
+
+	/**
+	 * DEBUG ONLY. Start a test game.
+	 * 
+	 * @param view
+	 *            The button.
+	 */
+	public void onTestGameClicked(View view) {
+		Intent intent = new Intent(this, GameActivity.class);
+		startActivity(intent);
+	}
+
 	@Override
 	/**
 	 * Handle notification when a match is updated.
@@ -560,6 +331,24 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * Call for rematch and wait for a response.
+	 */
+	public void rematch() {
+		showSpinner();
+		Games.TurnBasedMultiplayer
+				.rematch(apiAgent, match.getMatchId())
+				.setResultCallback(
+						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+							@Override
+							public void onResult(
+									TurnBasedMultiplayer.InitiateMatchResult result) {
+								processResult(result);
+							}
+						});
+		match = null;
+	}
+
+	/**
 	 * Handling error message from checkStatusCode
 	 * 
 	 * @param match
@@ -573,6 +362,44 @@ public class MainActivity extends BaseGameActivity implements
 			int stringId) {
 
 		showWarning("Warning", getResources().getString(stringId));
+	}
+
+	/**
+	 * Show a waiting spinner.
+	 */
+	public void showSpinner() {
+		findViewById(R.id.progressLayout).setVisibility(View.VISIBLE);
+	}
+
+	/**
+	 * Show a Warning dialog.
+	 * 
+	 * @param title
+	 *            The title of the dialog.
+	 * @param message
+	 *            The message to show in the dialog.
+	 */
+	public void showWarning(String title, String message) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set title
+		alertDialogBuilder.setTitle(title).setMessage(message);
+
+		// set dialog message
+		alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// if this button is clicked, maybe close current
+						// activity
+					}
+				});
+
+		// create alert dialog
+		alertDialog = alertDialogBuilder.create();
+
+		// show dialog
+		alertDialog.show();
 	}
 
 	/**
@@ -632,5 +459,178 @@ public class MainActivity extends BaseGameActivity implements
 		}
 
 		return false;
+	}
+
+	/**
+	 * Handle server result when player initiate a match.
+	 * 
+	 * @param result
+	 *            Result from server.
+	 */
+	private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
+		TurnBasedMatch match = result.getMatch();
+		dismissSpinner();
+
+		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+			return;
+		}
+
+		if (match.getData() != null) {
+			// This is a game that has already started, so I'll just start
+			updateMatch(match);
+			return;
+		}
+		startMatch(match);
+	}
+
+	/**
+	 * Handle server result when player update a match.
+	 * 
+	 * @param result
+	 *            Result from server.
+	 */
+	private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+		TurnBasedMatch match = result.getMatch();
+		dismissSpinner();
+		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+			return;
+		}
+		if (match.canRematch()) {
+			askForRematch();
+		}
+		if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
+			updateMatch(match);
+			return;
+		}
+	}
+
+	/**
+	 * Set menu visibility base on user sign in and sign out
+	 */
+	private void setViewVisibility() {
+		// Not Signed in
+		if (!isSignedIn()) {
+			findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
+			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+			findViewById(R.id.menu_layout).setVisibility(View.GONE);
+
+			if (alertDialog != null) {
+				alertDialog.dismiss();
+			}
+			return;
+		}
+		// Signed in
+		((TextView) findViewById(R.id.name_field))
+				.setText(getString(R.string.welcome)
+						+ Games.Players.getCurrentPlayer(getApiClient())
+								.getDisplayName());
+		findViewById(R.id.login_layout).setVisibility(View.GONE);
+		findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
+	}
+
+	/**
+	 * Set up table and start a new match. It there are any auto match player,
+	 * then the game will wait until all players available. If all players are
+	 * available, then the first player start his turn.
+	 * 
+	 * @param match
+	 *            The match.
+	 */
+	private void startMatch(TurnBasedMatch match) {
+		this.match = match;
+
+		table = new Table();
+		// Set players
+		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Participant> participants = match.getParticipants();
+		for (Participant participant : participants)
+			players.add(new Player(table, participant.getParticipantId(),
+					participant.getDisplayName()));
+		table.setPlayers(players);
+
+		// Set current player
+		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
+		String currnetParticipantId = match.getParticipantId(playerId);
+		String currentPlayerName = match.getParticipant(currnetParticipantId)
+				.getDisplayName();
+		table.setCurrentPlayer(new Player(table, currnetParticipantId,
+				currentPlayerName));
+
+		String pendingParticipantId = null;
+		if (match.getAvailableAutoMatchSlots() > 0) {
+			Toast.makeText(this,
+					"Match initialed, waiting for auto matching... ",
+					TOAST_DELAY).show();
+		} else {
+			pendingParticipantId = currnetParticipantId;
+		}
+		showSpinner();
+		Games.TurnBasedMultiplayer.takeTurn(apiAgent, match.getMatchId(),
+				gson.toJson(table, Table.class).getBytes(),
+				pendingParticipantId).setResultCallback(
+				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+					@Override
+					public void onResult(
+							TurnBasedMultiplayer.UpdateMatchResult result) {
+						processResult(result);
+					}
+				});
+	}
+
+	/**
+	 * This is the main function that gets called when players choose a match
+	 * from the inbox, or else create a match and want to start it.
+	 * 
+	 * @param match
+	 *            The match.
+	 */
+	private void updateMatch(TurnBasedMatch match) {
+		this.match = match;
+		int status = match.getStatus();
+		int turnStatus = match.getTurnStatus();
+
+		// Handling errors
+		switch (status) {
+		case TurnBasedMatch.MATCH_STATUS_CANCELED:
+			showWarning("Canceled!", "This game was canceled!");
+			return;
+		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
+			showWarning("Expired!", "This game is expired.  So sad!");
+			return;
+		case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
+			showWarning("Waiting for auto-match...",
+					"We're still waiting for an automatch partner.");
+			return;
+		case TurnBasedMatch.MATCH_STATUS_COMPLETE:
+			if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_COMPLETE) {
+				showWarning(
+						"Complete!",
+						"This game is over; someone finished it, and so did you!  There is nothing to be done.");
+				break;
+			}
+			showWarning("Complete!",
+					"This game is over; someone finished it!  You can only finish it now.");
+		}
+
+		// Check on turn status.
+		switch (turnStatus) {
+		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
+			String tableData = new String(match.getData());
+			table = gson.fromJson(tableData, Table.class);
+			Intent intent = new Intent(this, GameActivity.class);
+			intent.putExtra("com.diamondshearts.match", match);
+			intent.putExtra("com.diamondshearts.playerid",
+					Games.Players.getCurrentPlayerId(apiAgent));
+			startActivity(intent);
+			return;
+		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
+			// Should return results.
+			showWarning("Alas...", "It's not your turn.");
+			break;
+		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
+			showWarning("Good inititative!",
+					"Still waiting for invitations.\n\nBe patient!");
+		}
+		table = null;
 	}
 }
