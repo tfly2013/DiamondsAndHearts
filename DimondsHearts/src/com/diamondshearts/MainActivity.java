@@ -288,7 +288,7 @@ public class MainActivity extends BaseGameActivity implements
 
 	@Override
 	/**
-	 * This function is gets called when return from either the Play
+	 * This function gets called when return from either the Play
 	 * Games built-in inbox, or else the create game built-in interface.
 	 */
 	public void onActivityResult(int request, int response, Intent data) {
