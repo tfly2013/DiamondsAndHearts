@@ -158,14 +158,6 @@ public class MainActivity extends BaseGameActivity implements
 		startActivity(intent);
 	}
 
-	public void showGameActivity() {
-		Intent intent = new Intent(this, GameActivity.class);
-		intent.putExtra("com.diamondshearts.match", match);
-		intent.putExtra("com.diamondshearts.playerid",
-				Games.Players.getCurrentPlayerId(apiAgent));
-		startActivity(intent);
-	}
-
 	/**
 	 * Set menu visibility base on user sign in and sign out
 	 */
@@ -203,14 +195,15 @@ public class MainActivity extends BaseGameActivity implements
 	 * Check match data and initialize when sign in succeed
 	 */
 	public void onSignInSucceeded() {
-		if (mHelper.getTurnBasedMatch() != null) {
-			// Handle players that come from a notification click. Go striaght
-			// into game.
-			updateMatch(mHelper.getTurnBasedMatch());
-			return;
-		}
-
 		setViewVisibility();
+
+//		 if (mHelper.getTurnBasedMatch() != null) {
+//		 // Handle players that come from a notification click. Go striaght
+//		 // into game.
+//		 updateMatch(mHelper.getTurnBasedMatch());
+//		 return;
+//		 }
+
 		// Registering this activity as a handler for invitation and match
 		// events.
 		Games.Invitations.registerInvitationListener(getApiClient(), this);
@@ -469,7 +462,11 @@ public class MainActivity extends BaseGameActivity implements
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
 			String tableData = new String(match.getData());
 			table = gson.fromJson(tableData, Table.class);
-			showGameActivity();
+			Intent intent = new Intent(this, GameActivity.class);
+			intent.putExtra("com.diamondshearts.match", match);
+			intent.putExtra("com.diamondshearts.playerid",
+					Games.Players.getCurrentPlayerId(apiAgent));
+			startActivity(intent);
 			return;
 		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
 			// Should return results.
