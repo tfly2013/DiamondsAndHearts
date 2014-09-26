@@ -29,7 +29,7 @@ public class Card {
 		while (actions.size() < actionsCount)
 			actions.add(new Action());
 		// add new events
-		Integer eventsCount = gen.nextInt(3) + 1;
+		Integer eventsCount = gen.nextInt(3);
 		while (events.size() < eventsCount)
 			events.add(new Event());
 		
