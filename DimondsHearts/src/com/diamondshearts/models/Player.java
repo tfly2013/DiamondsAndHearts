@@ -46,7 +46,7 @@ public class Player {
 	 * @return true/false
 	 * */
 	public boolean equals(Object o) {
-		if (o.getClass() == Player.class) {
+		if (o != null && o.getClass() == Player.class) {
 			Player tar = (Player) o;
 			return (tar.getId().equals(getId()));
 		}

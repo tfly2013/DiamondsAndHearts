@@ -68,6 +68,9 @@ public class GameActivity extends BaseGameActivity {
 		if (!table.debug) {
 			updateTable(playerId);
 		}		
+		else {
+			currentPlayer = table.getCurrentPlayer();
+		}
 
 		// Set up layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
