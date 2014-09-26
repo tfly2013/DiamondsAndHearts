@@ -8,12 +8,12 @@ import java.util.Random;
  * such as turn modifiers and action modifiers
  * */
 public class Event {
-	//random number
+	/**random number*/
 	private static Random gen = new Random();
-	//event type
+	/**event type*/
 	private EventType type;
 
-	// define statistical distribution of types
+	/**define statistical distribution of types*/
 	public static final EventType[] allTypes = EventType.class
 			.getEnumConstants();
 

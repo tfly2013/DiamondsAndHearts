@@ -4,17 +4,17 @@ package com.diamondshearts.models;
  * A suit refers to Hearts, Clubs, Diamonds, Spades
  * */
 public enum Suit {
-	//a suit could be Hearts, Clubs, Diamonds, Spades, Suit's properties
+	/**a suit could be Hearts, Clubs, Diamonds, Spades, Suit's properties*/
 	Diamond("♦", "", 3),
 	Heart("♥", "", 1),
 	Club("♣", "", 3),
 	Spade("♠", "", 1);
 
-	//suit name
+	/**suit name*/
 	private String name;
-	//suit description
+	/**suit description*/
 	private String description;
-	//the frequency of a suit
+	/**the frequency of a suit*/
 	private Integer frequency;
 
 	/**

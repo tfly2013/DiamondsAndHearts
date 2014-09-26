@@ -9,16 +9,16 @@ import java.util.Random;
  * and a number from 1 to 9  
  * */
 public class Action {
-	//random number for 
+	/**random number for*/
 	private static Random gen = new Random();
-	//action rank
+	/**action rank*/
 	private Integer rank;
-	//a suit
+	/**a suit*/
 	private Suit suit;
-	//suit description
+	/**suit description*/
 	private String description;
 
-	// define statistical distribution of suits
+	/** define statistical distribution of suits*/
 	public static final Suit[] allSuits = Suit.class.getEnumConstants();
 
 	/**

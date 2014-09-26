@@ -7,14 +7,14 @@ import java.util.Random;
  * Cards have 1-3 actions and 0-2 effects
  * */
 public class Card {
-	//random num for events and actions
+	/**random num for events and actions*/
 	private static Random gen = new Random();
-	//owner of cards
+	/**owner of cards*/
 	private Player owner;
-	//cost according to action rank
+	/**cost according to action rank*/
 	private Integer cost;
 
-	//lists of actions and events initialized
+	/**lists of actions and events initialized*/
 	private HashSet<Action> actions = new HashSet<Action>();
 	private HashSet<Event> events = new HashSet<Event>();
 	
