@@ -15,6 +15,7 @@ public class Table {
 		this(false);
 	}
 
+
 	public Table(boolean debug) {
 		this.debug = debug;
 		turnCounter = 0;
