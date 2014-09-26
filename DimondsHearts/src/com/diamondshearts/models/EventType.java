@@ -17,11 +17,11 @@ public enum EventType {
 	Drain("Drain", "", 1), 
 	Revive("Revive", "", 1);
 	
-	/**name of event*/
+	/**Name of event*/
 	private String name;
-	/**event description*/
+	/**Event description*/
 	private String description;
-	/**event frequency*/
+	/**Event frequency*/
 	private Integer frequency;	
 
 	/**

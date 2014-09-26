@@ -18,16 +18,26 @@ import com.diamondshearts.models.Player;
  * @author Fei Tang
  */
 public class PlayerView extends View {
-
+	/**The player*/
 	private Player player;
+	
+	/**Add paint on text*/
 	private Paint textPaint;
+	/**Add paint on border*/
 	private Paint borderPaint;
+	/**Add paint on background*/
 	private Paint backgroundPaint;
+	/**Text height*/
 	private float textHeight = 0;
+	/**Color of text*/
 	private Integer textColor = Color.BLACK;
+	/**The background color*/
 	private Integer backgroundColor;
+	/**Card width and height*/
 	private Integer width, height;
+	/**Card border*/
 	private RectF border;
+	/**Density*/
 	private float density;
 
 	/**
@@ -112,6 +122,13 @@ public class PlayerView extends View {
 	}
 
 	@Override
+	/**
+	 * Called to determine the size requirements for this view and all of its children.
+	 * @param widthMeasureSpec
+	 * 						 The width requirement
+	 * @param heightMeasureSpec
+	 * 						 The height requirement
+	 * */
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
@@ -119,6 +136,11 @@ public class PlayerView extends View {
 	}
 
 	@Override
+	/**
+	 * Called when the view should render its content.
+	 * @param canvas
+	 * 				The canvas on which to draw the scroll-bars
+	 * */
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		// Draw background and border
@@ -169,10 +191,20 @@ public class PlayerView extends View {
 		return totalWidth;
 	}
 
+	/**
+	 * Access the player
+	 * @return player
+	 * 				 The player
+	 * */
 	public Player getPlayer() {
 		return player;
 	}
 
+	/**
+	 * Modify the player
+	 * @param player
+	 * 				The player
+	 * */
 	public void setPlayer(Player player) {
 		this.player = player;
 	}

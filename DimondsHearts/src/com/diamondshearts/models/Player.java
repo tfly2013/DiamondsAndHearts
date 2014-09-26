@@ -6,19 +6,19 @@ import java.util.ArrayList;
  * Player who participate in the turn-based card game
  * */
 public class Player {
-	/**initial hands*/
+	/**Initial hands*/
 	private static final int INITIALHAND = 5;
-	/**participant id*/
+	/**Participant id*/
 	private String participantId;
-	/**player name*/
+	/**Player name*/
 	private String name;
-	/**the number of diamonds a player has*/
+	/**The number of diamonds a player has*/
 	private Integer diamond;
-	/**the number of hearts a player has*/
+	/**The number of hearts a player has*/
 	private Integer heart;
-	/**the hand of cards a player holds*/
+	/**The hand of cards a player holds*/
 	private ArrayList<Card> hand;
-	/**the table where player plays the game*/
+	/**The table where player plays the game*/
 	private Table table;
 
 	/**
