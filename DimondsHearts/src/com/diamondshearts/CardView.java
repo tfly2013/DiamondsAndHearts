@@ -17,16 +17,26 @@ import com.diamondshearts.models.Event;
  * @author Fei Tang
  */
 public class CardView extends View {
+	/**The card*/
 	private Card card;
-
+	
+	/**Add paint on text*/
 	private Paint textPaint;
+	/**Add paint on border*/
 	private Paint borderPaint;
+	/**Add paint on background*/
 	private Paint backgroundPaint;
+	/**Text height*/
 	private float textHeight = 0;
+	/**Color of text*/
 	private Integer textColor = Color.BLACK;
+	/**The background color*/
 	private Integer backgroundColor;
+	/**Card width and height*/
 	private Integer width, height;
+	/**Card border*/
 	private RectF border;
+	/**Density*/
 	private float density;
 
 	/**
@@ -88,6 +98,13 @@ public class CardView extends View {
 	}
 
 	@Override
+	/**
+	 * Called to determine the size requirements for this view and all of its children.
+	 * @param widthMeasureSpec
+	 * 						 The width requirement
+	 * @param heightMeasureSpec
+	 * 						 The height requirement
+	 * */
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
@@ -95,6 +112,11 @@ public class CardView extends View {
 	}
 
 	@Override
+	/**
+	 * Called when the view should render its content.
+	 * @param canvas
+	 * 				The canvas on which to draw the scroll-bars
+	 * */
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		// Draw background and border
@@ -145,10 +167,20 @@ public class CardView extends View {
 		return totalWidth;
 	}
 
+	/**
+	 * Access the card
+	 * @return card
+	 * 			   The card
+	 * */
 	public Card getCard() {
 		return card;
 	}
 
+	/**
+	 * Modify the card
+	 * @param card
+	 * 			  The card
+	 * */
 	public void setCard(Card card) {
 		this.card = card;
 		invalidate();

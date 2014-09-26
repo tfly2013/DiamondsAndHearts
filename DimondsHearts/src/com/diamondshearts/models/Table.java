@@ -6,15 +6,17 @@ import java.util.ArrayList;
  * Table where a game occurs
  * */
 public class Table {
-	//the current player
+	/**The current player*/
 	private Player currentPlayer;
-	//the list of players
+	/**The list of players*/
 	private ArrayList<Player> players;
 	//plays this turn
 	private Player playerThisTurn;
+	
 	//the number of diamonds
 	private Integer diamond;
-	//counting number of turns have occurred 
+
+	/**Counting number of turns have occurred*/
 	private Integer turnCounter;
 	
 	public boolean debug;

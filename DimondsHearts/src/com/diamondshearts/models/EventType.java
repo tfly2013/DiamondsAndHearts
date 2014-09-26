@@ -4,7 +4,7 @@ package com.diamondshearts.models;
  * Various event types
  * */
 public enum EventType {
-	//EventType properties
+	/**EventType properties*/
 	ExtraTurn("Extra turn", "", 4),
 	ExtraCard("Extra card", "", 4),
 	SkipTurn("Skip Turn", "", 4), 
@@ -17,11 +17,11 @@ public enum EventType {
 	Drain("Drain", "", 1), 
 	Revive("Revive", "", 1);
 	
-	//name of event
+	/**Name of event*/
 	private String name;
-	//event description
+	/**Event description*/
 	private String description;
-	//event frequency
+	/**Event frequency*/
 	private Integer frequency;	
 
 	/**
