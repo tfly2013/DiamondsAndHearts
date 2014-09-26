@@ -11,10 +11,10 @@ public class Table {
 	//the list of players
 	private ArrayList<Player> players;
 	//plays this turn
-	private Integer playsThisTurn;
+	private Player playerThisTurn;
 	//the number of diamonds
 	private Integer diamond;
-	//counting number of turns have occurred
+	//counting number of turns have occurred 
 	private Integer turnCounter;
 	
 	public boolean debug;
@@ -38,8 +38,7 @@ public class Table {
 			players = new ArrayList<Player>();
 			for (int i = 0; i < 5; i++)
 				players.add(new Player(this, i + "", "TestPlayer" + i));
-			currentPlayer = players.get(3);
-			playsThisTurn = 3;
+			currentPlayer = setPlayerThisTurn(players.get(3));			
 		}
 	}
 
@@ -51,7 +50,7 @@ public class Table {
 	public String getNextParticipantId(Integer autoMatchSlots) {
 		int desiredIndex = -1;
 		for (int i = 0; i < players.size(); i++) {
-			if (players.get(i).getId().equals(currentPlayer.getId())) {
+			if (players.get(i).getId().equals(playerThisTurn.getId())) {
 				desiredIndex = i + 1;
 			}
 		}
@@ -104,14 +103,6 @@ public class Table {
 	public void setPlayers(ArrayList<Player> players) {
 		this.players = players;
 	}
-	
-	/**
-	 * Access the player who plays this turn
-	 * @return player plays the turn
-	 * */
-	public Player getPlayerThisTurn() {
-		return players.get(playsThisTurn);
-	}
 
 	/**
 	 * Access the current player
@@ -152,5 +143,32 @@ public class Table {
 	 * */
 	public Integer getRound() {
 		return turnCounter / players.size() + 1;
+	}
+
+	/**
+	 * @return the playerThisTurn
+	 */
+	public Player getPlayerThisTurn() {
+		return playerThisTurn;
+	}
+
+	/**
+	 * @param playerThisTurn the playerThisTurn to set
+	 */
+	public Player setPlayerThisTurn(Player playerThisTurn) {
+		this.playerThisTurn = playerThisTurn;
+		return playerThisTurn;
+	}
+	
+	public Player getPlayById(String id){
+		for (Player player : players) {
+			if (player.getId().equals(id))
+				return player;
+		}
+		return null;
+	}
+	
+	public boolean isMyTurn(){
+		return currentPlayer.equals(playerThisTurn);
 	}
 }

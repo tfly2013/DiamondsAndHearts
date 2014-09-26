@@ -38,13 +38,15 @@ public class PlayerView extends View {
 	public PlayerView(Context context) {
 		super(context);
 		// Initialize fields
+
+			backgroundColor = Color.WHITE;		
+		
 		density = getResources().getDisplayMetrics().density;
 		width = (int) density * 150;
 		height = (int) density * 50;
 		float boarderWith = 2 * density;
 		border = new RectF(boarderWith, boarderWith, width - boarderWith,
 				height - boarderWith);
-		backgroundColor = Color.WHITE;
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -83,12 +85,13 @@ public class PlayerView extends View {
 					v.invalidate();
 					return true;
 				case DragEvent.ACTION_DROP:
+					PlayerView playerView = (PlayerView)v;
 					CardView cardView = (CardView) event.getLocalState();
 					Card card = cardView.getCard();
 					ViewGroup hand = (ViewGroup) cardView.getParent();
 					hand.removeView(cardView);
-					player.getHand().remove(card);
-					card.play(player);
+					playerView.getPlayer().getHand().remove(card);
+					card.play(playerView.getPlayer());
 					v.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
@@ -175,5 +178,11 @@ public class PlayerView extends View {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+		if (player.getTable().getPlayerThisTurn().equals(player))
+			backgroundColor = Color.RED;
+		else
+			backgroundColor = Color.WHITE;
+		invalidate();
+		requestLayout();
 	}
 }

@@ -14,17 +14,12 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
+-->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-            android:state_pressed="true"
-            android:state_enabled="true"
-            android:drawable="@drawable/button_pressed" />
-    <item
-            android:state_focused="true"
-            android:state_enabled="true"
-            android:drawable="@drawable/button_focused" />
-    <item
-            android:state_enabled="true"
-            android:drawable="@drawable/button_default" />
+
+    <item android:drawable="@drawable/button_pressed" android:state_enabled="true" android:state_pressed="true"/>
+    <item android:drawable="@drawable/button_focused" android:state_enabled="true" android:state_focused="true"/>
+    <item android:drawable="@drawable/button_default" android:state_enabled="true"/>
+    <item android:drawable="@drawable/button_disabled" android:state_enabled="false"/>
+
 </selector>

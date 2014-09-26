@@ -31,7 +31,8 @@ public class Player {
 	 * 			   The player's alias name
 	 * */
 	public Player(Table table, String participantId, String displayName) {
-		this.setId(participantId);
+		this.table = table;
+		this.participantId = participantId;
 		this.name = displayName;
 		diamond = 30;
 		heart = 20;

@@ -10,7 +10,7 @@ public class Card {
 	//random num for events and actions
 	private static Random gen = new Random();
 	//owner of cards
-	private Player owner;
+	private transient Player owner;
 	//cost according to action rank
 	private Integer cost;
 
@@ -24,6 +24,7 @@ public class Card {
 	 *            The owner who owns the cards 
 	 * */
 	public Card(Player owner) {
+		this.owner = owner;
 		// add new actions
 		Integer actionsCount = gen.nextInt(3) + 1;
 		while (actions.size() < actionsCount)
@@ -88,10 +89,11 @@ public class Card {
 	 * 				The target opponent
 	 * */
 	public void play(Player target) {
-		for (Action action : getActions())
-			action.play(target);		
-		for (Event event : getEvents())
-			event.play(target);		
+		target.setHeart(target.getHeart() - 1);
+//		for (Action action : getActions())
+//			action.play(target);		
+//		for (Event event : getEvents())
+//			event.play(target);		
 	}
 
 	/**

@@ -28,7 +28,7 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
 import com.google.example.games.basegameutils.BaseGameActivity;
-import com.google.gson.Gson;
+import com.thoughtworks.xstream.XStream;
 
 /**
  * Main Game Activity, Launcher Activity. Include a main menu, and
@@ -62,8 +62,8 @@ public class MainActivity extends BaseGameActivity implements
 	/** The table state of game, null if not loaded. */
 	public Table table;
 
-	/** The Gson object. */
-	private Gson gson;
+	/** The XStream object. */
+	private XStream xStream;
 
 	@Override
 	/**
@@ -75,7 +75,8 @@ public class MainActivity extends BaseGameActivity implements
 
 		// Initialize objects
 		apiAgent = getApiClient();
-		gson = new Gson();
+		xStream = new XStream();
+		xStream.alias("table", Table.class);
 
 		// Setup sign in and sign out button
 		findViewById(R.id.sign_out_button).setOnClickListener(
@@ -313,22 +314,23 @@ public class MainActivity extends BaseGameActivity implements
 		startActivity(intent);
 	}
 
-	@Override
-	/**
-	 * Handle notification when a match is updated.
-	 */
-	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
-		Toast.makeText(this, "A match was updated.", TOAST_DELAY).show();
-	}
-
-	@Override
-	/**
-	 * Handle notification when a match is removed.
-	 */
-	public void onTurnBasedMatchRemoved(String matchId) {
-		Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
-
-	}
+	// @Override
+	// /**
+	// * Handle notification when a match is updated.
+	// */
+	// public void onTurnBasedMatchReceived(TurnBasedMatch match) {
+	// Toast.makeText(this, "A match was updated.", TOAST_DELAY).show();
+	//
+	// }
+	//
+	// @Override
+	// /**
+	// * Handle notification when a match is removed.
+	// */
+	// public void onTurnBasedMatchRemoved(String matchId) {
+	// Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
+	//
+	// }
 
 	/**
 	 * Call for rematch and wait for a response.
@@ -553,8 +555,9 @@ public class MainActivity extends BaseGameActivity implements
 		String currnetParticipantId = match.getParticipantId(playerId);
 		String currentPlayerName = match.getParticipant(currnetParticipantId)
 				.getDisplayName();
-		table.setCurrentPlayer(new Player(table, currnetParticipantId,
-				currentPlayerName));
+		Player currentPlayer = new Player(table, currnetParticipantId,
+				currentPlayerName);
+		table.setCurrentPlayer(currentPlayer);
 
 		String pendingParticipantId = null;
 		if (match.getAvailableAutoMatchSlots() > 0) {
@@ -562,19 +565,21 @@ public class MainActivity extends BaseGameActivity implements
 					"Match initialed, waiting for auto matching... ",
 					TOAST_DELAY).show();
 		} else {
+			table.setPlayerThisTurn(currentPlayer);
 			pendingParticipantId = currnetParticipantId;
 		}
 		showSpinner();
-		Games.TurnBasedMultiplayer.takeTurn(apiAgent, match.getMatchId(),
-				gson.toJson(table, Table.class).getBytes(),
-				pendingParticipantId).setResultCallback(
-				new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-					@Override
-					public void onResult(
-							TurnBasedMultiplayer.UpdateMatchResult result) {
-						processResult(result);
-					}
-				});
+		Games.TurnBasedMultiplayer
+				.takeTurn(apiAgent, match.getMatchId(),
+						xStream.toXML(table).getBytes(), pendingParticipantId)
+				.setResultCallback(
+						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+							@Override
+							public void onResult(
+									TurnBasedMultiplayer.UpdateMatchResult result) {
+								processResult(result);
+							}
+						});
 	}
 
 	/**
@@ -613,10 +618,11 @@ public class MainActivity extends BaseGameActivity implements
 		}
 
 		// Check on turn status.
+
 		switch (turnStatus) {
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
 			String tableData = new String(match.getData());
-			table = gson.fromJson(tableData, Table.class);
+			table = (Table) xStream.fromXML(tableData);
 			Intent intent = new Intent(this, GameActivity.class);
 			intent.putExtra("com.diamondshearts.match", match);
 			intent.putExtra("com.diamondshearts.playerid",
@@ -625,12 +631,51 @@ public class MainActivity extends BaseGameActivity implements
 			return;
 		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
 			// Should return results.
-			showWarning("Alas...", "It's not your turn.");
+			tableData = new String(match.getData());
+			table = (Table) xStream.fromXML(tableData);
+			intent = new Intent(this, GameActivity.class);
+			intent.putExtra("com.diamondshearts.match", match);
+			intent.putExtra("com.diamondshearts.playerid",
+					Games.Players.getCurrentPlayerId(apiAgent));
+			startActivity(intent);
 			break;
 		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
 			showWarning("Good inititative!",
 					"Still waiting for invitations.\n\nBe patient!");
 		}
 		table = null;
+	}
+
+	@Override
+	public void onTurnBasedMatchReceived(final TurnBasedMatch match) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		alertDialogBuilder
+				.setMessage("A match has been updated. Do you want to open that match?");
+
+		alertDialogBuilder
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								updateMatch(match);
+							}
+						})
+				.setNegativeButton("No.",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								// Do Nothing
+							}
+						});
+
+		alertDialogBuilder.show();
+
+	}
+
+	@Override
+	public void onTurnBasedMatchRemoved(String string) {
+		Toast.makeText(this, "An match was removed.", TOAST_DELAY).show();
 	}
 }

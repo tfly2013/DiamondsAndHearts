@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,11 +17,13 @@ import com.diamondshearts.models.Player;
 import com.diamondshearts.models.Table;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.multiplayer.Participant;
+import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdateReceivedListener;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameActivity;
-import com.google.gson.Gson;
+import com.thoughtworks.xstream.XStream;
 
-public class GameActivity extends BaseGameActivity {
+public class GameActivity extends BaseGameActivity implements
+		OnTurnBasedMatchUpdateReceivedListener {
 	/** Player Layout (Up) */
 	private LinearLayout playersUpLayout;
 	/** Player Layout (Down) */
@@ -31,15 +34,19 @@ public class GameActivity extends BaseGameActivity {
 	private LinearLayout handLayout;
 	/** The text view to show round */
 	private TextView roundView;
+	
+	private Button doneButton;
 
 	/** The table state of game */
 	private Table table;
+
+	private String playerId;
 	/** Current Player */
 	private Player currentPlayer;
 	/** The match */
 	private TurnBasedMatch match;
-	/** The Gson object */
-	private Gson gson;
+	/** The XStream object. */
+	private XStream xStream;
 
 	@Override
 	/**
@@ -48,36 +55,48 @@ public class GameActivity extends BaseGameActivity {
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
-
+		
 		// Retrieve match data from MainActivity
-		gson = new Gson();
+		xStream = new XStream();
+		xStream.alias("table", Table.class);
 		String matchKey = "com.diamondshearts.match";
 		if (getIntent().hasExtra(matchKey)
 				&& (match = getIntent().getParcelableExtra(matchKey)) != null) {
 			String tableData = new String(match.getData());
-			table = gson.fromJson(tableData, Table.class);
+			table = (Table)xStream.fromXML(tableData);
 		} else {
-			//  Table for debugging
+			// Table for debugging
 			table = new Table(true);
 		}
 		// Retrieve current logged in player Id
-		String playerId = null;
+		playerId = null;
 		String playerIdKey = "com.diamondshearts.playerid";
 		if (getIntent().hasExtra(playerIdKey))
 			playerId = getIntent().getStringExtra(playerIdKey);
-		if (!table.debug) {
-			updateTable(playerId);
-		}		
-		else {
-			currentPlayer = table.getCurrentPlayer();
-		}
 
 		// Set up layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
+		doneButton = (Button) findViewById(R.id.done_button);
+
+		loadUI();
+	}
+
+	/**
+	 * 
+	 */
+	private void loadUI() {
+		if (!table.debug) {
+			updateTable(playerId);
+		} else {
+			currentPlayer = table.getCurrentPlayer();
+		}
 		
+		if (table.isMyTurn())
+			doneButton.setEnabled(true);
+
 		// Load UI
 		loadPlayers();
 		loadHands();
@@ -129,14 +148,14 @@ public class GameActivity extends BaseGameActivity {
 			finish();
 			return;
 		}
-
 		String nextParticipantId = table.getNextParticipantId(match
 				.getAvailableAutoMatchSlots());
-
+		table.setPlayerThisTurn(table.getPlayById(nextParticipantId));
+		loadPlayers();
 		// Create the next turn
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
-				gson.toJson(table, Table.class).getBytes(), nextParticipantId);
-		finish();
+				xStream.toXML(table).getBytes(), nextParticipantId);
+		view.setEnabled(false);
 	}
 
 	@Override
@@ -147,29 +166,27 @@ public class GameActivity extends BaseGameActivity {
 
 	@Override
 	public void onSignInSucceeded() {
-		// TODO Auto-generated method stub
-
+		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
+				this);
 	}
 
 	/**
-	 * 	Player leaves match in their turn
+	 * Player leaves match in their turn
 	 */
 	private void leaveMatch() {
-		String nextParticipantId = table
-				.getNextParticipantId(match
-						.getAvailableAutoMatchSlots());
-		Games.TurnBasedMultiplayer
-				.leaveMatchDuringTurn(getApiClient(),
-						match.getMatchId(),
-						nextParticipantId);
+		String nextParticipantId = table.getNextParticipantId(match
+				.getAvailableAutoMatchSlots());
+		Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(),
+				match.getMatchId(), nextParticipantId);
 		finish();
 	}
 
 	/**
-	 *  Load cardViews for cards in current player's hand
+	 * Load cardViews for cards in current player's hand
 	 */
 	private void loadHands() {
 		// Show Cards in hand
+		handLayout.removeAllViews();
 		for (Card card : currentPlayer.getHand()) {
 			CardView cardView = new CardView(this);
 			cardView.setCard(card);
@@ -178,10 +195,12 @@ public class GameActivity extends BaseGameActivity {
 	}
 
 	/**
-	 *  Load playerViews for players
+	 * Load playerViews for players
 	 */
 	private void loadPlayers() {
 		// Show players
+		playersUpLayout.removeAllViews();
+		playersDownLayout.removeAllViews();
 		Integer count = 0;
 		for (Player player : table.getPlayers()) {
 			if (!player.equals(currentPlayer)) {
@@ -196,12 +215,13 @@ public class GameActivity extends BaseGameActivity {
 		}
 		PlayerView currentPlayerView = new PlayerView(this);
 		currentPlayerView.setPlayer(currentPlayer);
+		currentPlayerLayout.removeAllViews();
 		currentPlayerLayout.addView(currentPlayerView);
 	}
 
 	/**
-	 * Show a round counter at the start of each turn.
-	 * The round counter will fade in and fade out.
+	 * Show a round counter at the start of each turn. The round counter will
+	 * fade in and fade out.
 	 */
 	private void showRoundView() {
 		// Show Round
@@ -241,11 +261,24 @@ public class GameActivity extends BaseGameActivity {
 
 		// Set current player
 		String currnetParticipantId = match.getParticipantId(playerId);
-		String currentPlayerName = match.getParticipant(
-				currnetParticipantId).getDisplayName();
+		String currentPlayerName = match.getParticipant(currnetParticipantId)
+				.getDisplayName();
 		currentPlayer = new Player(table, currnetParticipantId,
 				currentPlayerName);
 		table.setCurrentPlayer(currentPlayer);
 		table.setTurnCounter(table.getTurnCounter() + 1);
+	}
+
+	@Override
+	public void onTurnBasedMatchReceived(TurnBasedMatch arg0) {
+		String tableData = new String(match.getData());
+		table = (Table) xStream.fromXML(tableData);
+		loadUI();
+	}
+
+	@Override
+	public void onTurnBasedMatchRemoved(String arg0) {
+		// TODO Auto-generated method stub
+
 	}
 }

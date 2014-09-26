@@ -70,13 +70,16 @@ public class CardView extends View {
 
 			@Override
 			public boolean onLongClick(View v) {
-				startDrag(null, new DragShadowBuilder(v), v, 0);
-				v.setVisibility(INVISIBLE);
+				CardView cardView = (CardView) v;
+				if (cardView.getCard().getOwner().getTable().isMyTurn()) {
+					startDrag(null, new DragShadowBuilder(v), v, 0);
+					v.setVisibility(INVISIBLE);
+				}
 				return false;
 			}
 		});
 	}
-	
+
 	/**
 	 * Change the background Color of player view
 	 */
@@ -124,7 +127,7 @@ public class CardView extends View {
 			eventY += textHeight + inteval;
 		}
 	}
-	
+
 	/**
 	 * Return the text width of a string
 	 * 
@@ -140,7 +143,7 @@ public class CardView extends View {
 		for (float i : widths)
 			totalWidth += i;
 		return totalWidth;
-	}	
+	}
 
 	public Card getCard() {
 		return card;
