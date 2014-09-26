@@ -40,7 +40,7 @@ public class Table {
 			players = new ArrayList<Player>();
 			for (int i = 0; i < 5; i++)
 				players.add(new Player(this, i + "", "TestPlayer" + i));
-			currentPlayer = setPlayerThisTurn(players.get(3));			
+			currentPlayer = setPlayerThisTurn(players.get(3));		 	
 		}
 	}
 
