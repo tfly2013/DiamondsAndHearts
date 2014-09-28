@@ -15,7 +15,7 @@ import com.diamondshearts.models.Player;
 /**
  * Custom View that contains UI of a player.
  * 
- * @author Fei Tang
+ * @author Fei Tang & Kimple Ke(co-author)
  */
 public class PlayerView extends View {
 	/**The player*/
@@ -23,20 +23,28 @@ public class PlayerView extends View {
 	
 	/**Add paint on text*/
 	private Paint textPaint;
+	
 	/**Add paint on border*/
 	private Paint borderPaint;
+	
 	/**Add paint on background*/
 	private Paint backgroundPaint;
+	
 	/**Text height*/
 	private float textHeight = 0;
+	
 	/**Color of text*/
 	private Integer textColor = Color.BLACK;
+	
 	/**The background color*/
 	private Integer backgroundColor;
+	
 	/**Card width and height*/
 	private Integer width, height;
+	
 	/**Card border*/
 	private RectF border;
+	
 	/**Density*/
 	private float density;
 
