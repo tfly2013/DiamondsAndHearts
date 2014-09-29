@@ -30,10 +30,10 @@ public class CardView extends View {
 	private Paint backgroundPaint;
 	
 	/**Text height*/
-	private float textHeight = 0;
+	private float textHeight;
 	
 	/**Color of text*/
-	private Integer textColor = Color.BLACK;
+	private Integer textColor;
 	
 	/**The background color*/
 	private Integer backgroundColor;
@@ -44,7 +44,7 @@ public class CardView extends View {
 	/**Card border*/
 	private RectF border;
 	
-	/**Density*/
+	/**Screen density in android or dots per inch(dpi)*/
 	private float density;
 
 	/**
@@ -55,14 +55,27 @@ public class CardView extends View {
 	 */
 	public CardView(Context context) {
 		super(context);
-		// Initialize fields
+		
+		//specify background color and text(color,height)
+		backgroundColor = Color.WHITE;
+		textColor = Color.BLACK;
+		textHeight = 0;
+		
+		//get the android screen density
 		density = getResources().getDisplayMetrics().density;
+		
+		//calculate the width of the player view
 		width = (int) density * 100;
+		
+		//calculate the height of the player view
 		height = (int) density * 120;
+		
+		//adjust the border width of the player view
 		float borderWith = 2 * density;
+		
+		//create the rectangular border specifying its top, left, right, bottom 
 		border = new RectF(borderWith, borderWith, width - borderWith, height
 				- borderWith);
-		backgroundColor = Color.WHITE;
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
