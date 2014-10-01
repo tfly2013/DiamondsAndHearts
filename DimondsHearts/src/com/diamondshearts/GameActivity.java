@@ -162,9 +162,8 @@ public class GameActivity extends BaseGameActivity implements
 			finish();
 			return;
 		}
-		String nextParticipantId = table.getNextParticipantId(match
-				.getAvailableAutoMatchSlots());
-		table.setPlayerThisTurn(table.getPlayById(nextParticipantId));
+		String nextParticipantId = table.getNextParticipantId();
+		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
@@ -189,8 +188,7 @@ public class GameActivity extends BaseGameActivity implements
 	 * Player leaves match in their turn
 	 */
 	private void leaveMatch() {
-		String nextParticipantId = table.getNextParticipantId(match
-				.getAvailableAutoMatchSlots());
+		String nextParticipantId = table.getNextParticipantId();
 		Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(),
 				match.getMatchId(), nextParticipantId);
 		finish();

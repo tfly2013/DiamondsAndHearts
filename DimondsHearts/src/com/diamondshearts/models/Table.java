@@ -19,6 +19,7 @@ public class Table {
 	/**Counting number of turns have occurred*/
 	private Integer turnCounter;
 	
+	private boolean preGame;
 	public boolean debug;
 
 	/**
@@ -49,7 +50,7 @@ public class Table {
 	 * 
 	 * @return participantId of next player, or null if auto-matching
 	 */
-	public String getNextParticipantId(Integer autoMatchSlots) {
+	public String getNextParticipantId() {
 		int desiredIndex = -1;
 		for (int i = 0; i < players.size(); i++) {
 			if (players.get(i).getId().equals(playerThisTurn.getId())) {
@@ -60,15 +61,7 @@ public class Table {
 		if (desiredIndex < players.size()) {
 			return players.get(desiredIndex).getId();
 		}
-
-		if (autoMatchSlots <= 0) {
-			// You've run out of auto-match slots, so we start over.
-			return players.get(0).getId();
-		} else {
-			// You have not yet fully auto-matched, so null will find a new
-			// person to play against.
-			return null;
-		}
+		return null;		
 	}
 
 	/**
@@ -162,7 +155,7 @@ public class Table {
 		return playerThisTurn;
 	}
 	
-	public Player getPlayById(String id){
+	public Player getPlayerById(String id){
 		for (Player player : players) {
 			if (player.getId().equals(id))
 				return player;
@@ -172,5 +165,19 @@ public class Table {
 	
 	public boolean isMyTurn(){
 		return currentPlayer.equals(playerThisTurn);
+	}
+
+	/**
+	 * @return the pregame
+	 */
+	public boolean isPreGame() {
+		return preGame;
+	}
+
+	/**
+	 * @param pregame the pregame to set
+	 */
+	public void setPreGame(boolean pregame) {
+		this.preGame = pregame;
 	}
 }

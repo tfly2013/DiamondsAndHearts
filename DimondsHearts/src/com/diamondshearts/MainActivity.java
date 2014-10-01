@@ -60,7 +60,7 @@ public class MainActivity extends BaseGameActivity implements
 	public TurnBasedMatch match;
 
 	/** The table state of game, null if not loaded. */
-	public Table table;
+	// public Table table;
 
 	/** The XStream object. */
 	private XStream xStream;
@@ -538,7 +538,7 @@ public class MainActivity extends BaseGameActivity implements
 	private void initiateMatch(TurnBasedMatch match) {
 		this.match = match;
 
-		table = new Table();
+		Table table = new Table();
 		// Set players
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();
@@ -555,29 +555,37 @@ public class MainActivity extends BaseGameActivity implements
 		Player currentPlayer = new Player(table, currnetParticipantId,
 				currentPlayerName);
 		table.setCurrentPlayer(currentPlayer);
+		table.setPlayerThisTurn(currentPlayer);
 
-		String pendingParticipantId = null;
-		// Waiting for all players ready if there is any auto match players
-		if (match.getAvailableAutoMatchSlots() > 0) {
+		table.setPreGame(true);
+		if (checkAutoMatchPlayers(match, xStream.toXML(table).getBytes()))
 			Toast.makeText(this,
 					"Match initialed, waiting for auto matching... ",
 					TOAST_DELAY).show();
-		} else {
-			table.setPlayerThisTurn(currentPlayer);
-			pendingParticipantId = currnetParticipantId;
+		else {
+			Toast.makeText(this,
+					"Match initialed, waiting for invited players... ",
+					TOAST_DELAY).show();
+			nextPlayerTakeTurn(match, table);
 		}
-		showSpinner();
-		Games.TurnBasedMultiplayer
-				.takeTurn(apiAgent, match.getMatchId(),
-						xStream.toXML(table).getBytes(), pendingParticipantId)
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.UpdateMatchResult result) {
-								processResult(result);
-							}
-						});
+
+	}
+
+	private boolean checkAutoMatchPlayers(TurnBasedMatch match, byte[] data) {
+		if (match.getAvailableAutoMatchSlots() > 0) {
+			Games.TurnBasedMultiplayer
+					.takeTurn(apiAgent, match.getMatchId(), data, null)
+					.setResultCallback(
+							new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+								@Override
+								public void onResult(
+										TurnBasedMultiplayer.UpdateMatchResult result) {
+									processResult(result);
+								}
+							});
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -616,20 +624,67 @@ public class MainActivity extends BaseGameActivity implements
 		}
 
 		// Check on turn status.
-		if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN
-				|| turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN) {
+		switch (turnStatus) {
+		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
+			// Check if there are any unavailable auto-match players
+			checkAutoMatchPlayers(match, match.getData());
+
+			// Check if all invited players has joined the game
 			String tableData = new String(match.getData());
-			table = (Table) xStream.fromXML(tableData);
+			Table table = (Table) xStream.fromXML(tableData);
+			if (table.isPreGame()) {
+				if (isAllPlayersJoined(match))
+					table.setPreGame(false);
+				nextPlayerTakeTurn(match, table);
+			}
+
+			// Open game UI
 			Intent intent = new Intent(this, GameActivity.class);
 			intent.putExtra("com.diamondshearts.match", match);
 			intent.putExtra("com.diamondshearts.playerid",
 					Games.Players.getCurrentPlayerId(apiAgent));
 			startActivity(intent);
-		} else if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_INVITED) {
+			return;
+
+		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
+			// Open game UI
+			intent = new Intent(this, GameActivity.class);
+			intent.putExtra("com.diamondshearts.match", match);
+			intent.putExtra("com.diamondshearts.playerid",
+					Games.Players.getCurrentPlayerId(apiAgent));
+			return;
+
+		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
 			showWarning("Good inititative!",
 					"Still waiting for invitations.\n\nBe patient!");
+			return;
 		}
-		table = null;
+	}
+
+	private void nextPlayerTakeTurn(TurnBasedMatch match, Table table) {
+		String nextParticipantId = table.getNextParticipantId();
+		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
+		Games.TurnBasedMultiplayer
+				.takeTurn(apiAgent, match.getMatchId(),
+						xStream.toXML(table).getBytes(), nextParticipantId)
+				.setResultCallback(
+						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+							@Override
+							public void onResult(
+									TurnBasedMultiplayer.UpdateMatchResult result) {
+								processResult(result);
+							}
+						});
+	}
+
+	private boolean isAllPlayersJoined(TurnBasedMatch match) {
+		for (Participant participant : match.getParticipants()) {
+			int status = participant.getStatus();
+			if (status == Participant.STATUS_INVITED) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
