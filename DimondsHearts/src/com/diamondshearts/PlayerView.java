@@ -15,7 +15,7 @@ import com.diamondshearts.models.Player;
 /**
  * Custom View that contains UI of a player.
  * 
- * @author Fei Tang
+ * @author Fei Tang & Kimple Ke(co-author)
  */
 public class PlayerView extends View {
 	/**The player*/
@@ -23,21 +23,29 @@ public class PlayerView extends View {
 	
 	/**Add paint on text*/
 	private Paint textPaint;
+	
 	/**Add paint on border*/
 	private Paint borderPaint;
+	
 	/**Add paint on background*/
 	private Paint backgroundPaint;
+	
 	/**Text height*/
-	private float textHeight = 0;
+	private float textHeight;
+	
 	/**Color of text*/
-	private Integer textColor = Color.BLACK;
+	private Integer textColor;
+	
 	/**The background color*/
 	private Integer backgroundColor;
-	/**Card width and height*/
+	
+	/**Player view width and height*/
 	private Integer width, height;
-	/**Card border*/
+	
+	/**Player view border*/
 	private RectF border;
-	/**Density*/
+	
+	/**Screen density in android or dots per inch(dpi)*/
 	private float density;
 
 	/**
@@ -47,16 +55,27 @@ public class PlayerView extends View {
 	 */
 	public PlayerView(Context context) {
 		super(context);
-		// Initialize fields
-
-			backgroundColor = Color.WHITE;		
 		
+		//specify background color and text(color,height)
+		backgroundColor = Color.WHITE;
+		textColor = Color.BLACK;
+		textHeight = 0;
+		
+		//get the android screen density
 		density = getResources().getDisplayMetrics().density;
+		
+		//calculate the width of the player view
 		width = (int) density * 150;
+		
+		//calculate the height of the player view
 		height = (int) density * 50;
-		float boarderWith = 2 * density;
-		border = new RectF(boarderWith, boarderWith, width - boarderWith,
-				height - boarderWith);
+		
+		//adjust the border width of the player view
+		float borderWidth = 2 * density;
+		
+		//create the rectangular border specifying its top, left, right, bottom 
+		border = new RectF(borderWidth, borderWidth, width - borderWidth,
+				height - borderWidth);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -68,7 +87,7 @@ public class PlayerView extends View {
 		borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint.setStyle(Paint.Style.STROKE);
 		borderPaint.setTextSize(textHeight);
-		borderPaint.setStrokeWidth(boarderWith);
+		borderPaint.setStrokeWidth(borderWidth);
 
 		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -78,22 +97,31 @@ public class PlayerView extends View {
 
 		// Setup OnDragListener to handle card drag to player
 		setOnDragListener(new OnDragListener() {
-
 			@Override
 			public boolean onDrag(View v, DragEvent event) {
 				switch (event.getAction()) {
+				//Signals the start of a drag and drop operation of a card.
 				case DragEvent.ACTION_DRAG_STARTED:
 					return event.getLocalState().getClass() == CardView.class;
+				//Signals to a View that the drag point has entered the bounding
+			    //box of the player View.
 				case DragEvent.ACTION_DRAG_ENTERED:
 					v.setBackgroundColor(0xFF33B5E5);
 					v.invalidate();
 					return true;
+				//Sent to a View after ACTION_DRAG_ENTERED if the drag shadow
+				//is still within the player View's bounding box.
 				case DragEvent.ACTION_DRAG_LOCATION:
 					return true;
+				//Signals that the user has moved the drag shadow outside the
+				//bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
 					v.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
+				//Signals to a View that the user has released the drag shadow,
+				//and the drag point is within the bounding box of the player
+				//View.
 				case DragEvent.ACTION_DROP:
 					PlayerView playerView = (PlayerView)v;
 					CardView cardView = (CardView) event.getLocalState();
@@ -105,6 +133,8 @@ public class PlayerView extends View {
 					v.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
+				//Signals to a View that the drag and drop operation has
+				//concluded.
 				case DragEvent.ACTION_DRAG_ENDED:
 					cardView = (CardView) event.getLocalState();
 					cardView.setVisibility(VISIBLE);
@@ -119,6 +149,8 @@ public class PlayerView extends View {
 
 	/**
 	 * Change the background Color of player view
+	 * @param color
+	 * 			  The background color
 	 */
 	public void setBackgroundColor(int color) {
 		backgroundColor = color;

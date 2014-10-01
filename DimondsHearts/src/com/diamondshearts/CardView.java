@@ -14,7 +14,7 @@ import com.diamondshearts.models.Event;
 /**
  * Custom View that contains UI of a card.
  * 
- * @author Fei Tang
+ * @author Fei Tang & Kimple Ke(co-author)
  */
 public class CardView extends View {
 	/**The card*/
@@ -22,21 +22,29 @@ public class CardView extends View {
 	
 	/**Add paint on text*/
 	private Paint textPaint;
+	
 	/**Add paint on border*/
 	private Paint borderPaint;
+	
 	/**Add paint on background*/
 	private Paint backgroundPaint;
+	
 	/**Text height*/
-	private float textHeight = 0;
+	private float textHeight;
+	
 	/**Color of text*/
-	private Integer textColor = Color.BLACK;
+	private Integer textColor;
+	
 	/**The background color*/
 	private Integer backgroundColor;
+	
 	/**Card width and height*/
 	private Integer width, height;
+	
 	/**Card border*/
 	private RectF border;
-	/**Density*/
+	
+	/**Screen density in android or dots per inch(dpi)*/
 	private float density;
 
 	/**
@@ -47,14 +55,27 @@ public class CardView extends View {
 	 */
 	public CardView(Context context) {
 		super(context);
-		// Initialize fields
+		
+		//specify background color and text(color,height)
+		backgroundColor = Color.WHITE;
+		textColor = Color.BLACK;
+		textHeight = 0;
+		
+		//get the android screen density
 		density = getResources().getDisplayMetrics().density;
+		
+		//calculate the width of the player view
 		width = (int) density * 100;
+		
+		//calculate the height of the player view
 		height = (int) density * 120;
+		
+		//adjust the border width of the player view
 		float borderWith = 2 * density;
+		
+		//create the rectangular border specifying its top, left, right, bottom 
 		border = new RectF(borderWith, borderWith, width - borderWith, height
 				- borderWith);
-		backgroundColor = Color.WHITE;
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);

@@ -22,16 +22,25 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameActivity;
 import com.thoughtworks.xstream.XStream;
 
+/** GameActivity handles the player views, card views, round views, 
+ *  the layouts as well as how to exit a game and how to finish a game
+ *  
+ *  @author Fei Tang & Kimple Ke(co-author)
+ * */
 public class GameActivity extends BaseGameActivity implements
 		OnTurnBasedMatchUpdateReceivedListener {
 	/** Player Layout (Up) */
 	private LinearLayout playersUpLayout;
+	
 	/** Player Layout (Down) */
 	private LinearLayout playersDownLayout;
+	
 	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
+	
 	/** Layout of current player's hand */
 	private LinearLayout handLayout;
+	
 	/** The text view to show round */
 	private TextView roundView;
 
@@ -40,11 +49,15 @@ public class GameActivity extends BaseGameActivity implements
 	/** The table state of game */
 	private Table table;
 
+	/** The player */
 	private String playerId;
+	
 	/** Current Player */
 	private Player currentPlayer;
+	
 	/** The match */
 	private TurnBasedMatch match;
+	
 	/** The XStream object. */
 	private XStream xStream;
 
@@ -85,7 +98,8 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * 
+	 * Load player views for players, card views for current player's hand and
+	 * show round view too.
 	 */
 	private void loadUI() {
 		if (!table.debug) {
@@ -152,7 +166,7 @@ public class GameActivity extends BaseGameActivity implements
 				.getAvailableAutoMatchSlots());
 		table.setPlayerThisTurn(table.getPlayById(nextParticipantId));
 		loadPlayers();
-		// Create the next turn
+		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				xStream.toXML(table).getBytes(), nextParticipantId);
 		view.setEnabled(false);
@@ -249,7 +263,9 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * Table setup. Set the current player on table and update turn counter. 
 	 * @param playerId
+	 * 				  The player ID
 	 */
 	private void updateTable(String playerId) {
 		// Update Table data
@@ -271,6 +287,11 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * Callback invoked when a new update to a match arrives.
+	 * @param arg0
+	 * 			  The match that was received
+	 */
 	public void onTurnBasedMatchReceived(TurnBasedMatch arg0) {
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
@@ -278,6 +299,11 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * Callback invoked when a match has been removed from the local device.
+	 * @param arg0
+	 * 			  The ID of the match that has been removed
+	 */
 	public void onTurnBasedMatchRemoved(String arg0) {
 		// TODO Auto-generated method stub
 
