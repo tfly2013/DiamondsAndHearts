@@ -34,7 +34,7 @@ public class GameActivity extends BaseGameActivity implements
 	private LinearLayout handLayout;
 	/** The text view to show round */
 	private TextView roundView;
-	
+
 	private Button doneButton;
 
 	/** The table state of game */
@@ -55,7 +55,7 @@ public class GameActivity extends BaseGameActivity implements
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
-		
+
 		// Retrieve match data from MainActivity
 		xStream = new XStream();
 		xStream.alias("table", Table.class);
@@ -63,7 +63,7 @@ public class GameActivity extends BaseGameActivity implements
 		if (getIntent().hasExtra(matchKey)
 				&& (match = getIntent().getParcelableExtra(matchKey)) != null) {
 			String tableData = new String(match.getData());
-			table = (Table)xStream.fromXML(tableData);
+			table = (Table) xStream.fromXML(tableData);
 		} else {
 			// Table for debugging
 			table = new Table(true);
@@ -93,7 +93,7 @@ public class GameActivity extends BaseGameActivity implements
 		} else {
 			currentPlayer = table.getCurrentPlayer();
 		}
-		
+
 		if (table.isMyTurn())
 			doneButton.setEnabled(true);
 
@@ -160,8 +160,9 @@ public class GameActivity extends BaseGameActivity implements
 
 	@Override
 	public void onSignInFailed() {
-		// TODO Auto-generated method stub
-
+		showWarning("Sign in failed",
+				"Something wrong with your authentication, please sign in again.");
+		finish();
 	}
 
 	@Override
@@ -280,5 +281,33 @@ public class GameActivity extends BaseGameActivity implements
 	public void onTurnBasedMatchRemoved(String arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Show a Warning dialog.
+	 * 
+	 * @param title
+	 *            The title of the dialog.
+	 * @param message
+	 *            The message to show in the dialog.
+	 */
+	public void showWarning(String title, String message) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set title
+		alertDialogBuilder.setTitle(title).setMessage(message);
+
+		// set dialog message
+		alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// if this button is clicked, maybe close current
+						// activity
+					}
+				});
+
+		// create and show alert dialog
+		alertDialogBuilder.create().show();
 	}
 }

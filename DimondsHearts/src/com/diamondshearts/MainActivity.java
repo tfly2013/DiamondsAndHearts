@@ -138,8 +138,8 @@ public class MainActivity extends BaseGameActivity implements
 	 * This function gets called when return from either the Play
 	 * Games built-in inbox or else the create game built-in interface.
 	 */
-	public void onActivityResult(int request, int response, Intent data) {
-		super.onActivityResult(request, response, data);
+	public void onActivityResult(int request, int response, Intent intent) {
+		super.onActivityResult(request, response, intent);
 		// Returning from the 'Select Match' dialog
 		if (request == RC_LOOK_AT_MATCHES) {
 
@@ -148,7 +148,7 @@ public class MainActivity extends BaseGameActivity implements
 				return;
 			}
 
-			TurnBasedMatch match = data
+			TurnBasedMatch match = intent
 					.getParcelableExtra(Multiplayer.EXTRA_TURN_BASED_MATCH);
 
 			if (match != null) {
@@ -165,15 +165,15 @@ public class MainActivity extends BaseGameActivity implements
 			}
 
 			// get the invitee list
-			final ArrayList<String> invitees = data
+			final ArrayList<String> invitees = intent
 					.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
 			// get automatch criteria
 			Bundle autoMatchCriteria = null;
 
-			int minAutoMatchPlayers = data.getIntExtra(
+			int minAutoMatchPlayers = intent.getIntExtra(
 					Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-			int maxAutoMatchPlayers = data.getIntExtra(
+			int maxAutoMatchPlayers = intent.getIntExtra(
 					Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
 
 			if (minAutoMatchPlayers > 0) {
@@ -478,11 +478,11 @@ public class MainActivity extends BaseGameActivity implements
 		}
 
 		if (match.getData() != null) {
-			// This is a game that has already started, so I'll just start
+			// This is a game that has already started
 			updateMatch(match);
 			return;
 		}
-		startMatch(match);
+		initiateMatch(match);
 	}
 
 	/**
@@ -500,10 +500,7 @@ public class MainActivity extends BaseGameActivity implements
 		if (match.canRematch()) {
 			askForRematch();
 		}
-		if (match.getTurnStatus() == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN) {
-			updateMatch(match);
-			return;
-		}
+		updateMatch(match);
 	}
 
 	/**
@@ -538,7 +535,7 @@ public class MainActivity extends BaseGameActivity implements
 	 * @param match
 	 *            The match.
 	 */
-	private void startMatch(TurnBasedMatch match) {
+	private void initiateMatch(TurnBasedMatch match) {
 		this.match = match;
 
 		table = new Table();
@@ -560,6 +557,7 @@ public class MainActivity extends BaseGameActivity implements
 		table.setCurrentPlayer(currentPlayer);
 
 		String pendingParticipantId = null;
+		// Waiting for all players ready if there is any auto match players
 		if (match.getAvailableAutoMatchSlots() > 0) {
 			Toast.makeText(this,
 					"Match initialed, waiting for auto matching... ",
@@ -600,7 +598,7 @@ public class MainActivity extends BaseGameActivity implements
 			showWarning("Canceled!", "This game was canceled!");
 			return;
 		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
-			showWarning("Expired!", "This game is expired.  So sad!");
+			showWarning("Expired!", "This game is expired!");
 			return;
 		case TurnBasedMatch.MATCH_STATUS_AUTO_MATCHING:
 			showWarning("Waiting for auto-match...",
@@ -618,9 +616,8 @@ public class MainActivity extends BaseGameActivity implements
 		}
 
 		// Check on turn status.
-
-		switch (turnStatus) {
-		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
+		if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN
+				|| turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN) {
 			String tableData = new String(match.getData());
 			table = (Table) xStream.fromXML(tableData);
 			Intent intent = new Intent(this, GameActivity.class);
@@ -628,18 +625,7 @@ public class MainActivity extends BaseGameActivity implements
 			intent.putExtra("com.diamondshearts.playerid",
 					Games.Players.getCurrentPlayerId(apiAgent));
 			startActivity(intent);
-			return;
-		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
-			// Should return results.
-			tableData = new String(match.getData());
-			table = (Table) xStream.fromXML(tableData);
-			intent = new Intent(this, GameActivity.class);
-			intent.putExtra("com.diamondshearts.match", match);
-			intent.putExtra("com.diamondshearts.playerid",
-					Games.Players.getCurrentPlayerId(apiAgent));
-			startActivity(intent);
-			break;
-		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
+		} else if (turnStatus == TurnBasedMatch.MATCH_TURN_STATUS_INVITED) {
 			showWarning("Good inititative!",
 					"Still waiting for invitations.\n\nBe patient!");
 		}
