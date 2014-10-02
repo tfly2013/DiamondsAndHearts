@@ -27,7 +27,6 @@ import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdate
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
-import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer.InitiateMatchResult;
 import com.google.example.games.basegameutils.BaseGameActivity;
 import com.thoughtworks.xstream.XStream;
 
@@ -240,7 +239,7 @@ public class MainActivity extends BaseGameActivity implements
 
 													@Override
 													public void onResult(
-															InitiateMatchResult result) {
+															TurnBasedMultiplayer.InitiateMatchResult result) {
 														processResult(result);
 													}
 												});
@@ -544,6 +543,7 @@ public class MainActivity extends BaseGameActivity implements
 		table.setPreGame(true);
 		String nextParticipantId = table.getNextParticipantId();
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
+		showSpinner();
 		Games.TurnBasedMultiplayer
 				.takeTurn(getApiClient(), match.getMatchId(),
 						xStream.toXML(table).getBytes(), nextParticipantId)
