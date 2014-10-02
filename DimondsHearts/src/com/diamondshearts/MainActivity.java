@@ -206,6 +206,10 @@ public class MainActivity extends BaseGameActivity implements
 	 *            The button.
 	 */
 	public void onCheckGamesClicked(View view) {
+		checkGames();
+	}
+
+	public void checkGames() {
 		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
 		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
 	}
@@ -215,11 +219,27 @@ public class MainActivity extends BaseGameActivity implements
 	 * Handle notification when a invitation is arrived.
 	 */
 	public void onInvitationReceived(Invitation invitation) {
-		Toast.makeText(
-				this,
-				"An invitation has arrived from "
-						+ invitation.getInviter().getDisplayName(), TOAST_DELAY)
-				.show();
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		alertDialogBuilder.setTitle("Invitation Received");
+		alertDialogBuilder.setMessage("An invitation has arrived from "
+				+ invitation.getInviter().getDisplayName() + ".");
+
+		alertDialogBuilder
+				.setCancelable(false)
+				.setPositiveButton("View",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								checkGames();
+							}
+						})
+				.setNegativeButton("Ignore",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+							}
+						});
+		alertDialogBuilder.show();
 	}
 
 	@Override
@@ -311,49 +331,37 @@ public class MainActivity extends BaseGameActivity implements
 		startActivity(intent);
 	}
 
-	// @Override
-	// /**
-	// * Handle notification when a match is updated.
-	// */
-	// public void onTurnBasedMatchReceived(TurnBasedMatch match) {
-	// Toast.makeText(this, "A match was updated.", TOAST_DELAY).show();
-	//
-	// }
-	//
-	// @Override
-	// /**
-	// * Handle notification when a match is removed.
-	// */
-	// public void onTurnBasedMatchRemoved(String matchId) {
-	// Toast.makeText(this, "A match was removed.", TOAST_DELAY).show();
-	//
-	// }
-
 	@Override
 	public void onTurnBasedMatchReceived(final TurnBasedMatch match) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		String tableData = new String(match.getData());
+		Table table = (Table) xStream.fromXML(tableData);
+		if (!table.isPreGame()) {
+			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+					this);
+			alertDialogBuilder.setTitle("Match Updated");
+			alertDialogBuilder
+					.setMessage("A match has been updated. Do you want to show that match?");
 
-		alertDialogBuilder
-				.setMessage("A match has been updated. Do you want to open that match?");
-
-		alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("Yes",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								updateMatch(match);
-							}
-						})
-				.setNegativeButton("No.",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								// Do Nothing
-							}
-						});
-
-		alertDialogBuilder.show();
+			alertDialogBuilder
+					.setCancelable(false)
+					.setPositiveButton("Yes",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									updateMatch(match);
+								}
+							})
+					.setNegativeButton("No",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int id) {
+									// Do Nothing
+								}
+							});
+			alertDialogBuilder.show();
+		}
 
 	}
 
@@ -682,20 +690,12 @@ public class MainActivity extends BaseGameActivity implements
 				return;
 			}
 			// Open game UI
-			Intent intent = new Intent(this, GameActivity.class);
-			intent.putExtra("com.diamondshearts.match", match);
-			intent.putExtra("com.diamondshearts.playerid",
-					Games.Players.getCurrentPlayerId(apiAgent));
-			startActivity(intent);
+			showGameUI(match);
 			return;
 
 		case TurnBasedMatch.MATCH_TURN_STATUS_THEIR_TURN:
 			// Open game UI
-			intent = new Intent(this, GameActivity.class);
-			intent.putExtra("com.diamondshearts.match", match);
-			intent.putExtra("com.diamondshearts.playerid",
-					Games.Players.getCurrentPlayerId(apiAgent));
-			startActivity(intent);
+			showGameUI(match);
 			return;
 
 		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:
@@ -703,5 +703,16 @@ public class MainActivity extends BaseGameActivity implements
 					"Still waiting for invitations.\n\nBe patient!");
 			return;
 		}
+	}
+
+	/**
+	 * @param match
+	 */
+	private void showGameUI(TurnBasedMatch match) {
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("com.diamondshearts.match", match);
+		intent.putExtra("com.diamondshearts.playerid",
+				Games.Players.getCurrentPlayerId(apiAgent));
+		startActivity(intent);
 	}
 }
