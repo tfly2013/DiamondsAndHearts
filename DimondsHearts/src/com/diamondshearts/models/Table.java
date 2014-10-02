@@ -180,4 +180,15 @@ public class Table {
 	public void setPreGame(boolean pregame) {
 		this.preGame = pregame;
 	}
+	
+	@Override
+	public String toString() {
+		String str = "";
+		for (Player player : players){
+			str += player.getName();
+			str += ": Heart: ";
+			str += player.getHeart();			
+		}
+		return str;
+	}
 }

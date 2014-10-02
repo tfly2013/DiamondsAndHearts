@@ -20,7 +20,8 @@ public class Player {
 	private ArrayList<Card> hand;
 	/**The table where player plays the game*/
 	private Table table;
-
+	
+	public Player(){};
 	/**
 	 * Initialize a player
 	 * @param table

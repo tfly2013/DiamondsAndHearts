@@ -18,6 +18,7 @@ public class Card {
 	private HashSet<Action> actions = new HashSet<Action>();
 	private HashSet<Event> events = new HashSet<Event>();
 	
+	public Card(){};
 	/**
 	 * Initialize a card
 	 * @param owner

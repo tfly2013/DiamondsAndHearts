@@ -7,6 +7,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -166,6 +167,8 @@ public class GameActivity extends BaseGameActivity implements
 		String nextParticipantId = table.getNextParticipantId();
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
+		
+		Log.d("DoneButtonClicked", table.toString());
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				xStream.toXML(table).getBytes(), nextParticipantId);
