@@ -298,7 +298,9 @@ public class GameActivity extends BaseGameActivity implements
 	public void onTurnBasedMatchReceived(TurnBasedMatch arg0) {
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
+		Log.d("JustReceived", table.toString());
 		loadUI();
+		Log.d("AfterLoadUI", table.toString());
 	}
 
 	@Override
