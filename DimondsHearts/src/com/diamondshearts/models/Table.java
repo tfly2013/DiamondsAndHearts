@@ -163,8 +163,12 @@ public class Table {
 		return null;
 	}
 	
-	public boolean isMyTurn(){
-		return currentPlayer.equals(playerThisTurn);
+	public boolean isMyTurn(){		
+		return isPlayerTurn(currentPlayer);
+	}
+	
+	public boolean isPlayerTurn(Player player){
+		return !preGame && player.equals(playerThisTurn);
 	}
 
 	/**

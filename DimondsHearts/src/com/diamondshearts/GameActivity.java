@@ -44,7 +44,7 @@ public class GameActivity extends BaseGameActivity implements
 	private LinearLayout handLayout;
 
 	/** The text view to show round */
-	private TextView roundView;
+	private TextView midMessageView;
 
 	private Button doneButton;
 
@@ -95,6 +95,7 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		doneButton = (Button) findViewById(R.id.done_button);
+		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 
 		loadUI();
 	}
@@ -114,7 +115,15 @@ public class GameActivity extends BaseGameActivity implements
 		// Load UI
 		loadPlayers();
 		loadHands();
-		showRoundView();
+		if (table.isPreGame())
+			showPreGameMessage();
+		else 
+			showRound();
+	}
+
+	private void showPreGameMessage() {
+		midMessageView.setVisibility(View.VISIBLE);
+		midMessageView.setText("Waiting for players...");
 	}
 
 	@Override
@@ -147,13 +156,17 @@ public class GameActivity extends BaseGameActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								if (table.isMyTurn()){
-								String nextParticipantId = table.getNextParticipantId();
-								Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(),
-										match.getMatchId(), nextParticipantId);
-								}
-								else
-									Games.TurnBasedMultiplayer.leaveMatch(getApiClient(), match.getMatchId());							
+								if (table.isMyTurn()) {
+									String nextParticipantId = table
+											.getNextParticipantId();
+									Games.TurnBasedMultiplayer
+											.leaveMatchDuringTurn(
+													getApiClient(),
+													match.getMatchId(),
+													nextParticipantId);
+								} else
+									Games.TurnBasedMultiplayer.leaveMatch(
+											getApiClient(), match.getMatchId());
 								finish();
 							}
 						});
@@ -174,7 +187,7 @@ public class GameActivity extends BaseGameActivity implements
 		String nextParticipantId = table.getNextParticipantId();
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
-		
+
 		Log.d("DoneButtonClicked", table.toString());
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
@@ -194,7 +207,7 @@ public class GameActivity extends BaseGameActivity implements
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
 	}
-	
+
 	/**
 	 * Load cardViews for cards in current player's hand
 	 */
@@ -237,24 +250,23 @@ public class GameActivity extends BaseGameActivity implements
 	 * Show a round counter at the start of each turn. The round counter will
 	 * fade in and fade out.
 	 */
-	private void showRoundView() {
+	private void showRound() {
 		// Show Round
-		roundView = (TextView) findViewById(R.id.round_view);
-		roundView.setVisibility(View.VISIBLE);
-		roundView.setAlpha(0f);
-		roundView.setText("Round " + table.getRound());
+		midMessageView.setVisibility(View.VISIBLE);
+		midMessageView.setAlpha(0f);
+		midMessageView.setText("Round " + table.getRound());
 		// Add a fade in fade out animation
-		roundView.animate().alpha(1f).setDuration(2000)
+		midMessageView.animate().alpha(1f).setDuration(2000)
 				.setListener(new AnimatorListenerAdapter() {
 					@Override
 					public void onAnimationEnd(Animator animation) {
-						roundView.animate().alpha(0f).setDuration(2000)
+						midMessageView.animate().alpha(0f).setDuration(2000)
 								.setStartDelay(2000)
 								.setListener(new AnimatorListenerAdapter() {
 									@Override
 									public void onAnimationEnd(
 											Animator animation) {
-										roundView.setVisibility(View.GONE);
+										midMessageView.setVisibility(View.GONE);
 									}
 								});
 					}
@@ -296,8 +308,30 @@ public class GameActivity extends BaseGameActivity implements
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
 		Log.d("JustReceived", table.toString());
+		if (match.getAvailableAutoMatchSlots() > 0) {
+			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
+					match.getMatchId(), match.getData(), null);
+		}
+		else if (table.isPreGame()) {
+			if (isAllPlayersJoined(match))
+				table.setPreGame(false);
+			String nextParticipantId = table.getNextParticipantId();
+			table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
+			Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
+					xStream.toXML(table).getBytes(), nextParticipantId);
+		}		
 		loadUI();
 		Log.d("AfterLoadUI", table.toString());
+	}
+
+	private boolean isAllPlayersJoined(TurnBasedMatch match) {
+		for (Participant participant : match.getParticipants()) {
+			int status = participant.getStatus();
+			if (status == Participant.STATUS_INVITED) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

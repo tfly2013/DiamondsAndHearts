@@ -436,24 +436,7 @@ public class MainActivity extends BaseGameActivity implements
 		alertDialogBuilder.create().show();
 
 	}
-
-	private boolean checkAutoMatchPlayers(TurnBasedMatch match, byte[] data) {
-		if (match.getAvailableAutoMatchSlots() > 0) {
-			Games.TurnBasedMultiplayer
-					.takeTurn(apiAgent, match.getMatchId(), data, null)
-					.setResultCallback(
-							new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
-								@Override
-								public void onResult(
-										TurnBasedMultiplayer.UpdateMatchResult result) {
-									processResult(result);
-								}
-							});
-			return true;
-		}
-		return false;
-	}
-
+	
 	/**
 	 * Handling Game status from server.
 	 * 
@@ -544,43 +527,26 @@ public class MainActivity extends BaseGameActivity implements
 		table.setPlayerThisTurn(currentPlayer);
 
 		table.setPreGame(true);
-		if (checkAutoMatchPlayers(match, xStream.toXML(table).getBytes()))
-			Toast.makeText(this,
-					"Match initialed, waiting for auto matching... ",
-					TOAST_DELAY).show();
-		else {
-			Toast.makeText(this,
-					"Match initialed, waiting for invited players... ",
-					TOAST_DELAY).show();
-			nextPlayerTakeTurn(match, table);
-		}
-
-	}
-
-	private boolean isAllPlayersJoined(TurnBasedMatch match) {
-		for (Participant participant : match.getParticipants()) {
-			int status = participant.getStatus();
-			if (status == Participant.STATUS_INVITED) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void nextPlayerTakeTurn(TurnBasedMatch match, Table table) {
 		String nextParticipantId = table.getNextParticipantId();
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		Games.TurnBasedMultiplayer
-				.takeTurn(apiAgent, match.getMatchId(),
+				.takeTurn(getApiClient(), match.getMatchId(),
 						xStream.toXML(table).getBytes(), nextParticipantId)
 				.setResultCallback(
 						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
+
 							@Override
-							public void onResult(
-									TurnBasedMultiplayer.UpdateMatchResult result) {
-								processResult(result);
+							public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+								TurnBasedMatch match = result.getMatch();
+								dismissSpinner();
+								if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+									return;
+								}
+								updateMatch(match);
 							}
 						});
+		;
+
 	}
 
 	/**
@@ -604,20 +570,20 @@ public class MainActivity extends BaseGameActivity implements
 		}
 		initiateMatch(match);
 	}
-
-	/**
-	 * Handle server result when player update a match.
-	 * 
-	 * @param result
-	 *            Result from server.
-	 */
-	private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-		TurnBasedMatch match = result.getMatch();
-		dismissSpinner();
-		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-			return;
-		}
-	}
+//
+//	/**
+//	 * Handle server result when player update a match.
+//	 * 
+//	 * @param result
+//	 *            Result from server.
+//	 */
+//	private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+//		TurnBasedMatch match = result.getMatch();
+//		dismissSpinner();
+//		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+//			return;
+//		}
+//	}
 
 	/**
 	 * Set menu visibility base on user sign in and sign out
@@ -676,19 +642,6 @@ public class MainActivity extends BaseGameActivity implements
 		// Check on turn status.
 		switch (turnStatus) {
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
-			// Check if there are any unavailable auto-match players
-			if (checkAutoMatchPlayers(match, match.getData()))
-				return;
-
-			// Check if all invited players has joined the game
-			String tableData = new String(match.getData());
-			Table table = (Table) xStream.fromXML(tableData);
-			if (table.isPreGame()) {
-				if (isAllPlayersJoined(match))
-					table.setPreGame(false);
-				nextPlayerTakeTurn(match, table);
-				return;
-			}
 			// Open game UI
 			showGameUI(match);
 			return;

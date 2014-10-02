@@ -72,7 +72,7 @@
         android:layout_marginTop="5dp" >
 
         <TextView
-            android:id="@+id/round_view"
+            android:id="@+id/mid_message_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

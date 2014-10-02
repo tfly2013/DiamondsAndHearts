@@ -118,7 +118,7 @@ public class PlayerView extends View {
 				//bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
 					PlayerView playerView = (PlayerView)v;
-					if (player.getTable().getPlayerThisTurn().equals(player))
+					if (player.getTable().isPlayerTurn(player))
 						playerView.setBackgroundColor(Color.RED);
 					else
 						playerView.setBackgroundColor(Color.WHITE);
@@ -137,7 +137,7 @@ public class PlayerView extends View {
 					Log.d("BeforePlay", player.getTable().toString());
 					card.play(playerView.getPlayer());
 					Log.d("AfterPlay", player.getTable().toString());
-					if (player.getTable().getPlayerThisTurn().equals(player))
+					if (player.getTable().isPlayerTurn(player))
 						playerView.setBackgroundColor(Color.RED);
 					else
 						playerView.setBackgroundColor(Color.WHITE);
@@ -252,7 +252,7 @@ public class PlayerView extends View {
 	 * */
 	public void setPlayer(Player player) {
 		this.player = player;
-		if (player.getTable().getPlayerThisTurn().equals(player))
+		if (player.getTable().isPlayerTurn(player))
 			backgroundColor = Color.RED;
 		else
 			backgroundColor = Color.WHITE;
