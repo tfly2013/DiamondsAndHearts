@@ -27,6 +27,7 @@ import com.google.android.gms.games.multiplayer.turnbased.OnTurnBasedMatchUpdate
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatchConfig;
 import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer;
+import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMultiplayer.InitiateMatchResult;
 import com.google.example.games.basegameutils.BaseGameActivity;
 import com.thoughtworks.xstream.XStream;
 
@@ -218,7 +219,7 @@ public class MainActivity extends BaseGameActivity implements
 	/**
 	 * Handle notification when a invitation is arrived.
 	 */
-	public void onInvitationReceived(Invitation invitation) {
+	public void onInvitationReceived(final Invitation invitation) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder.setTitle("Invitation Received");
 		alertDialogBuilder.setMessage("An invitation has arrived from "
@@ -226,17 +227,31 @@ public class MainActivity extends BaseGameActivity implements
 
 		alertDialogBuilder
 				.setCancelable(false)
-				.setPositiveButton("View",
+				.setPositiveButton("Accept",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								checkGames();
+								showSpinner();
+								Games.TurnBasedMultiplayer
+										.acceptInvitation(apiAgent,
+												invitation.getInvitationId())
+										.setResultCallback(
+												new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
+
+													@Override
+													public void onResult(
+															InitiateMatchResult result) {
+														processResult(result);
+													}
+												});
 							}
 						})
-				.setNegativeButton("Ignore",
+				.setNegativeButton("Decline",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
+								Games.TurnBasedMultiplayer.declineInvitation(
+										apiAgent, invitation.getInvitationId());
 							}
 						});
 		alertDialogBuilder.show();
@@ -436,7 +451,7 @@ public class MainActivity extends BaseGameActivity implements
 		alertDialogBuilder.create().show();
 
 	}
-	
+
 	/**
 	 * Handling Game status from server.
 	 * 
@@ -536,10 +551,12 @@ public class MainActivity extends BaseGameActivity implements
 						new ResultCallback<TurnBasedMultiplayer.UpdateMatchResult>() {
 
 							@Override
-							public void onResult(TurnBasedMultiplayer.UpdateMatchResult result) {
+							public void onResult(
+									TurnBasedMultiplayer.UpdateMatchResult result) {
 								TurnBasedMatch match = result.getMatch();
 								dismissSpinner();
-								if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+								if (!checkStatusCode(match, result.getStatus()
+										.getStatusCode())) {
 									return;
 								}
 								updateMatch(match);
@@ -570,20 +587,22 @@ public class MainActivity extends BaseGameActivity implements
 		}
 		initiateMatch(match);
 	}
-//
-//	/**
-//	 * Handle server result when player update a match.
-//	 * 
-//	 * @param result
-//	 *            Result from server.
-//	 */
-//	private void processResult(TurnBasedMultiplayer.UpdateMatchResult result) {
-//		TurnBasedMatch match = result.getMatch();
-//		dismissSpinner();
-//		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-//			return;
-//		}
-//	}
+
+	//
+	// /**
+	// * Handle server result when player update a match.
+	// *
+	// * @param result
+	// * Result from server.
+	// */
+	// private void processResult(TurnBasedMultiplayer.UpdateMatchResult result)
+	// {
+	// TurnBasedMatch match = result.getMatch();
+	// dismissSpinner();
+	// if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+	// return;
+	// }
+	// }
 
 	/**
 	 * Set menu visibility base on user sign in and sign out
