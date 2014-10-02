@@ -61,7 +61,7 @@ public class Table {
 		if (desiredIndex < players.size()) {
 			return players.get(desiredIndex).getId();
 		}
-		return null;		
+		return players.get(0).getId();		
 	}
 
 	/**

@@ -130,7 +130,10 @@ public class PlayerView extends View {
 					hand.removeView(cardView);
 					playerView.getPlayer().getHand().remove(card);
 					card.play(playerView.getPlayer());
-					v.setBackgroundColor(Color.WHITE);
+					if (player.getTable().getPlayerThisTurn().equals(player))
+						playerView.setBackgroundColor(Color.RED);
+					else
+						playerView.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
 				//Signals to a View that the drag and drop operation has
