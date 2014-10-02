@@ -187,7 +187,8 @@ public class Table {
 		for (Player player : players){
 			str += player.getName();
 			str += ": Heart: ";
-			str += player.getHeart();			
+			str += player.getHeart();
+			str += "; ";	
 		}
 		return str;
 	}

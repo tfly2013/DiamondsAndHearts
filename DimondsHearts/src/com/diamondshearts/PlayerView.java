@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +134,9 @@ public class PlayerView extends View {
 					ViewGroup hand = (ViewGroup) cardView.getParent();
 					hand.removeView(cardView);
 					playerView.getPlayer().getHand().remove(card);
+					Log.d("BeforePlay", player.getTable().toString());
 					card.play(playerView.getPlayer());
+					Log.d("AfterPlay", player.getTable().toString());
 					if (player.getTable().getPlayerThisTurn().equals(player))
 						playerView.setBackgroundColor(Color.RED);
 					else

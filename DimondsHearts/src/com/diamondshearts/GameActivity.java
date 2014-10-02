@@ -147,7 +147,14 @@ public class GameActivity extends BaseGameActivity implements
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
-								leaveMatch();
+								if (table.isMyTurn()){
+								String nextParticipantId = table.getNextParticipantId();
+								Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(),
+										match.getMatchId(), nextParticipantId);
+								}
+								else
+									Games.TurnBasedMultiplayer.leaveMatch(getApiClient(), match.getMatchId());							
+								finish();
 							}
 						});
 		alertDialogBuilder.show();
@@ -187,17 +194,7 @@ public class GameActivity extends BaseGameActivity implements
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
 	}
-
-	/**
-	 * Player leaves match in their turn
-	 */
-	private void leaveMatch() {
-		String nextParticipantId = table.getNextParticipantId();
-		Games.TurnBasedMultiplayer.leaveMatchDuringTurn(getApiClient(),
-				match.getMatchId(), nextParticipantId);
-		finish();
-	}
-
+	
 	/**
 	 * Load cardViews for cards in current player's hand
 	 */

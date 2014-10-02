@@ -669,7 +669,8 @@ public class MainActivity extends BaseGameActivity implements
 		switch (turnStatus) {
 		case TurnBasedMatch.MATCH_TURN_STATUS_MY_TURN:
 			// Check if there are any unavailable auto-match players
-			checkAutoMatchPlayers(match, match.getData());
+			if (checkAutoMatchPlayers(match, match.getData()))
+				return;
 
 			// Check if all invited players has joined the game
 			String tableData = new String(match.getData());
@@ -678,8 +679,8 @@ public class MainActivity extends BaseGameActivity implements
 				if (isAllPlayersJoined(match))
 					table.setPreGame(false);
 				nextPlayerTakeTurn(match, table);
+				return;
 			}
-
 			// Open game UI
 			Intent intent = new Intent(this, GameActivity.class);
 			intent.putExtra("com.diamondshearts.match", match);
