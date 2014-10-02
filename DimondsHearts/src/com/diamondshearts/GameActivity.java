@@ -305,6 +305,7 @@ public class GameActivity extends BaseGameActivity implements
 	 * 			  The match that was received
 	 */
 	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
+		this.match = match;
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
 		Log.d("JustReceived", table.toString());
