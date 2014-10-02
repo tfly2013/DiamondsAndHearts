@@ -694,6 +694,7 @@ public class MainActivity extends BaseGameActivity implements
 			intent.putExtra("com.diamondshearts.match", match);
 			intent.putExtra("com.diamondshearts.playerid",
 					Games.Players.getCurrentPlayerId(apiAgent));
+			startActivity(intent);
 			return;
 
 		case TurnBasedMatch.MATCH_TURN_STATUS_INVITED:

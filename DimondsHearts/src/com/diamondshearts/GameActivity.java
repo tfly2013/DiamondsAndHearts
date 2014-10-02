@@ -22,25 +22,26 @@ import com.google.android.gms.games.multiplayer.turnbased.TurnBasedMatch;
 import com.google.example.games.basegameutils.BaseGameActivity;
 import com.thoughtworks.xstream.XStream;
 
-/** GameActivity handles the player views, card views, round views, 
- *  the layouts as well as how to exit a game and how to finish a game
- *  
- *  @author Fei Tang & Kimple Ke(co-author)
+/**
+ * GameActivity handles the player views, card views, round views, the layouts
+ * as well as how to exit a game and how to finish a game
+ * 
+ * @author Fei Tang & Kimple Ke(co-author)
  * */
 public class GameActivity extends BaseGameActivity implements
 		OnTurnBasedMatchUpdateReceivedListener {
 	/** Player Layout (Up) */
 	private LinearLayout playersUpLayout;
-	
+
 	/** Player Layout (Down) */
 	private LinearLayout playersDownLayout;
-	
+
 	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
-	
+
 	/** Layout of current player's hand */
 	private LinearLayout handLayout;
-	
+
 	/** The text view to show round */
 	private TextView roundView;
 
@@ -51,13 +52,13 @@ public class GameActivity extends BaseGameActivity implements
 
 	/** The player */
 	private String playerId;
-	
+
 	/** Current Player */
 	private Player currentPlayer;
-	
+
 	/** The match */
 	private TurnBasedMatch match;
-	
+
 	/** The XStream object. */
 	private XStream xStream;
 
@@ -107,9 +108,7 @@ public class GameActivity extends BaseGameActivity implements
 		} else {
 			currentPlayer = table.getCurrentPlayer();
 		}
-
-		if (table.isMyTurn())
-			doneButton.setEnabled(true);
+		doneButton.setEnabled(table.isMyTurn());
 
 		// Load UI
 		loadPlayers();
@@ -131,23 +130,25 @@ public class GameActivity extends BaseGameActivity implements
 		// Dialog to leave match
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-		alertDialogBuilder.setMessage("Are you sure to leave this game?");
+		alertDialogBuilder
+				.setMessage("Do you want to hide this game or leave this game?");
 
 		alertDialogBuilder
 				.setCancelable(false)
-				.setPositiveButton("Yes",
+				.setPositiveButton("Hide",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int id) {
+								GameActivity.this.finish();
+							}
+						})
+				.setNegativeButton("Leave",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {
 								leaveMatch();
 							}
-						})
-				.setNegativeButton("No", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						// Do Nothing
-					}
-				});
+						});
 		alertDialogBuilder.show();
 	}
 
@@ -261,9 +262,10 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Table setup. Set the current player on table and update turn counter. 
+	 * Table setup. Set the current player on table and update turn counter.
+	 * 
 	 * @param playerId
-	 * 				  The player ID
+	 *            The player ID
 	 */
 	private void updateTable(String playerId) {
 		// Update Table data

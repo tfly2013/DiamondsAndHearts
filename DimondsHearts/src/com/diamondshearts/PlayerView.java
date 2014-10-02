@@ -116,14 +116,18 @@ public class PlayerView extends View {
 				//Signals that the user has moved the drag shadow outside the
 				//bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
-					v.setBackgroundColor(Color.WHITE);
+					PlayerView playerView = (PlayerView)v;
+					if (player.getTable().getPlayerThisTurn().equals(player))
+						playerView.setBackgroundColor(Color.RED);
+					else
+						playerView.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
 				//Signals to a View that the user has released the drag shadow,
 				//and the drag point is within the bounding box of the player
 				//View.
-				case DragEvent.ACTION_DROP:
-					PlayerView playerView = (PlayerView)v;
+				case DragEvent.ACTION_DROP:		
+					playerView = (PlayerView)v;
 					CardView cardView = (CardView) event.getLocalState();
 					Card card = cardView.getCard();
 					ViewGroup hand = (ViewGroup) cardView.getParent();
