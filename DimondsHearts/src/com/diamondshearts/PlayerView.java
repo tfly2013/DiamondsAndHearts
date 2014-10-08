@@ -5,6 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
+import com.google.android.gms.common.images.ImageManager;
 
 /**
  * Custom View that contains UI of a player.
@@ -19,64 +22,67 @@ import com.diamondshearts.models.Player;
  * @author Fei Tang & Kimple Ke(co-author)
  */
 public class PlayerView extends View {
-	/**The player*/
+	/** The player */
 	private Player player;
-	
-	/**Add paint on text*/
+
+	/** Add paint on text */
 	private Paint textPaint;
-	
-	/**Add paint on border*/
+
+	/** Add paint on border */
 	private Paint borderPaint;
-	
-	/**Add paint on background*/
+
+	/** Add paint on background */
 	private Paint backgroundPaint;
-	
-	/**Text height*/
+
+	/** Text height */
 	private float textHeight;
-	
-	/**Color of text*/
+
+	/** Color of text */
 	private Integer textColor;
-	
-	/**The background color*/
+
+	/** The background color */
 	private Integer backgroundColor;
-	
-	/**Player view width and height*/
+
+	/** Player view width and height */
 	private Integer width, height;
-	
-	/**Player view border*/
+
+	/** Player view border */
 	private RectF border;
-	
-	/**Screen density in android or dots per inch(dpi)*/
+
+	/** Screen density in android or dots per inch(dpi) */
 	private float density;
+
+	private Drawable playerImage;
 
 	/**
 	 * Initialize a player view.
+	 * 
 	 * @param context
 	 *            The context that view is in.
 	 */
 	public PlayerView(Context context) {
 		super(context);
-		
-		//specify background color and text(color,height)
+
+		// specify background color and text(color,height)
 		backgroundColor = Color.WHITE;
 		textColor = Color.BLACK;
 		textHeight = 0;
-		
-		//get the android screen density
+
+		// get the android screen density
 		density = getResources().getDisplayMetrics().density;
-		
-		//calculate the width of the player view
+
+		// calculate the width of the player view
 		width = (int) density * 150;
-		
-		//calculate the height of the player view
-		height = (int) density * 50;
-		
-		//adjust the border width of the player view
+
+		// calculate the height of the player view
+		height = (int) density * 80;
+
+		// adjust the border width of the player view
 		float borderWidth = 2 * density;
-		
-		//create the rectangular border specifying its top, left, right, bottom 
-		border = new RectF(borderWidth, borderWidth, width - borderWidth,
-				height - borderWidth);
+
+		// create the rectangular border specifying its top, left, right, bottom
+		border = new RectF(borderWidth, borderWidth + 30 * density, width
+				- borderWidth, height - borderWidth);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -101,34 +107,39 @@ public class PlayerView extends View {
 			@Override
 			public boolean onDrag(View v, DragEvent event) {
 				switch (event.getAction()) {
-				//Signals the start of a drag and drop operation of a card.
+				// Signals the start of a drag and drop operation of a card.
 				case DragEvent.ACTION_DRAG_STARTED:
 					return event.getLocalState().getClass() == CardView.class;
-				//Signals to a View that the drag point has entered the bounding
-			    //box of the player View.
+					// Signals to a View that the drag point has entered the
+					// bounding
+					// box of the player View.
 				case DragEvent.ACTION_DRAG_ENTERED:
 					v.setBackgroundColor(0xFF33B5E5);
 					v.invalidate();
 					return true;
-				//Sent to a View after ACTION_DRAG_ENTERED if the drag shadow
-				//is still within the player View's bounding box.
+					// Sent to a View after ACTION_DRAG_ENTERED if the drag
+					// shadow
+					// is still within the player View's bounding box.
 				case DragEvent.ACTION_DRAG_LOCATION:
 					return true;
-				//Signals that the user has moved the drag shadow outside the
-				//bounding box of the player View.
+					// Signals that the user has moved the drag shadow outside
+					// the
+					// bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
-					PlayerView playerView = (PlayerView)v;
+					PlayerView playerView = (PlayerView) v;
 					if (player.getTable().isPlayerTurn(player))
 						playerView.setBackgroundColor(Color.RED);
 					else
 						playerView.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
-				//Signals to a View that the user has released the drag shadow,
-				//and the drag point is within the bounding box of the player
-				//View.
-				case DragEvent.ACTION_DROP:		
-					playerView = (PlayerView)v;
+					// Signals to a View that the user has released the drag
+					// shadow,
+					// and the drag point is within the bounding box of the
+					// player
+					// View.
+				case DragEvent.ACTION_DROP:
+					playerView = (PlayerView) v;
 					CardView cardView = (CardView) event.getLocalState();
 					Card card = cardView.getCard();
 					ViewGroup hand = (ViewGroup) cardView.getParent();
@@ -143,8 +154,8 @@ public class PlayerView extends View {
 						playerView.setBackgroundColor(Color.WHITE);
 					v.invalidate();
 					return true;
-				//Signals to a View that the drag and drop operation has
-				//concluded.
+					// Signals to a View that the drag and drop operation has
+					// concluded.
 				case DragEvent.ACTION_DRAG_ENDED:
 					cardView = (CardView) event.getLocalState();
 					cardView.setVisibility(VISIBLE);
@@ -159,8 +170,9 @@ public class PlayerView extends View {
 
 	/**
 	 * Change the background Color of player view
+	 * 
 	 * @param color
-	 * 			  The background color
+	 *            The background color
 	 */
 	public void setBackgroundColor(int color) {
 		backgroundColor = color;
@@ -190,16 +202,26 @@ public class PlayerView extends View {
 		super.onDraw(canvas);
 		// Draw background and border
 		backgroundPaint.setColor(backgroundColor);
-		canvas.drawRoundRect(border, 10 * density, 10 * density,
-				backgroundPaint);
-		canvas.drawRoundRect(border, 10 * density, 10 * density, borderPaint);
+		canvas.drawRect(border, backgroundPaint);
+		canvas.drawRect(border, borderPaint);
+
+		if (playerImage != null) {
+			playerImage.setBounds((int) (2 * density), (int) (4 * density),
+					(int) (52 * density), (int) (54 * density));
+			playerImage.draw(canvas);
+		} else
+			canvas.drawRect(2 * density, 4 * density, 52 * density,
+					54 * density, backgroundPaint);
+
+		canvas.drawRect(2 * density, 4 * density, 52 * density, 54 * density,
+				borderPaint);
 
 		// Draw name
 		assert (player != null);
 		String name = player.getName();
 
-		float nameX = (width - getTextWidth(name)) / 2;
-		float nameY = 10 * density + textHeight / 2;
+		float nameX = (width - getTextWidth(name)) / 2 + 20 * density;
+		float nameY = 40 * density + textHeight / 2;
 		canvas.drawText(name, nameX, nameY, textPaint);
 
 		// Draw line
@@ -238,8 +260,8 @@ public class PlayerView extends View {
 
 	/**
 	 * Access the player
-	 * @return player
-	 * 				 The player
+	 * 
+	 * @return player The player
 	 * */
 	public Player getPlayer() {
 		return player;
@@ -247,8 +269,9 @@ public class PlayerView extends View {
 
 	/**
 	 * Modify the player
+	 * 
 	 * @param player
-	 * 				The player
+	 *            The player
 	 * */
 	public void setPlayer(Player player) {
 		this.player = player;
@@ -256,6 +279,17 @@ public class PlayerView extends View {
 			backgroundColor = Color.RED;
 		else
 			backgroundColor = Color.WHITE;
+		if (player.getImageUri() != null)
+			ImageManager.create(getContext()).loadImage(
+					new ImageManager.OnImageLoadedListener() {
+
+						@Override
+						public void onImageLoaded(Uri uri, Drawable image,
+								boolean isRequestedDrawable) {
+							playerImage = image;
+							PlayerView.this.invalidate();
+						}
+					}, player.getImageUri());
 		invalidate();
 		requestLayout();
 	}

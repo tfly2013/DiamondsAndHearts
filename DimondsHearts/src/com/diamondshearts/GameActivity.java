@@ -117,7 +117,7 @@ public class GameActivity extends BaseGameActivity implements
 		loadHands();
 		if (table.isPreGame())
 			showPreGameMessage();
-		else 
+		else
 			showRound();
 	}
 
@@ -139,37 +139,30 @@ public class GameActivity extends BaseGameActivity implements
 
 		// Dialog to leave match
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
 		alertDialogBuilder
 				.setMessage("Do you want to hide this game or leave this game?");
-
-		alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("Hide",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								GameActivity.this.finish();
-							}
-						})
-				.setNegativeButton("Leave",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								if (table.isMyTurn()) {
-									String nextParticipantId = table
-											.getNextParticipantId();
-									Games.TurnBasedMultiplayer
-											.leaveMatchDuringTurn(
-													getApiClient(),
-													match.getMatchId(),
-													nextParticipantId);
-								} else
-									Games.TurnBasedMultiplayer.leaveMatch(
-											getApiClient(), match.getMatchId());
-								finish();
-							}
-						});
+		alertDialogBuilder.setPositiveButton("Hide",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						GameActivity.this.finish();
+					}
+				}).setNegativeButton("Leave",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						if (table.isMyTurn()) {
+							String nextParticipantId = table
+									.getNextParticipantId();
+							Games.TurnBasedMultiplayer.leaveMatchDuringTurn(
+									getApiClient(), match.getMatchId(),
+									nextParticipantId);
+						} else
+							Games.TurnBasedMultiplayer.leaveMatch(
+									getApiClient(), match.getMatchId());
+						finish();
+					}
+				});
 		alertDialogBuilder.show();
 	}
 
@@ -284,16 +277,13 @@ public class GameActivity extends BaseGameActivity implements
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();
 		for (Participant participant : participants)
-			players.add(new Player(table, participant.getParticipantId(),
-					participant.getDisplayName()));
+			players.add(new Player(table, participant));
 		table.setPlayers(players);
 
 		// Set current player
 		String currnetParticipantId = match.getParticipantId(playerId);
-		String currentPlayerName = match.getParticipant(currnetParticipantId)
-				.getDisplayName();
-		currentPlayer = new Player(table, currnetParticipantId,
-				currentPlayerName);
+		currentPlayer = new Player(table,
+				match.getParticipant(currnetParticipantId));
 		table.setCurrentPlayer(currentPlayer);
 		table.setTurnCounter(table.getTurnCounter() + 1);
 	}
@@ -301,7 +291,7 @@ public class GameActivity extends BaseGameActivity implements
 	@Override
 	/**
 	 * Callback invoked when a new update to a match arrives.
-	 * @param arg0
+	 * @param match
 	 * 			  The match that was received
 	 */
 	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
@@ -312,15 +302,15 @@ public class GameActivity extends BaseGameActivity implements
 		if (match.getAvailableAutoMatchSlots() > 0) {
 			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
 					match.getMatchId(), match.getData(), null);
-		}
-		else if (table.isPreGame()) {
+		} else if (table.isPreGame()) {
 			if (isAllPlayersJoined(match))
 				table.setPreGame(false);
 			String nextParticipantId = table.getNextParticipantId();
 			table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
-			Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
-					xStream.toXML(table).getBytes(), nextParticipantId);
-		}		
+			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
+					match.getMatchId(), xStream.toXML(table).getBytes(),
+					nextParticipantId);
+		}
 		loadUI();
 		Log.d("AfterLoadUI", table.toString());
 	}

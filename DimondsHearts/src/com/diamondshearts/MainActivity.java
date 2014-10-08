@@ -526,17 +526,13 @@ public class MainActivity extends BaseGameActivity implements
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();
 		for (Participant participant : participants)
-			players.add(new Player(table, participant.getParticipantId(),
-					participant.getDisplayName()));
+			players.add(new Player(table, participant));
 		table.setPlayers(players);
 
 		// Set current player
 		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
 		String currnetParticipantId = match.getParticipantId(playerId);
-		String currentPlayerName = match.getParticipant(currnetParticipantId)
-				.getDisplayName();
-		Player currentPlayer = new Player(table, currnetParticipantId,
-				currentPlayerName);
+		Player currentPlayer = new Player(table, match.getParticipant(currnetParticipantId));
 		table.setCurrentPlayer(currentPlayer);
 		table.setPlayerThisTurn(currentPlayer);
 

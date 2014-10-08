@@ -2,16 +2,16 @@ package com.diamondshearts.models;
 
 import java.util.ArrayList;
 
+import android.net.Uri;
+
+import com.google.android.gms.games.multiplayer.Participant;
+
 /**
  * Player who participate in the turn-based card game
  * */
 public class Player {
 	/**Initial hands*/
 	private static final int INITIALHAND = 5;
-	/**Participant id*/
-	private String participantId;
-	/**Player name*/
-	private String name;
 	/**The number of diamonds a player has*/
 	private Integer diamond;
 	/**The number of hearts a player has*/
@@ -20,21 +20,23 @@ public class Player {
 	private ArrayList<Card> hand;
 	/**The table where player plays the game*/
 	private Table table;
+		
+	private Participant participant;
+	
+	
 	
 	public Player(){};
+	
 	/**
 	 * Initialize a player
 	 * @param table
 	 * 			   The table player plays the game
-	 * @param participantId
-	 * 			   The player id
-	 * @param displayName
-	 * 			   The player's alias name
-	 * */
-	public Player(Table table, String participantId, String displayName) {
+	 * @param participant
+	 * 			   The player as participant
+	 * */	
+	public Player(Table table, Participant participant) {
 		this.table = table;
-		this.participantId = participantId;
-		this.name = displayName;
+		this.participant = participant;
 		diamond = 30;
 		heart = 20;
 		initialHand();
@@ -60,16 +62,9 @@ public class Player {
 	 * @return name
 	 * */
 	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Modify the name of the player
-	 * @param name
-	 * 			   Player's name
-	 * */
-	public void setName(String name) {
-		this.name = name;
+		if (participant == null)
+			return "TestPlayer";
+		return participant.getDisplayName();
 	}
 
 	/**
@@ -223,16 +218,9 @@ public class Player {
 	 * 						The participant id
 	 * */
 	public String getId() {
-		return participantId;
-	}
-
-	/**
-	 * Modify the player's participant id
-	 * @param participantId
-	 * 					   The new participant id
-	 * */
-	public void setId(String participantId) {
-		this.participantId = participantId;
+		if (participant == null)
+			return "test";
+		return participant.getParticipantId();
 	}
 
 	/**
@@ -242,13 +230,10 @@ public class Player {
 	public Table getTable() {
 		return table;
 	}
-
-	/**
-	 * Modify the table
-	 * @param table
-	 * 			   The table to set
-	 */
-	public void setTable(Table table) {
-		this.table = table;
+	
+	public Uri getImageUri() {
+		if (participant == null)
+			return null;
+		return participant.getIconImageUri();
 	}
 }
