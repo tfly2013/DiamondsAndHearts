@@ -68,14 +68,14 @@ public class CardView extends View {
 		width = (int) density * 100;
 
 		// calculate the height of the player view
-		height = (int) density * 120;
+		height = (int) density * 110;
 
 		// adjust the border width of the player view
-		float borderWith = 2 * density;
+		float borderWidth = 2 * density;
 
 		// create the rectangular border specifying its top, left, right, bottom
-		border = new RectF(borderWith, borderWith, width - borderWith, height
-				- borderWith);
+		border = new RectF(borderWidth, borderWidth, width - borderWidth, height
+				- borderWidth);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -87,7 +87,7 @@ public class CardView extends View {
 		borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		borderPaint.setStyle(Paint.Style.STROKE);
 		borderPaint.setTextSize(textHeight);
-		borderPaint.setStrokeWidth(borderWith);
+		borderPaint.setStrokeWidth(borderWidth);
 
 		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -159,14 +159,14 @@ public class CardView extends View {
 		canvas.drawText(actions, actionsX, actionsY, textPaint);
 
 		// Draw events
-		float inteval = 2 * density;
+		float inteval = 10 * density;
 		float eventHeight = (textHeight + inteval) * card.getEvents().size()
 				- inteval;
 		float eventY = (height - actionsY - textHeight - eventHeight) / 2
 				+ actionsY + textHeight;
 		for (Event event : card.getEvents()) {
 			String text = event.getName();
-			float eventX = (width - getTextWidth(text)) / 2;
+			float eventX = 28 * density;
 			canvas.drawText(text, eventX, eventY, textPaint);
 			eventY += textHeight + inteval;
 		}
