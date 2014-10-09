@@ -89,12 +89,13 @@ public class Card {
 	 * @param target
 	 * 				The target opponent
 	 * */
-	public void play(Player target) {
+	public boolean play(Player target) {
 		target.setHeart(target.getHeart() - 1);
 //		for (Action action : getActions())
 //			action.play(target);		
 //		for (Event event : getEvents())
 //			event.play(target);		
+		return true;
 	}
 
 	/**

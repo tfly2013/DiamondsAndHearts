@@ -116,7 +116,7 @@ public class PlayerView extends View {
 					// box of the player View.
 				case DragEvent.ACTION_DRAG_ENTERED:
 					PlayerView playerView = (PlayerView) v;
-					playerView.setBorderColor(0xFF33B5E5);
+					playerView.setBorderColor(Color.GREEN);
 					v.invalidate();
 					return true;
 					// Sent to a View after ACTION_DRAG_ENTERED if the drag
@@ -129,10 +129,7 @@ public class PlayerView extends View {
 					// bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
 					playerView = (PlayerView) v;
-					if (player.getTable().isPlayerTurn(player))
-						playerView.setBorderColor(Color.RED);
-					else
-						playerView.setBorderColor(Color.TRANSPARENT);
+					playerView.resetColor();
 					v.invalidate();
 					return true;
 					// Signals to a View that the user has released the drag
@@ -143,17 +140,18 @@ public class PlayerView extends View {
 				case DragEvent.ACTION_DROP:
 					playerView = (PlayerView) v;
 					CardView cardView = (CardView) event.getLocalState();
-					Card card = cardView.getCard();
-					ViewGroup hand = (ViewGroup) cardView.getParent();
-					hand.removeView(cardView);
-					playerView.getPlayer().getHand().remove(card);
+					Card card = cardView.getCard();				
 					Log.d("BeforePlay", player.getTable().toString());
-					card.play(playerView.getPlayer());
+					if (card.play(playerView.getPlayer())){
+						ViewGroup hand = (ViewGroup) cardView.getParent();
+						hand.removeView(cardView);
+						player.getHand().remove(card);
+						player.getTable().setPlayerTLastHit(playerView.getPlayer());
+						if (getContext().getClass() == GameActivity.class)
+							((GameActivity)getContext()).finishTurn();						
+					}
+					playerView.resetColor();
 					Log.d("AfterPlay", player.getTable().toString());
-					if (player.getTable().isPlayerTurn(player))
-						playerView.setBorderColor(Color.RED);
-					else
-						playerView.setBorderColor(Color.TRANSPARENT);
 					v.invalidate();
 					return true;
 					// Signals to a View that the drag and drop operation has
@@ -168,6 +166,15 @@ public class PlayerView extends View {
 				return false;
 			}
 		});
+	}
+	
+	public void resetColor() {
+		if (player.getTable().isPlayerLastHit(player))
+			setBorderColor(0xFF33B5E5);
+		else if (player.getTable().isPlayerTurn(player))
+			setBorderColor(Color.RED);
+		else
+			setBorderColor(Color.TRANSPARENT);
 	}
 
 	/**
@@ -277,10 +284,7 @@ public class PlayerView extends View {
 	 * */
 	public void setPlayer(Player player) {
 		this.player = player;
-		if (player.getTable().isPlayerTurn(player))
-			setBorderColor(Color.RED);
-		else
-			setBorderColor(Color.TRANSPARENT);
+		resetColor();
 		if (player.getImageUri() != null)
 			ImageManager.create(getContext()).loadImage(
 					new ImageManager.OnImageLoadedListener() {

@@ -13,6 +13,8 @@ public class Table {
 	//plays this turn
 	private Player playerThisTurn;
 	
+	private Player playerTLastHit;
+	
 	//the number of diamonds
 	private Integer diamond;
 
@@ -169,6 +171,17 @@ public class Table {
 	
 	public boolean isPlayerTurn(Player player){
 		return !preGame && player.equals(playerThisTurn);
+	}
+
+	/**
+	 * @param playerTLastHit the playerTLastHit to set
+	 */
+	public void setPlayerTLastHit(Player playerTLastHit) {
+		this.playerTLastHit = playerTLastHit;
+	}
+	
+	public boolean isPlayerLastHit(Player player){		
+		return player.equals(playerTLastHit);
 	}
 
 	/**

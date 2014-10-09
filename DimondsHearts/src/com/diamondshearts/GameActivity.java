@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -45,8 +44,6 @@ public class GameActivity extends BaseGameActivity implements
 
 	/** The text view to show round */
 	private TextView midMessageView;
-
-	private Button doneButton;
 
 	/** The table state of game */
 	private Table table;
@@ -94,7 +91,6 @@ public class GameActivity extends BaseGameActivity implements
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
-		doneButton = (Button) findViewById(R.id.done_button);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 
 		loadUI();
@@ -110,7 +106,6 @@ public class GameActivity extends BaseGameActivity implements
 		} else {
 			currentPlayer = table.getCurrentPlayer();
 		}
-		doneButton.setEnabled(table.isMyTurn());
 
 		// Load UI
 		loadPlayers();
@@ -165,14 +160,8 @@ public class GameActivity extends BaseGameActivity implements
 				});
 		alertDialogBuilder.show();
 	}
-
-	/**
-	 * Save table state and end current turn.
-	 * 
-	 * @param View
-	 *            the done button.
-	 */
-	public void onDoneClicked(View view) {
+	
+	public void finishTurn(){
 		if (table.debug) {
 			finish();
 			return;
@@ -181,11 +170,10 @@ public class GameActivity extends BaseGameActivity implements
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
 
-		Log.d("DoneButtonClicked", table.toString());
+		Log.d("TurnFinished", table.toString());
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				xStream.toXML(table).getBytes(), nextParticipantId);
-		view.setEnabled(false);
 	}
 
 	@Override

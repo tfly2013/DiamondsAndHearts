@@ -17,34 +17,34 @@ import com.diamondshearts.models.Event;
  * @author Fei Tang & Kimple Ke(co-author)
  */
 public class CardView extends View {
-	/**The card*/
+	/** The card */
 	private Card card;
-	
-	/**Add paint on text*/
+
+	/** Add paint on text */
 	private Paint textPaint;
-	
-	/**Add paint on border*/
+
+	/** Add paint on border */
 	private Paint borderPaint;
-	
-	/**Add paint on background*/
+
+	/** Add paint on background */
 	private Paint backgroundPaint;
-	
-	/**Text height*/
+
+	/** Text height */
 	private float textHeight;
-	
-	/**Color of text*/
+
+	/** Color of text */
 	private Integer textColor;
-	
-	/**The background color*/
+
+	/** The background color */
 	private Integer backgroundColor;
-	
-	/**Card width and height*/
+
+	/** Card width and height */
 	private Integer width, height;
-	
-	/**Card border*/
+
+	/** Card border */
 	private RectF border;
-	
-	/**Screen density in android or dots per inch(dpi)*/
+
+	/** Screen density in android or dots per inch(dpi) */
 	private float density;
 
 	/**
@@ -55,25 +55,25 @@ public class CardView extends View {
 	 */
 	public CardView(Context context) {
 		super(context);
-		
-		//specify background color and text(color,height)
+
+		// specify background color and text(color,height)
 		backgroundColor = Color.WHITE;
 		textColor = Color.BLACK;
 		textHeight = 0;
-		
-		//get the android screen density
+
+		// get the android screen density
 		density = getResources().getDisplayMetrics().density;
-		
-		//calculate the width of the player view
+
+		// calculate the width of the player view
 		width = (int) density * 100;
-		
-		//calculate the height of the player view
+
+		// calculate the height of the player view
 		height = (int) density * 120;
-		
-		//adjust the border width of the player view
+
+		// adjust the border width of the player view
 		float borderWith = 2 * density;
-		
-		//create the rectangular border specifying its top, left, right, bottom 
+
+		// create the rectangular border specifying its top, left, right, bottom
 		border = new RectF(borderWith, borderWith, width - borderWith, height
 				- borderWith);
 
@@ -114,6 +114,7 @@ public class CardView extends View {
 	/**
 	 * Change the background Color of player view
 	 */
+	@Override
 	public void setBackgroundColor(int color) {
 		backgroundColor = color;
 	}
@@ -190,8 +191,8 @@ public class CardView extends View {
 
 	/**
 	 * Access the card
-	 * @return card
-	 * 			   The card
+	 * 
+	 * @return card The card
 	 * */
 	public Card getCard() {
 		return card;
@@ -199,8 +200,9 @@ public class CardView extends View {
 
 	/**
 	 * Modify the card
+	 * 
 	 * @param card
-	 * 			  The card
+	 *            The card
 	 * */
 	public void setCard(Card card) {
 		this.card = card;
