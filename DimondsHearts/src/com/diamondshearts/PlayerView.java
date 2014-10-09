@@ -41,7 +41,7 @@ public class PlayerView extends View {
 	private Integer textColor;
 
 	/** The background color */
-	private Integer backgroundColor;
+	private Integer borderColor;
 
 	/** Player view width and height */
 	private Integer width, height;
@@ -64,7 +64,7 @@ public class PlayerView extends View {
 		super(context);
 
 		// specify background color and text(color,height)
-		backgroundColor = Color.WHITE;
+		borderColor = Color.TRANSPARENT;
 		textColor = Color.BLACK;
 		textHeight = 0;
 
@@ -72,7 +72,7 @@ public class PlayerView extends View {
 		density = getResources().getDisplayMetrics().density;
 
 		// calculate the width of the player view
-		width = (int) density * 150;
+		width = (int) density * 110;
 
 		// calculate the height of the player view
 		height = (int) density * 80;
@@ -81,7 +81,7 @@ public class PlayerView extends View {
 		float borderWidth = 2 * density;
 
 		// create the rectangular border specifying its top, left, right, bottom
-		border = new RectF(borderWidth, borderWidth + 30 * density, width
+		border = new RectF(borderWidth, borderWidth, width
 				- borderWidth, height - borderWidth);
 
 		// Initialize text paint
@@ -95,10 +95,11 @@ public class PlayerView extends View {
 		borderPaint.setStyle(Paint.Style.STROKE);
 		borderPaint.setTextSize(textHeight);
 		borderPaint.setStrokeWidth(borderWidth);
+		borderPaint.setColor(borderColor);
 
 		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		backgroundPaint.setColor(backgroundColor);
+		backgroundPaint.setColor(Color.TRANSPARENT);
 		backgroundPaint.setStyle(Paint.Style.FILL);
 		backgroundPaint.setTextSize(textHeight);
 
@@ -114,7 +115,8 @@ public class PlayerView extends View {
 					// bounding
 					// box of the player View.
 				case DragEvent.ACTION_DRAG_ENTERED:
-					v.setBackgroundColor(0xFF33B5E5);
+					PlayerView playerView = (PlayerView) v;
+					playerView.setBorderColor(0xFF33B5E5);
 					v.invalidate();
 					return true;
 					// Sent to a View after ACTION_DRAG_ENTERED if the drag
@@ -126,11 +128,11 @@ public class PlayerView extends View {
 					// the
 					// bounding box of the player View.
 				case DragEvent.ACTION_DRAG_EXITED:
-					PlayerView playerView = (PlayerView) v;
+					playerView = (PlayerView) v;
 					if (player.getTable().isPlayerTurn(player))
-						playerView.setBackgroundColor(Color.RED);
+						playerView.setBorderColor(Color.RED);
 					else
-						playerView.setBackgroundColor(Color.WHITE);
+						playerView.setBorderColor(Color.TRANSPARENT);
 					v.invalidate();
 					return true;
 					// Signals to a View that the user has released the drag
@@ -149,9 +151,9 @@ public class PlayerView extends View {
 					card.play(playerView.getPlayer());
 					Log.d("AfterPlay", player.getTable().toString());
 					if (player.getTable().isPlayerTurn(player))
-						playerView.setBackgroundColor(Color.RED);
+						playerView.setBorderColor(Color.RED);
 					else
-						playerView.setBackgroundColor(Color.WHITE);
+						playerView.setBorderColor(Color.TRANSPARENT);
 					v.invalidate();
 					return true;
 					// Signals to a View that the drag and drop operation has
@@ -174,8 +176,12 @@ public class PlayerView extends View {
 	 * @param color
 	 *            The background color
 	 */
-	public void setBackgroundColor(int color) {
-		backgroundColor = color;
+	public void setBorderColor(int color) {
+		borderColor = color;
+		if (color == Color.TRANSPARENT)
+			textColor = Color.BLACK;
+		else
+			textColor = color;		
 	}
 
 	@Override
@@ -201,44 +207,40 @@ public class PlayerView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		// Draw background and border
-		backgroundPaint.setColor(backgroundColor);
-		canvas.drawRect(border, backgroundPaint);
-		canvas.drawRect(border, borderPaint);
-
+		//canvas.drawRect(border, borderPaint);		
+		
+		float imageTop = 24 * density;
+		float imageLeft = 6 * density;
+		float imageRight = 56 * density;
+		float imageBottom = 74 * density;
 		if (playerImage != null) {
-			playerImage.setBounds((int) (2 * density), (int) (4 * density),
-					(int) (52 * density), (int) (54 * density));
+			playerImage.setBounds((int)imageLeft, (int)imageTop,
+					(int)imageRight, (int)imageBottom);
 			playerImage.draw(canvas);
-		} else
-			canvas.drawRect(2 * density, 4 * density, 52 * density,
-					54 * density, backgroundPaint);
-
-		canvas.drawRect(2 * density, 4 * density, 52 * density, 54 * density,
-				borderPaint);
-
+		}
+		
+		borderPaint.setColor(borderColor);
+		canvas.drawRect(border, borderPaint);
+		
+		textPaint.setColor(textColor);		
 		// Draw name
 		assert (player != null);
 		String name = player.getName();
-
-		float nameX = (width - getTextWidth(name)) / 2 + 20 * density;
-		float nameY = 40 * density + textHeight / 2;
+		float nameX = (width - getTextWidth(name)) / 2;
+		float nameY = 10 * density + textHeight / 2;
+		textPaint.setFakeBoldText(true);
 		canvas.drawText(name, nameX, nameY, textPaint);
 
-		// Draw line
-		float startX, startY, stopX, stopY;
-		startY = stopY = nameY + textHeight / 2;
-		startX = 2 * density;
-		stopX = width - 2 * density;
-		canvas.drawLine(startX, startY, stopX, stopY, borderPaint);
-
 		// Draw labels
-		String label = "";
-		for (String text : player.getLabels())
-			label += text + " ";
-		label = label.trim();
-		float labelX = (width - getTextWidth(label)) / 2;
-		float labelY = startY + textHeight / 2 + 8 * density;
-		canvas.drawText(label, labelX, labelY, textPaint);
+		float startY = 18 * density;
+		textPaint.setFakeBoldText(false);
+		for (String text : player.getLabels()){			
+			float labelX = imageRight + (width - imageRight 
+					- getTextWidth(text)) / 2;
+			float labelY = startY + textHeight / 2 + 10 * density;
+			canvas.drawText(text, labelX, labelY, textPaint);
+			startY += 20 * density;
+		}
 	}
 
 	/**
@@ -276,9 +278,9 @@ public class PlayerView extends View {
 	public void setPlayer(Player player) {
 		this.player = player;
 		if (player.getTable().isPlayerTurn(player))
-			backgroundColor = Color.RED;
+			setBorderColor(Color.RED);
 		else
-			backgroundColor = Color.WHITE;
+			setBorderColor(Color.TRANSPARENT);
 		if (player.getImageUri() != null)
 			ImageManager.create(getContext()).loadImage(
 					new ImageManager.OnImageLoadedListener() {
