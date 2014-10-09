@@ -81,9 +81,11 @@ public class PlayerView extends View {
 		float borderWidth = 2 * density;
 
 		// create the rectangular border specifying its top, left, right, bottom
-		border = new RectF(borderWidth, borderWidth, width
-				- borderWidth, height - borderWidth);
-
+		border = new RectF(borderWidth, borderWidth, width - borderWidth,
+				height - borderWidth);
+		
+		playerImage = getResources().getDrawable(R.drawable.photo);
+		
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
@@ -140,15 +142,16 @@ public class PlayerView extends View {
 				case DragEvent.ACTION_DROP:
 					playerView = (PlayerView) v;
 					CardView cardView = (CardView) event.getLocalState();
-					Card card = cardView.getCard();				
+					Card card = cardView.getCard();
 					Log.d("BeforePlay", player.getTable().toString());
-					if (card.play(playerView.getPlayer())){
+					if (card.play(playerView.getPlayer())) {
 						ViewGroup hand = (ViewGroup) cardView.getParent();
 						hand.removeView(cardView);
 						player.getHand().remove(card);
-						player.getTable().setPlayerTLastHit(playerView.getPlayer());
+						player.getTable().setPlayerTLastHit(
+								playerView.getPlayer());
 						if (getContext().getClass() == GameActivity.class)
-							((GameActivity)getContext()).finishTurn();						
+							((GameActivity) getContext()).finishTurn();
 					}
 					playerView.resetColor();
 					Log.d("AfterPlay", player.getTable().toString());
@@ -167,7 +170,7 @@ public class PlayerView extends View {
 			}
 		});
 	}
-	
+
 	public void resetColor() {
 		if (player.getTable().isPlayerLastHit(player))
 			setBorderColor(0xFF33B5E5);
@@ -188,7 +191,7 @@ public class PlayerView extends View {
 		if (color == Color.TRANSPARENT)
 			textColor = Color.BLACK;
 		else
-			textColor = color;		
+			textColor = color;
 	}
 
 	@Override
@@ -214,22 +217,20 @@ public class PlayerView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		// Draw background and border
-		//canvas.drawRect(border, borderPaint);		
-		
+		// canvas.drawRect(border, borderPaint);
+
 		float imageTop = 24 * density;
 		float imageLeft = 6 * density;
 		float imageRight = 56 * density;
 		float imageBottom = 74 * density;
-		if (playerImage != null) {
-			playerImage.setBounds((int)imageLeft, (int)imageTop,
-					(int)imageRight, (int)imageBottom);
-			playerImage.draw(canvas);
-		}
-		
+		playerImage.setBounds((int) imageLeft, (int) imageTop,
+				(int) imageRight, (int) imageBottom);
+		playerImage.draw(canvas);
+
 		borderPaint.setColor(borderColor);
 		canvas.drawRect(border, borderPaint);
-		
-		textPaint.setColor(textColor);		
+
+		textPaint.setColor(textColor);
 		// Draw name
 		assert (player != null);
 		String name = player.getName();
@@ -241,9 +242,9 @@ public class PlayerView extends View {
 		// Draw labels
 		float startY = 18 * density;
 		textPaint.setFakeBoldText(false);
-		for (String text : player.getLabels()){			
-			float labelX = imageRight + (width - imageRight 
-					- getTextWidth(text)) / 2;
+		for (String text : player.getLabels()) {
+			float labelX = imageRight
+					+ (width - imageRight - getTextWidth(text)) / 2;
 			float labelY = startY + textHeight / 2 + 10 * density;
 			canvas.drawText(text, labelX, labelY, textPaint);
 			startY += 20 * density;
