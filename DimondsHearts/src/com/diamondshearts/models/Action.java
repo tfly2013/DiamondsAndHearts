@@ -20,6 +20,7 @@ public class Action {
 
 	/**Define statistical distribution of suits*/
 	public static final Suit[] allSuits = Suit.class.getEnumConstants();
+	
 
 	/**
 	 * Initialize a action
