@@ -108,12 +108,28 @@ public class Card {
 	 *            The target opponent
 	 * */
 	public boolean play(Player target) {
-		target.setHeart(target.getHeart() - 1);
-		// for (Action action : getActions())
-		// action.play(target);
-		// for (Event event : getEvents())
-		// event.play(target);
-		return true;
+		Integer cost = getCost();
+		if (owner.canAfford(cost)) {
+			if (needTarget() == target.equals(owner))
+				return false;
+			owner.setDiamond(owner.getDiamond() - cost);
+			for (Action action : getActions())
+				action.play(owner, target);
+			for (Event event : getEvents())
+				event.play(owner, target);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean needTarget(){
+		for (Action action : getActions()) {
+			if (action.getSuit() == Suit.Spade)
+				return true;
+			if (action.getSuit() == Suit.Club)
+				return true;
+		}
+		return false;
 	}
 
 	/**

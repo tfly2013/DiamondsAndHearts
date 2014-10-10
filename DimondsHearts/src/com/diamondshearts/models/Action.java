@@ -104,8 +104,24 @@ public class Action {
 	 * @param target
 	 * 				The targeted opponent
 	 * */
-	public void play(Player target) {
-		// TODO Auto-generated method stub
-		
+	public void play(Player owner, Player target) {
+		Integer power = rank;
+		switch (suit) {
+		case Club:			
+			target.setHeart(target.getHeart() - power);
+			break;
+		case Heart:
+			owner.setHeart(owner.getHeart() + power);
+			break;
+		case Spade:
+			Integer targetDiamond = target.getDiamond();
+			if (targetDiamond < power)
+				power = targetDiamond;
+			target.setDiamond(targetDiamond - power);
+			owner.setDiamond(owner.getDiamond() + power);
+			break;
+		default:
+			break;
+		}
 	}
 }

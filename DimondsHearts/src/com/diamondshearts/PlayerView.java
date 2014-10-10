@@ -152,6 +152,10 @@ public class PlayerView extends View {
 								playerView.getPlayer());
 						if (getContext().getClass() == GameActivity.class)
 							((GameActivity) getContext()).finishTurn();
+					} else {
+						if (getContext().getClass() == GameActivity.class)
+							((GameActivity) getContext()).showMessage(
+									"I cant play like that.", 1000);
 					}
 					playerView.resetColor();
 					Log.d("AfterPlay", player.getTable().toString());
