@@ -82,7 +82,7 @@ public class CardView extends View {
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
-		textHeight = 15 * getResources().getDisplayMetrics().scaledDensity;
+		textHeight = 14 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
 
 		// Initialize background paint
@@ -164,7 +164,7 @@ public class CardView extends View {
 				+ actionsY + textHeight;
 		for (Event event : card.getEvents()) {
 			String text = event.getName();
-			float eventX = 28 * density;
+			float eventX = (width - getTextWidth(text)) / 2;
 			canvas.drawText(text, eventX, eventY, textPaint);
 			eventY += textHeight + inteval;
 		}

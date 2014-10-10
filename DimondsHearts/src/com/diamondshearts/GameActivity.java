@@ -92,7 +92,8 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
-
+		
+		checkPreGame(match);		
 		loadUI();
 	}
 
@@ -260,20 +261,22 @@ public class GameActivity extends BaseGameActivity implements
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
 		Log.d("JustReceived", table.toString());
+		checkPreGame(match);
+		loadUI();
+		Log.d("AfterLoadUI", table.toString());
+	}
+
+	/**
+	 * @param match
+	 */
+	private void checkPreGame(TurnBasedMatch match) {
 		if (match.getAvailableAutoMatchSlots() > 0) {
 			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
 					match.getMatchId(), match.getData(), null);
 		} else if (table.isPreGame()) {
 			if (isAllPlayersJoined(match))
 				table.setPreGame(false);
-			String nextParticipantId = table.getNextParticipantId();
-			table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
-			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
-					match.getMatchId(), xStream.toXML(table).getBytes(),
-					nextParticipantId);
 		}
-		loadUI();
-		Log.d("AfterLoadUI", table.toString());
 	}
 
 	private boolean isAllPlayersJoined(TurnBasedMatch match) {
