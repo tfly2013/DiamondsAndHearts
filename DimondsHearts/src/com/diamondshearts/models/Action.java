@@ -1,7 +1,6 @@
 package com.diamondshearts.models;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -18,22 +17,14 @@ public class Action {
 	/**Suit description*/
 	private String description;
 
-	/**Define statistical distribution of suits*/
-	public static final Suit[] allSuits = Suit.class.getEnumConstants();
-
 	/**
 	 * Initialize a action
 	 * */
-	public Action() {
+	public Action(ArrayList<Suit> suits) {
 		// select a suit based on the given distribution
-		List<Suit> selection = new ArrayList<Suit>();
-		for (int i = 0; i < allSuits.length; i++) {
-			for (int j = 0; j < allSuits[i].getFrequency(); j++)
-				selection.add(allSuits[i]);
-		}
-		int choice = gen.nextInt(allSuits.length);
-		setSuit(selection.get(choice));
-		setDescription(selection.get(choice).getDescription());
+		int choice = gen.nextInt(suits.size());
+		setSuit(suits.get(choice));
+		setDescription(suits.get(choice).getDescription());
 
 		// define statistical distribution of ranks
 		int[] rankDistribution = { 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6,

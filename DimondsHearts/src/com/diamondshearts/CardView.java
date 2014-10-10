@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.diamondshearts.models.Action;
@@ -22,9 +23,6 @@ public class CardView extends View {
 
 	/** Add paint on text */
 	private Paint textPaint;
-
-	/** Add paint on border */
-	private Paint borderPaint;
 
 	/** Add paint on background */
 	private Paint backgroundPaint;
@@ -46,6 +44,8 @@ public class CardView extends View {
 
 	/** Screen density in android or dots per inch(dpi) */
 	private float density;
+	
+	private Drawable cardBoarder;
 
 	/**
 	 * Initialize a card view.
@@ -68,7 +68,7 @@ public class CardView extends View {
 		width = (int) density * 100;
 
 		// calculate the height of the player view
-		height = (int) density * 110;
+		height = (int) density * 120;
 
 		// adjust the border width of the player view
 		float borderWidth = 2 * density;
@@ -76,18 +76,14 @@ public class CardView extends View {
 		// create the rectangular border specifying its top, left, right, bottom
 		border = new RectF(borderWidth, borderWidth, width - borderWidth, height
 				- borderWidth);
+		
+		cardBoarder = getResources().getDrawable(R.drawable.card_border);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
 		textHeight = 15 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
-
-		// Initialize border paint
-		borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		borderPaint.setStyle(Paint.Style.STROKE);
-		borderPaint.setTextSize(textHeight);
-		borderPaint.setStrokeWidth(borderWidth);
 
 		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -145,7 +141,9 @@ public class CardView extends View {
 		backgroundPaint.setColor(backgroundColor);
 		canvas.drawRoundRect(border, 10 * density, 10 * density,
 				backgroundPaint);
-		canvas.drawRoundRect(border, 10 * density, 10 * density, borderPaint);
+		
+		cardBoarder.setBounds(0,0,width,height);
+		cardBoarder.draw(canvas);
 
 		// Draw actions
 		assert (card != null);

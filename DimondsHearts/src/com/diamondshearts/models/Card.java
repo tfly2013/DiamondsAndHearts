@@ -1,5 +1,7 @@
 package com.diamondshearts.models;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -7,34 +9,44 @@ import java.util.Random;
  * Cards have 1-3 actions and 0-2 effects
  * */
 public class Card {
-	/**Random num for events and actions*/
+	/** Random num for events and actions */
 	private static Random gen = new Random();
-	/**Owner of cards*/
+	/** Owner of cards */
 	private Player owner;
-	/**Cost according to action rank*/
+	/** Cost according to action rank */
 	private Integer cost;
 
-	/**Lists of actions and events initialized*/
+	/** Lists of actions and events initialized */
 	private HashSet<Action> actions = new HashSet<Action>();
 	private HashSet<Event> events = new HashSet<Event>();
-	
-	public Card(){};
+
+	public Card() {
+	};
+
 	/**
 	 * Initialize a card
+	 * 
 	 * @param owner
-	 *            The owner who owns the cards 
+	 *            The owner who owns the cards
 	 * */
 	public Card(Player owner) {
 		this.owner = owner;
+
+		ArrayList<Suit> suits = new ArrayList<Suit>(Arrays.asList(Suit.class
+				.getEnumConstants()));
+		
 		// add new actions
 		Integer actionsCount = gen.nextInt(3) + 1;
-		while (actions.size() < actionsCount)
-			actions.add(new Action());
+		while (actions.size() < actionsCount) {
+			Action newAction = new Action(suits);			
+			actions.add(newAction);
+			suits.remove(newAction.getSuit());
+		}
 		// add new events
 		Integer eventsCount = gen.nextInt(3);
 		while (events.size() < eventsCount)
 			events.add(new Event());
-		
+
 		cost = 0;
 		for (Action action : getActions()) {
 			if (action.getSuit() == Suit.Diamond)
@@ -44,6 +56,7 @@ public class Card {
 
 	/**
 	 * Access the cost
+	 * 
 	 * @return cost
 	 * */
 	public Integer getCost() {
@@ -52,6 +65,7 @@ public class Card {
 
 	/**
 	 * Access a list of actions
+	 * 
 	 * @return actions
 	 * */
 	public HashSet<Action> getActions() {
@@ -60,8 +74,9 @@ public class Card {
 
 	/**
 	 * Modify the actions list
+	 * 
 	 * @param actions
-	 * 				 A list of actions.
+	 *            A list of actions.
 	 * */
 	public void setActions(HashSet<Action> actions) {
 		this.actions = actions;
@@ -69,6 +84,7 @@ public class Card {
 
 	/**
 	 * Access a list of events
+	 * 
 	 * @return events
 	 * */
 	public HashSet<Event> getEvents() {
@@ -77,8 +93,9 @@ public class Card {
 
 	/**
 	 * Modify the list of events
+	 * 
 	 * @param events
-	 * 				A list of events
+	 *            A list of events
 	 * */
 	public void setEvents(HashSet<Event> events) {
 		this.events = events;
@@ -86,20 +103,22 @@ public class Card {
 
 	/**
 	 * Given a target, act according to actions and events
+	 * 
 	 * @param target
-	 * 				The target opponent
+	 *            The target opponent
 	 * */
 	public boolean play(Player target) {
 		target.setHeart(target.getHeart() - 1);
-//		for (Action action : getActions())
-//			action.play(target);		
-//		for (Event event : getEvents())
-//			event.play(target);		
+		// for (Action action : getActions())
+		// action.play(target);
+		// for (Event event : getEvents())
+		// event.play(target);
 		return true;
 	}
 
 	/**
 	 * Access the owner of cards
+	 * 
 	 * @return owner
 	 * */
 	public Player getOwner() {
@@ -108,8 +127,9 @@ public class Card {
 
 	/**
 	 * Change the owner of cards
+	 * 
 	 * @param owner
-	 * 			   The owner who owns the cards
+	 *            The owner who owns the cards
 	 * */
 	public void setOwner(Player owner) {
 		this.owner = owner;
