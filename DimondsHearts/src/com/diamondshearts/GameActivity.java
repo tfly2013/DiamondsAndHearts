@@ -1,7 +1,5 @@
 package com.diamondshearts;
 
-import java.util.ArrayList;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
@@ -92,8 +90,8 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
-		
-		checkPreGame(match);		
+
+		checkPreGame(match);
 		loadUI();
 	}
 
@@ -161,8 +159,8 @@ public class GameActivity extends BaseGameActivity implements
 				});
 		alertDialogBuilder.show();
 	}
-	
-	public void finishTurn(){
+
+	public void finishTurn() {
 		if (table.debug) {
 			finish();
 			return;
@@ -235,17 +233,9 @@ public class GameActivity extends BaseGameActivity implements
 	 *            The player ID
 	 */
 	private void updateTable(String playerId) {
-		// Update Table data
-		ArrayList<Player> players = new ArrayList<Player>();
-		ArrayList<Participant> participants = match.getParticipants();
-		for (Participant participant : participants)
-			players.add(new Player(table, participant));
-		table.setPlayers(players);
-
 		// Set current player
 		String currnetParticipantId = match.getParticipantId(playerId);
-		currentPlayer = new Player(table,
-				match.getParticipant(currnetParticipantId));
+		currentPlayer = table.getPlayerById(currnetParticipantId);
 		table.setCurrentPlayer(currentPlayer);
 		table.setTurnCounter(table.getTurnCounter() + 1);
 	}
@@ -333,19 +323,19 @@ public class GameActivity extends BaseGameActivity implements
 		midMessageView.setAlpha(0);
 		midMessageView.setText(string);
 		midMessageView.animate().alpha(1).setDuration(1000)
-		.setListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				midMessageView.animate().alpha(0).setDuration(1000)
-						.setStartDelay(1000)
-						.setListener(new AnimatorListenerAdapter() {
-							@Override
-							public void onAnimationEnd(
-									Animator animation) {
-								midMessageView.setVisibility(View.GONE);
-							}
-						});
-			}
-		});
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						midMessageView.animate().alpha(0).setDuration(1000)
+								.setStartDelay(1000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										midMessageView.setVisibility(View.GONE);
+									}
+								});
+					}
+				});
 	}
 }

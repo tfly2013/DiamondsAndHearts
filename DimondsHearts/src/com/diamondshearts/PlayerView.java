@@ -84,8 +84,6 @@ public class PlayerView extends View {
 		border = new RectF(borderWidth, borderWidth, width - borderWidth,
 				height - borderWidth);
 		
-		playerImage = getResources().getDrawable(R.drawable.photo);
-		
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
@@ -227,6 +225,9 @@ public class PlayerView extends View {
 		float imageLeft = 6 * density;
 		float imageRight = 56 * density;
 		float imageBottom = 74 * density;
+		
+		if (playerImage == null)
+			playerImage = getResources().getDrawable(R.drawable.photo);
 		playerImage.setBounds((int) imageLeft, (int) imageTop,
 				(int) imageRight, (int) imageBottom);
 		playerImage.draw(canvas);
