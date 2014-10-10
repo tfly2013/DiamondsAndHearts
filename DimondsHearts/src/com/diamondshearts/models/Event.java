@@ -72,7 +72,7 @@ public class Event {
 	 * @param target
 	 * 				The targeted opponent
 	 * */
-	public void play(Player target) {
+	public void play(Player owner, Player target) {
 		// TODO Auto-generated method stub
 		
 	}
