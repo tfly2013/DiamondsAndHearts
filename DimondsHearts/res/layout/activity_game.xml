@@ -12,15 +12,17 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="false"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp" >
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="15dp" >
 
         <LinearLayout
             android:id="@+id/hand_layout"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal" />
+            android:orientation="horizontal" 
+        	android:background="@drawable/hand_layout_frame" />
     </HorizontalScrollView>
 
     <RelativeLayout
