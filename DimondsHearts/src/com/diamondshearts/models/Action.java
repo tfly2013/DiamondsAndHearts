@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * An action is a represented by a suit (Hearts, Clubs, Diamonds, Spades) and a
- * number from 1 to 9
+ * An action is a represented by a suit (Hearts, Clubs, Diamonds, Spades) 
+ * and a number from 1 to 9  
  * */
 public class Action {
-	/** Random number for */
+	/**Random number for*/
 	private static Random gen = new Random();
-	/** Action rank */
+	/**Action rank*/
 	private Integer rank;
-	/** A suit */
+	/**A suit*/
 	private Suit suit;
-	/** Suit description */
+	/**Suit description*/
 	private String description;
 
-	/** Define statistical distribution of suits */
+	/**Define statistical distribution of suits*/
 	public static final Suit[] allSuits = Suit.class.getEnumConstants();
 
 	/**
@@ -59,7 +59,6 @@ public class Action {
 
 	/**
 	 * Access the rank
-	 * 
 	 * @return rank
 	 * */
 	public Integer getRank() {
@@ -68,9 +67,8 @@ public class Action {
 
 	/**
 	 * Modify the rank
-	 * 
 	 * @param rank
-	 *            Rank of the action
+	 * 			  Rank of the action
 	 * */
 	public void setRank(Integer rank) {
 		this.rank = rank;
@@ -78,7 +76,6 @@ public class Action {
 
 	/**
 	 * Access the suit
-	 * 
 	 * @return suit
 	 * */
 	public Suit getSuit() {
@@ -87,9 +84,8 @@ public class Action {
 
 	/**
 	 * Modify the suit
-	 * 
 	 * @param suit
-	 *            The suit
+	 * 			  The suit
 	 * */
 	public void setSuit(Suit suit) {
 		this.suit = suit;
@@ -97,7 +93,6 @@ public class Action {
 
 	/**
 	 * Access the description
-	 * 
 	 * @return description
 	 * */
 	public String getDescription() {
@@ -106,39 +101,20 @@ public class Action {
 
 	/**
 	 * Modify the description of a card
-	 * 
 	 * @param description
-	 *            The description for a card
+	 * 					 The description for a card
 	 * */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
 	/**
-	 * Play against target opponent according to action
-	 * 
+	 * Play against target opponent according to action 
 	 * @param target
-	 *            The targeted opponent
+	 * 				The targeted opponent
 	 * */
-	public void play(Player owner, Player target) {
-		Integer power = rank;
-		switch (suit) {
-		case Club:			
-			target.setHeart(target.getHeart() - power);
-			break;
-		case Heart:
-			owner.setHeart(owner.getHeart() + power);
-			break;
-		case Spade:
-			Integer targetDiamond = target.getDiamond();
-			if (targetDiamond < power)
-				power = targetDiamond;
-			target.setDiamond(targetDiamond - power);
-			owner.setDiamond(owner.getDiamond() + power);
-			break;
-		default:
-			break;
-		}
-
+	public void play(Player target) {
+		// TODO Auto-generated method stub
+		
 	}
 }

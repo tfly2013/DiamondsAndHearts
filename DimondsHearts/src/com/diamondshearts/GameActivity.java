@@ -113,7 +113,7 @@ public class GameActivity extends BaseGameActivity implements
 		if (table.isPreGame())
 			showPreGameMessage();
 		else
-			showMessage("Round " + table.getRound(), 2000);
+			showRound();
 	}
 
 	private void showPreGameMessage() {
@@ -228,6 +228,33 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * Show a round counter at the start of each turn. The round counter will
+	 * fade in and fade out.
+	 */
+	private void showRound() {
+		// Show Round
+		midMessageView.setVisibility(View.VISIBLE);
+		midMessageView.setAlpha(0f);
+		midMessageView.setText("Round " + table.getRound());
+		// Add a fade in fade out animation
+		midMessageView.animate().alpha(1f).setDuration(2000)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						midMessageView.animate().alpha(0f).setDuration(2000)
+								.setStartDelay(2000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										midMessageView.setVisibility(View.GONE);
+									}
+								});
+					}
+				});
+	}
+
+	/**
 	 * Table setup. Set the current player on table and update turn counter.
 	 * 
 	 * @param playerId
@@ -323,26 +350,5 @@ public class GameActivity extends BaseGameActivity implements
 
 		// create and show alert dialog
 		alertDialogBuilder.create().show();
-	}
-
-	public void showMessage(String string, long duration) {
-		midMessageView.setVisibility(View.VISIBLE);
-		midMessageView.setAlpha(0);
-		midMessageView.setText(string);
-		midMessageView.animate().alpha(1).setDuration(1000)
-		.setListener(new AnimatorListenerAdapter() {
-			@Override
-			public void onAnimationEnd(Animator animation) {
-				midMessageView.animate().alpha(0).setDuration(1000)
-						.setStartDelay(1000)
-						.setListener(new AnimatorListenerAdapter() {
-							@Override
-							public void onAnimationEnd(
-									Animator animation) {
-								midMessageView.setVisibility(View.GONE);
-							}
-						});
-			}
-		});
 	}
 }

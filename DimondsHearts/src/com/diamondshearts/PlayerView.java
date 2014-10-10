@@ -83,9 +83,9 @@ public class PlayerView extends View {
 		// create the rectangular border specifying its top, left, right, bottom
 		border = new RectF(borderWidth, borderWidth, width - borderWidth,
 				height - borderWidth);
-
+		
 		playerImage = getResources().getDrawable(R.drawable.photo);
-
+		
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
@@ -152,10 +152,6 @@ public class PlayerView extends View {
 								playerView.getPlayer());
 						if (getContext().getClass() == GameActivity.class)
 							((GameActivity) getContext()).finishTurn();
-					} else {
-						if (getContext().getClass() == GameActivity.class)
-							((GameActivity) getContext()).showMessage(
-									"I cant play like that.", 1000);
 					}
 					playerView.resetColor();
 					Log.d("AfterPlay", player.getTable().toString());
