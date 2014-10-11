@@ -612,13 +612,15 @@ public class MainActivity extends BaseGameActivity implements
 			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 			findViewById(R.id.menu_layout).setVisibility(View.GONE);
 		}
-		// Signed in
-		((TextView) findViewById(R.id.name_field))
-				.setText(getString(R.string.welcome)
-						+ Games.Players.getCurrentPlayer(getApiClient())
-								.getDisplayName());
-		findViewById(R.id.login_layout).setVisibility(View.GONE);
-		findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
+		else {
+			// Signed in
+			((TextView) findViewById(R.id.name_field))
+					.setText(getString(R.string.welcome)
+							+ Games.Players.getCurrentPlayer(getApiClient())
+									.getDisplayName());
+			findViewById(R.id.login_layout).setVisibility(View.GONE);
+			findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
+		}
 	}
 
 	/**

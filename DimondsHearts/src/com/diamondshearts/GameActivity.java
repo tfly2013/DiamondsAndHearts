@@ -369,7 +369,6 @@ public class GameActivity extends BaseGameActivity implements
 		} else {
 			showMessage("I cant afford this.", 1000);
 		}
-
 	}
 
 	public void onSkipButtonClicked(View view) {
