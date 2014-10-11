@@ -6,7 +6,7 @@
 
     <HorizontalScrollView
         android:id="@+id/hand_scroll_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="130dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
@@ -88,6 +88,34 @@
                 android:gravity="center"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/draw_button"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:onClick="onDrawButtonClicked"
+            android:text="@string/draw"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/skip_button"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:onClick="onSkipButtonClicked"
+            android:text="@string/skip"
+            android:textSize="15sp" />
     </RelativeLayout>
 
 </RelativeLayout>

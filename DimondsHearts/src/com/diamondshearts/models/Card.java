@@ -150,4 +150,8 @@ public class Card {
 	public void setOwner(Player owner) {
 		this.owner = owner;
 	}
+
+	public static Card draw() {
+		return new Card();		
+	}
 }

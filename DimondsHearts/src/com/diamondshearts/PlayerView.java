@@ -167,8 +167,9 @@ public class PlayerView extends View {
 					activity = (GameActivity) getContext();
 					if (card.play(playerView.getPlayer())) {
 						((ViewGroup) cardView.getParent()).removeView(cardView);
-						player.getHand().remove(card);
-						Table table = player.getTable();						
+						card.getOwner().getHand().remove(card);
+						card.setOwner(null);
+						Table table = playerView.getPlayer().getTable();						
 						table.setPlayerLastHit(playerView.getPlayer());
 						ArrayList<Card> cardPlayed = table.getCardPlayed();
 						cardPlayed.add(card);

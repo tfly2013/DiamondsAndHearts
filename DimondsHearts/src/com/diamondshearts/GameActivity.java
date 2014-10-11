@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,10 @@ public class GameActivity extends BaseGameActivity implements
 	private TextView midMessageView;
 
 	private LinearLayout cardPlayedLayout;
+	
+	private Button drawButton;
+	
+	private Button skipButton;
 
 	/** The table state of game */
 	private Table table;
@@ -92,7 +97,9 @@ public class GameActivity extends BaseGameActivity implements
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
-
+		drawButton = (Button) findViewById(R.id.draw_button);
+		skipButton = (Button) findViewById(R.id.skip_button);
+				
 		if (!table.debug)
 			checkPreGame(match);
 		updateUI();
@@ -264,7 +271,7 @@ public class GameActivity extends BaseGameActivity implements
 
 	private void loadCardPlayed() {
 		cardPlayedLayout.removeAllViews();
-		for (int i = table.getCardPlayed().size() - 1; i >= 0; i--) {
+		for (int i = 0; i < table.getCardPlayed().size(); i++) {
 			CardView cardView = new CardView(this);
 			cardView.setCard(table.getCardPlayed().get(i));
 			cardPlayedLayout.addView(cardView);
@@ -319,7 +326,15 @@ public class GameActivity extends BaseGameActivity implements
 		} else {
 			currentPlayer = table.getCurrentPlayer();
 		}
-
+		if (table.isMyTurn()){
+			drawButton.setVisibility(View.VISIBLE);
+			skipButton.setVisibility(View.VISIBLE);			
+		}
+		else {
+			drawButton.setVisibility(View.GONE);
+			skipButton.setVisibility(View.GONE);	
+		}
+		
 		// Load UI
 		loadPlayers();
 		loadCardPlayed();
@@ -343,5 +358,23 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayer = table.getPlayerById(currnetParticipantId);
 		table.setCurrentPlayer(currentPlayer);
 		table.setTurnCounter(table.getTurnCounter() + 1);
+	}
+
+	public void onDrawButtonClicked(View view) {
+		if (currentPlayer.canAfford(3)) {
+			currentPlayer.setDiamond(currentPlayer.getDiamond() - 3);
+			currentPlayer.getHand().add(Card.draw());
+			loadHands();
+			showMessage("I spend 3 diamond to draw a card.", 1000);
+		} else {
+			showMessage("I cant afford this.", 1000);
+		}
+
+	}
+
+	public void onSkipButtonClicked(View view) {
+		currentPlayer.setDiamond(currentPlayer.getDiamond() + 4);
+		finishTurn();
+		showMessage("I gain 4 diamond for skipping my turn.", 1000);
 	}
 }
