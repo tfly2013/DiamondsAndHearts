@@ -22,6 +22,9 @@ public class Table {
 	private Integer turnCounter;
 	
 	private boolean preGame;
+	
+	private ArrayList<Card> cardPlayed;
+	
 	public boolean debug;
 
 	/**
@@ -39,6 +42,7 @@ public class Table {
 	public Table(boolean debug) {
 		this.debug = debug;
 		turnCounter = 0;
+		cardPlayed = new ArrayList<Card>();
 		if (debug) {
 			players = new ArrayList<Player>();
 			for (int i = 0; i < 5; i++)
@@ -176,7 +180,7 @@ public class Table {
 	/**
 	 * @param playerTLastHit the playerTLastHit to set
 	 */
-	public void setPlayerTLastHit(Player playerTLastHit) {
+	public void setPlayerLastHit(Player playerTLastHit) {
 		this.playerTLastHit = playerTLastHit;
 	}
 	
@@ -198,15 +202,10 @@ public class Table {
 		this.preGame = pregame;
 	}
 	
-	@Override
-	public String toString() {
-		String str = "";
-		for (Player player : players){
-			str += player.getName();
-			str += ": Heart: ";
-			str += player.getHeart();
-			str += "; ";	
-		}
-		return str;
+	/**
+	 * @return the cardPlayed
+	 */
+	public ArrayList<Card> getCardPlayed() {
+		return cardPlayed;
 	}
 }

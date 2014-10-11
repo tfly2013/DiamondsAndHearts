@@ -1,5 +1,7 @@
 package com.diamondshearts;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,13 +9,13 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
+import com.diamondshearts.models.Table;
 import com.google.android.gms.common.images.ImageManager;
 
 /**
@@ -83,7 +85,7 @@ public class PlayerView extends View {
 		// create the rectangular border specifying its top, left, right, bottom
 		border = new RectF(borderWidth, borderWidth, width - borderWidth,
 				height - borderWidth);
-		
+
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
@@ -140,24 +142,7 @@ public class PlayerView extends View {
 				case DragEvent.ACTION_DROP:
 					playerView = (PlayerView) v;
 					CardView cardView = (CardView) event.getLocalState();
-					Card card = cardView.getCard();
-					Log.d("BeforePlay", player.getTable().toString());
-					if (card.play(playerView.getPlayer())) {
-						ViewGroup hand = (ViewGroup) cardView.getParent();
-						hand.removeView(cardView);
-						player.getHand().remove(card);
-						player.getTable().setPlayerTLastHit(
-								playerView.getPlayer());
-						if (getContext().getClass() == GameActivity.class)
-							((GameActivity) getContext()).finishTurn();
-					} else {
-						if (getContext().getClass() == GameActivity.class)
-							((GameActivity) getContext()).showMessage(
-									"I cant play like that.", 1000);
-					}
-					playerView.resetColor();
-					Log.d("AfterPlay", player.getTable().toString());
-					v.invalidate();
+					onDrop(playerView, cardView);
 					return true;
 					// Signals to a View that the drag and drop operation has
 					// concluded.
@@ -170,44 +155,34 @@ public class PlayerView extends View {
 				}
 				return false;
 			}
+
+			/**
+			 * @param playerView
+			 * @param cardView
+			 */
+			private void onDrop(PlayerView playerView, CardView cardView) {
+				GameActivity activity = null;
+				Card card = cardView.getCard();
+				if (getContext().getClass() == GameActivity.class) {
+					activity = (GameActivity) getContext();
+					if (card.play(playerView.getPlayer())) {
+						((ViewGroup) cardView.getParent()).removeView(cardView);
+						player.getHand().remove(card);
+						Table table = player.getTable();						
+						table.setPlayerLastHit(playerView.getPlayer());
+						ArrayList<Card> cardPlayed = table.getCardPlayed();
+						cardPlayed.add(card);
+						if (cardPlayed.size() > 10)
+							cardPlayed.remove(0);
+						activity.finishTurn();
+					} else {
+						activity.showMessage("I cant play like that.", 1000);
+					}
+					playerView.resetColor();
+					playerView.invalidate();
+				}
+			}
 		});
-	}
-
-	public void resetColor() {
-		if (player.getTable().isPlayerLastHit(player))
-			setBorderColor(0xFF33B5E5);
-		else if (player.getTable().isPlayerTurn(player))
-			setBorderColor(Color.RED);
-		else
-			setBorderColor(Color.TRANSPARENT);
-	}
-
-	/**
-	 * Change the background Color of player view
-	 * 
-	 * @param color
-	 *            The background color
-	 */
-	public void setBorderColor(int color) {
-		borderColor = color;
-		if (color == Color.TRANSPARENT)
-			textColor = Color.BLACK;
-		else
-			textColor = color;
-	}
-
-	@Override
-	/**
-	 * Called to determine the size requirements for this view and all of its children.
-	 * @param widthMeasureSpec
-	 * 						 The width requirement
-	 * @param heightMeasureSpec
-	 * 						 The height requirement
-	 * */
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
-				resolveSize(height, heightMeasureSpec));
 	}
 
 	@Override
@@ -225,7 +200,7 @@ public class PlayerView extends View {
 		float imageLeft = 6 * density;
 		float imageRight = 56 * density;
 		float imageBottom = 74 * density;
-		
+
 		if (playerImage == null)
 			playerImage = getResources().getDrawable(R.drawable.photo);
 		playerImage.setBounds((int) imageLeft, (int) imageTop,
@@ -256,6 +231,29 @@ public class PlayerView extends View {
 		}
 	}
 
+	@Override
+	/**
+	 * Called to determine the size requirements for this view and all of its children.
+	 * @param widthMeasureSpec
+	 * 						 The width requirement
+	 * @param heightMeasureSpec
+	 * 						 The height requirement
+	 * */
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
+				resolveSize(height, heightMeasureSpec));
+	}
+
+	/**
+	 * Access the player
+	 * 
+	 * @return player The player
+	 * */
+	public Player getPlayer() {
+		return player;
+	}
+
 	/**
 	 * Return the text width of a string
 	 * 
@@ -273,13 +271,27 @@ public class PlayerView extends View {
 		return totalWidth;
 	}
 
+	public void resetColor() {
+		if (player.getTable().isPlayerLastHit(player))
+			setBorderColor(0xFF33B5E5);
+		else if (player.getTable().isPlayerTurn(player))
+			setBorderColor(Color.RED);
+		else
+			setBorderColor(Color.TRANSPARENT);
+	}
+
 	/**
-	 * Access the player
+	 * Change the background Color of player view
 	 * 
-	 * @return player The player
-	 * */
-	public Player getPlayer() {
-		return player;
+	 * @param color
+	 *            The background color
+	 */
+	public void setBorderColor(int color) {
+		borderColor = color;
+		if (color == Color.TRANSPARENT)
+			textColor = Color.BLACK;
+		else
+			textColor = color;
 	}
 
 	/**

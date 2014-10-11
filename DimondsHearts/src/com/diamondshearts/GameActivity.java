@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,6 +41,8 @@ public class GameActivity extends BaseGameActivity implements
 
 	/** The text view to show round */
 	private TextView midMessageView;
+
+	private LinearLayout cardPlayedLayout;
 
 	/** The table state of game */
 	private Table table;
@@ -90,34 +91,24 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
+		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 
 		checkPreGame(match);
-		loadUI();
+		updateUI();
 	}
 
-	/**
-	 * Load player views for players, card views for current player's hand and
-	 * show round view too.
-	 */
-	private void loadUI() {
-		if (!table.debug) {
-			updateTable(playerId);
-		} else {
-			currentPlayer = table.getCurrentPlayer();
+	public void finishTurn() {
+		if (table.debug) {
+			finish();
+			return;
 		}
-
-		// Load UI
+		String nextParticipantId = table.getNextParticipantId();
+		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
-		loadHands();
-		if (table.isPreGame())
-			showPreGameMessage();
-		else
-			showMessage("Round " + table.getRound(), 2000);
-	}
-
-	private void showPreGameMessage() {
-		midMessageView.setVisibility(View.VISIBLE);
-		midMessageView.setText("Waiting for players...");
+		loadCardPlayed();
+		// Update a match with new turn data
+		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
+				xStream.toXML(table).getBytes(), nextParticipantId);
 	}
 
 	@Override
@@ -160,21 +151,6 @@ public class GameActivity extends BaseGameActivity implements
 		alertDialogBuilder.show();
 	}
 
-	public void finishTurn() {
-		if (table.debug) {
-			finish();
-			return;
-		}
-		String nextParticipantId = table.getNextParticipantId();
-		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
-		loadPlayers();
-
-		Log.d("TurnFinished", table.toString());
-		// Update a match with new turn data
-		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
-				xStream.toXML(table).getBytes(), nextParticipantId);
-	}
-
 	@Override
 	public void onSignInFailed() {
 		showWarning("Sign in failed",
@@ -186,6 +162,112 @@ public class GameActivity extends BaseGameActivity implements
 	public void onSignInSucceeded() {
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
+	}
+
+	@Override
+	/**
+	 * Callback invoked when a new update to a match arrives.
+	 * @param match
+	 * 			  The match that was received
+	 */
+	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
+		this.match = match;
+		String tableData = new String(match.getData());
+		table = (Table) xStream.fromXML(tableData);
+		checkPreGame(match);
+		updateUI();
+	}
+
+	@Override
+	/**
+	 * Callback invoked when a match has been removed from the local device.
+	 * @param arg0
+	 * 			  The ID of the match that has been removed
+	 */
+	public void onTurnBasedMatchRemoved(String arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void showMessage(String string, long duration) {
+		midMessageView.setVisibility(View.VISIBLE);
+		midMessageView.setAlpha(0);
+		midMessageView.setText(string);
+		midMessageView.animate().alpha(1).setDuration(1000)
+				.setListener(new AnimatorListenerAdapter() {
+					@Override
+					public void onAnimationEnd(Animator animation) {
+						midMessageView.animate().alpha(0).setDuration(1000)
+								.setStartDelay(1000)
+								.setListener(new AnimatorListenerAdapter() {
+									@Override
+									public void onAnimationEnd(
+											Animator animation) {
+										midMessageView.setVisibility(View.GONE);
+									}
+								});
+					}
+				});
+	}
+
+	/**
+	 * Show a Warning dialog.
+	 * 
+	 * @param title
+	 *            The title of the dialog.
+	 * @param message
+	 *            The message to show in the dialog.
+	 */
+	public void showWarning(String title, String message) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+		// set title
+		alertDialogBuilder.setTitle(title).setMessage(message);
+
+		// set dialog message
+		alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int id) {
+						// if this button is clicked, maybe close current
+						// activity
+					}
+				});
+
+		// create and show alert dialog
+		alertDialogBuilder.create().show();
+	}
+
+	/**
+	 * @param match
+	 */
+	private void checkPreGame(TurnBasedMatch match) {
+		if (match.getAvailableAutoMatchSlots() > 0) {
+			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
+					match.getMatchId(), match.getData(), null);
+		} else if (table.isPreGame()) {
+			if (isAllPlayersJoined(match))
+				table.setPreGame(false);
+		}
+	}
+
+	private boolean isAllPlayersJoined(TurnBasedMatch match) {
+		for (Participant participant : match.getParticipants()) {
+			int status = participant.getStatus();
+			if (status == Participant.STATUS_INVITED) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void loadCardPlayed() {
+		cardPlayedLayout.removeAllViews();
+		for (int i = table.getCardPlayed().size() - 1; i >= 0; i--) {
+			CardView cardView = new CardView(this);
+			cardView.setCard(table.getCardPlayed().get(i));
+			cardPlayedLayout.addView(cardView);
+		}
 	}
 
 	/**
@@ -227,6 +309,28 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * Load player views for players, card views for current player's hand and
+	 * show round view too.
+	 */
+	private void updateUI() {
+		if (!table.debug) {
+			updateTable(playerId);
+		} else {
+			currentPlayer = table.getCurrentPlayer();
+		}
+
+		// Load UI
+		loadPlayers();
+		loadCardPlayed();
+		loadHands();
+		if (table.isPreGame()) {
+			midMessageView.setVisibility(View.VISIBLE);
+			midMessageView.setText("Waiting for players...");
+		} else
+			showMessage("Round " + table.getRound(), 2000);
+	}
+
+	/**
 	 * Table setup. Set the current player on table and update turn counter.
 	 * 
 	 * @param playerId
@@ -238,104 +342,5 @@ public class GameActivity extends BaseGameActivity implements
 		currentPlayer = table.getPlayerById(currnetParticipantId);
 		table.setCurrentPlayer(currentPlayer);
 		table.setTurnCounter(table.getTurnCounter() + 1);
-	}
-
-	@Override
-	/**
-	 * Callback invoked when a new update to a match arrives.
-	 * @param match
-	 * 			  The match that was received
-	 */
-	public void onTurnBasedMatchReceived(TurnBasedMatch match) {
-		this.match = match;
-		String tableData = new String(match.getData());
-		table = (Table) xStream.fromXML(tableData);
-		Log.d("JustReceived", table.toString());
-		checkPreGame(match);
-		loadUI();
-		Log.d("AfterLoadUI", table.toString());
-	}
-
-	/**
-	 * @param match
-	 */
-	private void checkPreGame(TurnBasedMatch match) {
-		if (match.getAvailableAutoMatchSlots() > 0) {
-			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
-					match.getMatchId(), match.getData(), null);
-		} else if (table.isPreGame()) {
-			if (isAllPlayersJoined(match))
-				table.setPreGame(false);
-		}
-	}
-
-	private boolean isAllPlayersJoined(TurnBasedMatch match) {
-		for (Participant participant : match.getParticipants()) {
-			int status = participant.getStatus();
-			if (status == Participant.STATUS_INVITED) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	/**
-	 * Callback invoked when a match has been removed from the local device.
-	 * @param arg0
-	 * 			  The ID of the match that has been removed
-	 */
-	public void onTurnBasedMatchRemoved(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * Show a Warning dialog.
-	 * 
-	 * @param title
-	 *            The title of the dialog.
-	 * @param message
-	 *            The message to show in the dialog.
-	 */
-	public void showWarning(String title, String message) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		// set title
-		alertDialogBuilder.setTitle(title).setMessage(message);
-
-		// set dialog message
-		alertDialogBuilder.setCancelable(false).setPositiveButton("OK",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int id) {
-						// if this button is clicked, maybe close current
-						// activity
-					}
-				});
-
-		// create and show alert dialog
-		alertDialogBuilder.create().show();
-	}
-
-	public void showMessage(String string, long duration) {
-		midMessageView.setVisibility(View.VISIBLE);
-		midMessageView.setAlpha(0);
-		midMessageView.setText(string);
-		midMessageView.animate().alpha(1).setDuration(1000)
-				.setListener(new AnimatorListenerAdapter() {
-					@Override
-					public void onAnimationEnd(Animator animation) {
-						midMessageView.animate().alpha(0).setDuration(1000)
-								.setStartDelay(1000)
-								.setListener(new AnimatorListenerAdapter() {
-									@Override
-									public void onAnimationEnd(
-											Animator animation) {
-										midMessageView.setVisibility(View.GONE);
-									}
-								});
-					}
-				});
 	}
 }
