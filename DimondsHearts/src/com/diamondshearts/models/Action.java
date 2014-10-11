@@ -20,6 +20,9 @@ public class Action {
 	/**
 	 * Initialize a action
 	 * */
+	
+	public Action(){}
+	
 	public Action(ArrayList<Suit> suits) {
 		// select a suit based on the given distribution
 		int choice = gen.nextInt(suits.size());

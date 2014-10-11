@@ -73,7 +73,5 @@ public class Event {
 	 * 				The targeted opponent
 	 * */
 	public void play(Player owner, Player target) {
-		// TODO Auto-generated method stub
-		
 	}
 }

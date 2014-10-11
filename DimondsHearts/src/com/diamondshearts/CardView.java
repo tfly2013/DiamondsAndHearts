@@ -83,7 +83,7 @@ public class CardView extends View {
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
-		textHeight = 14 * getResources().getDisplayMetrics().scaledDensity;
+		textHeight = 12 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
 
 		// Initialize background paint

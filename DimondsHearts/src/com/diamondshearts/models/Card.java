@@ -13,8 +13,6 @@ public class Card {
 	private static Random gen = new Random();
 	/** Owner of cards */
 	private Player owner;
-	/** Cost according to action rank */
-	private Integer cost;
 
 	/** Lists of actions and events initialized */
 	private HashSet<Action> actions = new HashSet<Action>();
@@ -47,11 +45,6 @@ public class Card {
 		while (events.size() < eventsCount)
 			events.add(new Event());
 
-		cost = 0;
-		for (Action action : getActions()) {
-			if (action.getSuit() == Suit.Diamond)
-				cost = action.getRank();
-		}
 	}
 
 	/**
@@ -60,7 +53,11 @@ public class Card {
 	 * @return cost
 	 * */
 	public Integer getCost() {
-		return cost;
+		for (Action action : getActions()) {
+			if (action.getSuit() == Suit.Diamond)
+				return action.getRank();
+		}
+		return 0;
 	}
 
 	/**

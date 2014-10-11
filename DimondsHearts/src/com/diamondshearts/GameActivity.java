@@ -44,16 +44,13 @@ public class GameActivity extends BaseGameActivity implements
 	private TextView midMessageView;
 
 	private LinearLayout cardPlayedLayout;
-	
+
 	private Button drawButton;
-	
+
 	private Button skipButton;
 
 	/** The table state of game */
 	private Table table;
-
-	/** The player */
-	private String playerId;
 
 	/** Current Player */
 	private Player currentPlayer;
@@ -72,24 +69,6 @@ public class GameActivity extends BaseGameActivity implements
 		super.onCreate(b);
 		setContentView(R.layout.activity_game);
 
-		// Retrieve match data from MainActivity
-		xStream = new XStream();
-		xStream.alias("table", Table.class);
-		String matchKey = "com.diamondshearts.match";
-		if (getIntent().hasExtra(matchKey)
-				&& (match = getIntent().getParcelableExtra(matchKey)) != null) {
-			String tableData = new String(match.getData());
-			table = (Table) xStream.fromXML(tableData);
-		} else {
-			// Table for debugging
-			table = new Table(true);
-		}
-		// Retrieve current logged in player Id
-		playerId = null;
-		String playerIdKey = "com.diamondshearts.playerid";
-		if (getIntent().hasExtra(playerIdKey))
-			playerId = getIntent().getStringExtra(playerIdKey);
-
 		// Set up layouts
 		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
 		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
@@ -99,10 +78,6 @@ public class GameActivity extends BaseGameActivity implements
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
-				
-		if (!table.debug)
-			checkPreGame(match);
-		updateUI();
 	}
 
 	public void finishTurn() {
@@ -170,6 +145,23 @@ public class GameActivity extends BaseGameActivity implements
 	public void onSignInSucceeded() {
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
+
+		// Retrieve match data from MainActivity
+		xStream = new XStream();
+		xStream.alias("table", Table.class);
+		String matchKey = "com.diamondshearts.match";
+		if (getIntent().hasExtra(matchKey)
+				&& (match = getIntent().getParcelableExtra(matchKey)) != null) {
+			String tableData = new String(match.getData());
+			table = (Table) xStream.fromXML(tableData);
+		} else {
+			// Table for debugging
+			table = new Table(true);
+		}
+		// Retrieve current logged in player Id
+		if (!table.debug)
+			checkPreGame(match);
+		updateUI();
 	}
 
 	@Override
@@ -256,6 +248,11 @@ public class GameActivity extends BaseGameActivity implements
 		} else if (table.isPreGame()) {
 			if (isAllPlayersJoined(match))
 				table.setPreGame(false);
+			String nextParticipantId = table.getNextParticipantId();
+			table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
+			Games.TurnBasedMultiplayer.takeTurn(getApiClient(),
+					match.getMatchId(), xStream.toXML(table).getBytes(),
+					nextParticipantId);
 		}
 	}
 
@@ -322,19 +319,22 @@ public class GameActivity extends BaseGameActivity implements
 	 */
 	private void updateUI() {
 		if (!table.debug) {
-			updateTable(playerId);
+			String currnetParticipantId = match.getParticipantId(Games.Players
+					.getCurrentPlayerId(getApiClient()));
+			currentPlayer = table.getPlayerById(currnetParticipantId);
+			table.setCurrentPlayer(currentPlayer);
+			table.setTurnCounter(table.getTurnCounter() + 1);
 		} else {
 			currentPlayer = table.getCurrentPlayer();
 		}
-		if (table.isMyTurn()){
+		if (table.isMyTurn()) {
 			drawButton.setVisibility(View.VISIBLE);
 			skipButton.setVisibility(View.VISIBLE);			
-		}
-		else {
+		} else {
 			drawButton.setVisibility(View.GONE);
-			skipButton.setVisibility(View.GONE);	
+			skipButton.setVisibility(View.GONE);
 		}
-		
+
 		// Load UI
 		loadPlayers();
 		loadCardPlayed();
@@ -344,20 +344,6 @@ public class GameActivity extends BaseGameActivity implements
 			midMessageView.setText("Waiting for players...");
 		} else
 			showMessage("Round " + table.getRound(), 2000);
-	}
-
-	/**
-	 * Table setup. Set the current player on table and update turn counter.
-	 * 
-	 * @param playerId
-	 *            The player ID
-	 */
-	private void updateTable(String playerId) {
-		// Set current player
-		String currnetParticipantId = match.getParticipantId(playerId);
-		currentPlayer = table.getPlayerById(currnetParticipantId);
-		table.setCurrentPlayer(currentPlayer);
-		table.setTurnCounter(table.getTurnCounter() + 1);
 	}
 
 	public void onDrawButtonClicked(View view) {
