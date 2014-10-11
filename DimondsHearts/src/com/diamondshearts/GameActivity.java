@@ -93,7 +93,8 @@ public class GameActivity extends BaseGameActivity implements
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 
-		checkPreGame(match);
+		if (!table.debug)
+			checkPreGame(match);
 		updateUI();
 	}
 
