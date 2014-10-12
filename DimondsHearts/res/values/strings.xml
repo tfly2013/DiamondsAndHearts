@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="next_turn_">Next turn</string>
-    <string name="instruction">Welcome to the Diamonds&amp;Hearts!\nThis is network-only, so you\'ll need to log in to play!</string>
+    <string name="instruction">Welcome!Please sign in!</string>
     <string name="match_instructions">Type in a new word for the data in this game, then hit done.</string>
     <string name="continue_str">Continue</string>
     <string name="guesser_prompt">This has not been set.</string>

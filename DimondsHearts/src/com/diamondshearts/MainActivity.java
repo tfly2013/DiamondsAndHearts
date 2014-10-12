@@ -90,8 +90,6 @@ public class MainActivity extends BaseGameActivity implements
 					@Override
 					public void onClick(View v) {
 						beginUserInitiatedSignIn();
-						findViewById(R.id.sign_in_button).setVisibility(
-								View.GONE);
 
 					}
 				});
