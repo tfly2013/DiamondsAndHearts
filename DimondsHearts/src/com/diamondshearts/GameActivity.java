@@ -25,7 +25,7 @@ import com.thoughtworks.xstream.XStream;
  * GameActivity handles the player views, card views, round views, the layouts
  * as well as how to exit a game and how to finish a game
  * 
- * @author Fei Tang & Kimple Ke(co-author)
+ * @author Fei Tang & Kimple Ke
  * */
 public class GameActivity extends BaseGameActivity implements
 		OnTurnBasedMatchUpdateReceivedListener {
@@ -65,6 +65,8 @@ public class GameActivity extends BaseGameActivity implements
 	@Override
 	/**
 	 * Initialize the activity and match data.
+	 * @param b
+	 * 		   The bundle
 	 */
 	protected void onCreate(Bundle b) {
 		super.onCreate(b);
@@ -79,9 +81,11 @@ public class GameActivity extends BaseGameActivity implements
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
-		
 	}
 
+	/**
+	 * Called when a turn is finish
+	 * */
 	public void finishTurn() {
 		if (table.debug) {
 			finish();
@@ -150,6 +154,9 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * Show warning for failing sign-in
+	 * */
 	public void onSignInFailed() {
 		showWarning("Sign in failed",
 				"Something wrong with your authentication, please sign in again.");
@@ -157,6 +164,9 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * Sign-in succeeded, and update match
+	 * */
 	public void onSignInSucceeded() {
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
@@ -203,6 +213,13 @@ public class GameActivity extends BaseGameActivity implements
 
 	}
 
+	/**
+	 * Animating a message for a while in game activity
+	 * @param string
+	 * 				The message to display
+	 * @param duration
+	 * 				Time period
+	 * */
 	public void showMessage(String string, long duration) {
 		midMessageView.setVisibility(View.VISIBLE);
 		midMessageView.setAlpha(0);
@@ -253,7 +270,10 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * Check if all players joined, if so, set the current player to
+	 * to take turn and start the game.
 	 * @param match
+	 * 			  The turn based match
 	 */
 	private void checkPreGame(TurnBasedMatch match) {
 		if (match.getAvailableAutoMatchSlots() > 0) {
@@ -270,6 +290,13 @@ public class GameActivity extends BaseGameActivity implements
 		}
 	}
 
+	/**
+	 * Check if all players have joined the game
+	 * @param match
+	 * 			   Turn base match
+	 * @return false/true
+	 * 			   True if all players joined
+	 * */
 	private boolean isAllPlayersJoined(TurnBasedMatch match) {
 		for (Participant participant : match.getParticipants()) {
 			int status = participant.getStatus();
@@ -280,6 +307,9 @@ public class GameActivity extends BaseGameActivity implements
 		return true;
 	}
 
+	/**
+	 * Load all cards have been played and add them into cardPlayedLayout
+	 * */
 	private void loadCardPlayed() {
 		cardPlayedLayout.removeAllViews();
 		for (int i = 0; i < table.getCardPlayed().size(); i++) {
@@ -366,6 +396,11 @@ public class GameActivity extends BaseGameActivity implements
 			showMessage("Round " + table.getRound(), 2000);
 	}
 
+	/**
+	 * Press draw button to buy a card
+	 * @param view
+	 * 			  The view pressed
+	 * */
 	public void onDrawButtonClicked(View view) {
 		if (currentPlayer.canAfford(3)) {
 			currentPlayer.setDiamond(currentPlayer.getDiamond() - 3);
@@ -377,6 +412,11 @@ public class GameActivity extends BaseGameActivity implements
 		}
 	}
 
+	/**
+	 * Press skip button to skip a turn
+	 * @param view
+	 * 			  The view pressed 
+	 * */
 	public void onSkipButtonClicked(View view) {
 		currentPlayer.setDiamond(currentPlayer.getDiamond() + 4);
 		finishTurn();

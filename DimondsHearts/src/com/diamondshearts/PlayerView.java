@@ -272,6 +272,9 @@ public class PlayerView extends View {
 		return totalWidth;
 	}
 
+	/**
+	 * Reset color for player view
+	 * */
 	public void resetColor() {
 		if (player.getTable().isPlayerLastHit(player))
 			setBorderColor(0xFF33B5E5);
