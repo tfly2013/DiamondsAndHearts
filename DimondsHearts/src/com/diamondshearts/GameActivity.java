@@ -78,6 +78,7 @@ public class GameActivity extends BaseGameActivity implements
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
+		
 	}
 
 	public void finishTurn() {
