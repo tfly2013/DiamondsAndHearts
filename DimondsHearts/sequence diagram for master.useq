@@ -1,28 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sequence-diagram version="1.1.6" icons="true" automaticImage="PNG">  
-  <object id="1" language="java" name="com.diamondshearts.GameActivity" project="MainActivity" 
+  <object id="1" language="java" name="com.diamondshearts.MainActivity" project="MainActivity" 
+    file="/MainActivity/src/com/diamondshearts/MainActivity.java" binary="false" label="mainActivity" type="class" 
+    autoSize="true">    
+    <position height="-1" width="-1" x="268" y="0"/>    
+    <execution id="2">      
+      <position height="84" width="94" x="5" y="78"/>    
+    </execution>    
+    <execution id="4">      
+      <position height="21" width="94" x="5" y="120"/>    
+    </execution>    
+    <execution id="5">      
+      <position height="175" width="94" x="5" y="118"/>    
+    </execution>    
+    <execution id="7">      
+      <position height="112" width="94" x="5" y="160"/>    
+    </execution>    
+    <execution id="9">      
+      <position height="51" width="7" x="52" y="200"/>    
+    </execution>  
+  </object>  
+  <object id="12" language="java" name="com.diamondshearts.GameActivity" project="MainActivity" 
     file="/MainActivity/src/com/diamondshearts/GameActivity.java" binary="false" label="gameActivity" type="class" 
     autoSize="true">    
     <position height="-1" width="-1" x="345" y="0"/>    
-    <execution id="2">      
-      <position height="84" width="97" x="5" y="173"/>    
+    <execution id="13">      
+      <position height="147" width="97" x="5" y="206"/>    
     </execution>    
-    <execution id="4">      
-      <position height="21" width="97" x="5" y="215"/>    
+    <execution id="15">      
+      <position height="84" width="97" x="5" y="248"/>    
     </execution>    
-    <execution id="5">      
-      <position height="84" width="97" x="5" y="78"/>    
+    <execution id="11">      
+      <position height="21" width="97" x="103" y="209"/>    
     </execution>    
-    <execution id="7">      
-      <position height="21" width="97" x="5" y="120"/>    
+    <execution id="17">      
+      <position height="21" width="7" x="148" y="290"/>    
     </execution>  
   </object>  
-  <message id="3" operation="onSignInSucceeded():void">    
+  <message id="3" operation="onCreate(android.os.Bundle):void" x="62" y="78">    
     <end type="SOURCE" refId="2"/>    
     <end type="TARGET" refId="4"/>  
   </message>  
-  <message id="6" operation="onCreate(android.os.Bundle):void">    
+  <message id="6" operation="onNewGameClicked(android.view.View):void" x="66" y="122">    
     <end type="SOURCE" refId="5"/>    
     <end type="TARGET" refId="7"/>  
+  </message>  
+  <message id="8" operation="onActivityResult(int,int,android.content.Intent):void">    
+    <end type="SOURCE" refId="7"/>    
+    <end type="TARGET" refId="9"/>  
+  </message>  
+  <message id="10">    
+    <end type="SOURCE" refId="9"/>    
+    <end type="TARGET" refId="11"/>  
+  </message>  
+  <message id="14" operation="onCreate(android.os.Bundle):void">    
+    <end type="SOURCE" refId="13"/>    
+    <end type="TARGET" refId="15"/>  
+  </message>  
+  <message id="16" operation="onSignInSucceeded():void">    
+    <end type="SOURCE" refId="15"/>    
+    <end type="TARGET" refId="17"/>  
   </message>
 </sequence-diagram>

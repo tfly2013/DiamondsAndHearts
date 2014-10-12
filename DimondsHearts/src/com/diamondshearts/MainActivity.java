@@ -210,6 +210,9 @@ public class MainActivity extends BaseGameActivity implements
 		checkGames();
 	}
 
+	/**
+	 * Check all concurrent and ongoing games
+	 * */
 	public void checkGames() {
 		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
 		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
@@ -218,6 +221,8 @@ public class MainActivity extends BaseGameActivity implements
 	@Override
 	/**
 	 * Handle notification when a invitation is arrived.
+	 * @param invitation
+	 * 				    Invitation received
 	 */
 	public void onInvitationReceived(final Invitation invitation) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -260,6 +265,8 @@ public class MainActivity extends BaseGameActivity implements
 	@Override
 	/**
 	 * Handle notification when a invitation is removed.
+	 * @param invitationId
+	 * 					  The id of an invitation
 	 */
 	public void onInvitationRemoved(String invitationId) {
 		Toast.makeText(this, "An invitation was removed.", TOAST_DELAY).show();
@@ -347,6 +354,11 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * All others have finished their turns, a updated turn received
+	 * @param match
+	 * 			   The updated turn based match
+	 * */
 	public void onTurnBasedMatchReceived(final TurnBasedMatch match) {
 		String tableData = new String(match.getData());
 		Table table = (Table) xStream.fromXML(tableData);
@@ -381,6 +393,11 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	@Override
+	/**
+	 * The turn based match is removed
+	 * @param string
+	 * 				The message
+	 * */
 	public void onTurnBasedMatchRemoved(String string) {
 		Toast.makeText(this, "An match was removed.", TOAST_DELAY).show();
 	}
@@ -586,22 +603,6 @@ public class MainActivity extends BaseGameActivity implements
 		initiateMatch(match);
 	}
 
-	//
-	// /**
-	// * Handle server result when player update a match.
-	// *
-	// * @param result
-	// * Result from server.
-	// */
-	// private void processResult(TurnBasedMultiplayer.UpdateMatchResult result)
-	// {
-	// TurnBasedMatch match = result.getMatch();
-	// dismissSpinner();
-	// if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-	// return;
-	// }
-	// }
-
 	/**
 	 * Set menu visibility base on user sign in and sign out
 	 */
@@ -678,7 +679,9 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * display game ui
 	 * @param match
+	 * 			   The turn based match
 	 */
 	private void showGameUI(TurnBasedMatch match) {
 		Intent intent = new Intent(this, GameActivity.class);

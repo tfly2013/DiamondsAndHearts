@@ -66,6 +66,7 @@ public enum Suit {
 	}
 
 	/**
+	 * Access the value coefficient
 	 * @return the valueCoefficient
 	 */
 	public double getValueCoefficient() {
@@ -73,6 +74,7 @@ public enum Suit {
 	}
 
 	/**
+	 * Modify the value coefficient
 	 * @param valueCoefficient the valueCoefficient to set
 	 */
 	public void setValueCoefficient(double valueCoefficient) {

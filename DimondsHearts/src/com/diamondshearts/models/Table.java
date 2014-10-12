@@ -10,19 +10,17 @@ public class Table {
 	private Player currentPlayer;
 	/**The list of players*/
 	private ArrayList<Player> players;
-	//plays this turn
+	/**Player plays this turn*/
 	private Player playerThisTurn;
-	
+	/**Player who was hit*/
 	private Player playerTLastHit;
-	
-	//the number of diamonds
+	/**the number of diamonds on the table*/
 	private Integer diamond;
-
 	/**Counting number of turns have occurred*/
 	private Integer turnCounter;
-	
+	/**Pregame boolean*/
 	private boolean preGame;
-	
+	/**All cards have been played since the game starts*/
 	private ArrayList<Card> cardPlayed;
 	
 	public boolean debug;
@@ -148,6 +146,7 @@ public class Table {
 	}
 
 	/**
+	 * Access the player of this turn
 	 * @return the playerThisTurn
 	 */
 	public Player getPlayerThisTurn() {
@@ -155,12 +154,20 @@ public class Table {
 	}
 
 	/**
+	 * Modify the player in this turn
 	 * @param playerThisTurn the playerThisTurn to set
 	 */
 	public void setPlayerThisTurn(Player playerThisTurn) {
 		this.playerThisTurn = playerThisTurn;
 	}
 	
+	/**
+	 * Map player id to the player
+	 * @param id
+	 * 			The player's id
+	 * @return player
+	 * 			The corresponding player
+	 * */
 	public Player getPlayerById(String id){
 		for (Player player : players) {
 			if (player.getId().equals(id))
@@ -169,41 +176,63 @@ public class Table {
 		return null;
 	}
 	
+	/**
+	 * Check if it is the current player's turn
+	 * @return true/false
+	 * 					This might be the current player's turn
+	 * */
 	public boolean isMyTurn(){		
 		return isPlayerTurn(currentPlayer);
 	}
 	
+	/**
+	 * Check if it is the player's turn
+	 * @param player
+	 * 				The player
+	 * */
 	public boolean isPlayerTurn(Player player){
 		return !preGame && player.equals(playerThisTurn);
 	}
 
 	/**
+	 * Modify the last player who was hit
 	 * @param playerTLastHit the playerTLastHit to set
 	 */
 	public void setPlayerLastHit(Player playerTLastHit) {
 		this.playerTLastHit = playerTLastHit;
 	}
 	
+	/**
+	 * Get the player who was hit from last turn
+	 * @param player	
+	 * 			    The player
+	 * */
 	public boolean isPlayerLastHit(Player player){		
 		return player.equals(playerTLastHit);
 	}
 
 	/**
-	 * @return the pregame
+	 * Get preGame boolean
+	 * @return pregame
+	 * 				the pregame
 	 */
 	public boolean isPreGame() {
 		return preGame;
 	}
 
 	/**
-	 * @param pregame the pregame to set
+	 * Set the preGame
+	 * @param pregame 
+	 * 				The pregame to set
 	 */
 	public void setPreGame(boolean pregame) {
 		this.preGame = pregame;
 	}
 	
 	/**
+	 * Access the all cards played 
 	 * @return the cardPlayed
+	 * 						All cards played
 	 */
 	public ArrayList<Card> getCardPlayed() {
 		return cardPlayed;

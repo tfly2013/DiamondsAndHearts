@@ -18,12 +18,15 @@ public class Action {
 	private String description;
 
 	/**
-	 * Initialize a action
+	 * Empty action constructor
 	 * */
+	public Action() {}
 
-	public Action() {
-	}
-
+	/**
+	 * Initialize a action
+	 * @param suits
+	 * 			   Suits enum
+	 * */
 	public Action(ArrayList<Suit> suits) {
 		// select a suit based on the given distribution
 		int choice = gen.nextInt(suits.size());

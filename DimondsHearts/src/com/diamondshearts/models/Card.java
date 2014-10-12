@@ -18,8 +18,10 @@ public class Card {
 	private HashSet<Action> actions = new HashSet<Action>();
 	private HashSet<Event> events = new HashSet<Event>();
 
-	public Card() {
-	};
+	/**
+	 * Empty Card constructor
+	 * */
+	public Card() {};
 
 	/**
 	 * Initialize a card
@@ -129,6 +131,10 @@ public class Card {
 		return false;
 	}
 	
+	/**
+	 * Check if the play need to target
+	 * @return true/false
+	 * */
 	public boolean needTarget(){
 		for (Action action : getActions()) {
 			if (action.getSuit() == Suit.Spade)
@@ -158,6 +164,11 @@ public class Card {
 		this.owner = owner;
 	}
 
+	/**
+	 * Draw a new card
+	 * @return card
+	 * 				A new card
+	 * */
 	public static Card draw() {
 		return new Card();		
 	}

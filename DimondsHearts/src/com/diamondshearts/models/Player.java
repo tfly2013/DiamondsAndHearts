@@ -21,13 +21,14 @@ public class Player {
 	private ArrayList<Card> hand;
 	/**The table where player plays the game*/
 	private Table table;
-		
+	/**Participant in the game*/	
 	private Participant participant;
-	
+	/**EventActivated map*/
 	private EnumMap<EventType, Boolean> eventsActivated;
 	
-	
-	
+	/**
+	 * Empty player constructor
+	 * */
 	public Player(){};
 	
 	/**
@@ -235,12 +236,22 @@ public class Player {
 		return table;
 	}
 	
+	/**
+	 * Access the player image from server
+	 * @return Uri
+	 * 			  The player profile image uri
+	 * */
 	public Uri getImageUri() {
 		if (participant == null)
 			return null;
 		return participant.getIconImageUri();
 	}
 
+	/**
+	 * A data structure where key is various event types and values are booleans
+	 * @return eventActivated
+	 * 						A map of events might have been activated
+	 * */
 	public EnumMap<EventType, Boolean> getEventsActivated() {
 		return eventsActivated;
 	}
