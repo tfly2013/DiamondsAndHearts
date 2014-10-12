@@ -75,6 +75,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:onClick="onTestGameClicked"
                 android:text="@string/test_game" />
 
@@ -83,6 +84,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:onClick="onQuickGameClicked"
                 android:text="@string/quick_game" />
 
@@ -91,6 +93,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:onClick="onNewGameClicked"
                 android:text="@string/new_game" />
 
@@ -99,6 +102,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
                 android:onClick="onCheckGamesClicked"
                 android:text="@string/check_games" />
 

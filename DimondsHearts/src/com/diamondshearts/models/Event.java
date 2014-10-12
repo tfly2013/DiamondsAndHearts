@@ -7,12 +7,12 @@ import java.util.Random;
  * such as turn modifiers and action modifiers
  * */
 public class Event {
-	/**Random number*/
+	/** Random number */
 	private static Random gen = new Random();
-	/**Event type*/
+	/** Event type */
 	private EventType type;
 
-	/**Define statistical distribution of types*/
+	/** Define statistical distribution of types */
 	private static final EventType[] allTypes = EventType.class
 			.getEnumConstants();
 
@@ -38,7 +38,8 @@ public class Event {
 
 	/**
 	 * Access the name of event type
-	 * @return name 
+	 * 
+	 * @return name
 	 * */
 	public String getName() {
 		return type.getName();
@@ -46,6 +47,7 @@ public class Event {
 
 	/**
 	 * Access the description of event type
+	 * 
 	 * @return description
 	 * */
 	public String getDescription() {
@@ -54,6 +56,7 @@ public class Event {
 
 	/**
 	 * Access the type of a event
+	 * 
 	 * @return type
 	 * */
 	public EventType getType() {
@@ -62,20 +65,13 @@ public class Event {
 
 	/**
 	 * Play against target opponent according to event
+	 * 
 	 * @param target
-	 * 				The targeted opponent
+	 *            The targeted opponent
 	 * */
 	public void play(Player owner, Player target, Card card) {
-		//Reaction: the player’s Club does damage to target but reacts back to himself
-		if(type.equals(EventType.Reaction)){
-			for (Action action : card.getActions()){
-				if(action.getSuit() == Suit.Club){
-					owner.setHeart(owner.getHeart() - action.getRank());
-				}
-			}
-		}else{
-			//actions does not immediately happen will be recorded
-			owner.getEventsActivated().put(type, true);
-		}
+		// actions does not immediately happen will be recorded
+		owner.getEventsActivated().put(type, true);
+
 	}
 }
