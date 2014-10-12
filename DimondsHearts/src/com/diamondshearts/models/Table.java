@@ -47,7 +47,8 @@ public class Table {
 			players = new ArrayList<Player>();
 			for (int i = 0; i < 5; i++)
 				players.add(new Player(this, null));
-			currentPlayer = setPlayerThisTurn(players.get(3));		 	
+			setPlayerThisTurn(players.get(3));
+			currentPlayer = getPlayerThisTurn();
 		}
 	}
 
@@ -156,9 +157,8 @@ public class Table {
 	/**
 	 * @param playerThisTurn the playerThisTurn to set
 	 */
-	public Player setPlayerThisTurn(Player playerThisTurn) {
+	public void setPlayerThisTurn(Player playerThisTurn) {
 		this.playerThisTurn = playerThisTurn;
-		return playerThisTurn;
 	}
 	
 	public Player getPlayerById(String id){

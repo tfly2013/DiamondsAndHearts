@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.diamondshearts.models.Card;
+import com.diamondshearts.models.EventType;
 import com.diamondshearts.models.Player;
 import com.diamondshearts.models.Table;
 import com.google.android.gms.games.Games;
@@ -110,7 +111,20 @@ public class GameActivity extends BaseGameActivity implements
 			finish();
 			return;
 		}
-		String nextParticipantId = table.getNextParticipantId();
+		//Extra Turn: set the next participant the current one
+		String nextParticipantId;
+		Player playerThisTurn = table.getPlayerThisTurn(); 
+		if(!playerThisTurn.getEventsActivated().get(EventType.ExtraTurn)){
+			nextParticipantId = table.getNextParticipantId();
+		}else{
+			nextParticipantId = playerThisTurn.getId();
+			playerThisTurn.getEventsActivated().put(EventType.ExtraTurn, false);
+		}
+		//Extra Card: obtain an extra card at end of the turn
+		if(playerThisTurn.getEventsActivated().get(EventType.ExtraCard)){
+			playerThisTurn.getHand().add(Card.draw());
+			playerThisTurn.getEventsActivated().put(EventType.ExtraCard, false);
+		}
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		loadPlayers();
 		loadCardPlayed();
@@ -170,6 +184,8 @@ public class GameActivity extends BaseGameActivity implements
 	public void onSignInSucceeded() {
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
+		
+		//if skip turn, 
 	}
 
 	@Override
@@ -328,7 +344,12 @@ public class GameActivity extends BaseGameActivity implements
 		}
 		if (table.isMyTurn()){
 			drawButton.setVisibility(View.VISIBLE);
-			skipButton.setVisibility(View.VISIBLE);			
+			skipButton.setVisibility(View.VISIBLE);
+			//Skip Turn: current player's turn is forced to be skipped
+			if(currentPlayer.getEventsActivated().get(EventType.SkipTurn)){
+				currentPlayer.getEventsActivated().put(EventType.SkipTurn, false);
+				finishTurn();
+			}
 		}
 		else {
 			drawButton.setVisibility(View.GONE);

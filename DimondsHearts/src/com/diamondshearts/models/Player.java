@@ -1,6 +1,7 @@
 package com.diamondshearts.models;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import android.net.Uri;
 
@@ -23,6 +24,8 @@ public class Player {
 		
 	private Participant participant;
 	
+	private EnumMap<EventType, Boolean> eventsActivated;
+	
 	
 	
 	public Player(){};
@@ -37,6 +40,7 @@ public class Player {
 	public Player(Table table, Participant participant) {
 		this.table = table;
 		this.participant = participant;
+		eventsActivated = new EnumMap<EventType, Boolean>(EventType.class);
 		diamond = 30;
 		heart = 20;
 		initialHand();
@@ -235,5 +239,9 @@ public class Player {
 		if (participant == null)
 			return null;
 		return participant.getIconImageUri();
+	}
+
+	public EnumMap<EventType, Boolean> getEventsActivated() {
+		return eventsActivated;
 	}
 }

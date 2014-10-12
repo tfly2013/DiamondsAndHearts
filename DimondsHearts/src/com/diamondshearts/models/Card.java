@@ -109,6 +109,16 @@ public class Card {
 	 * */
 	public boolean play(Player target) {
 		Integer cost = getCost();
+		//Barter: the players next diamond cost is halved
+		if(owner.getEventsActivated().get(EventType.Barter)){
+			cost /= 2;
+			owner.getEventsActivated().put(EventType.Barter, false);
+		}
+		//Load: the players next diamond cost is doubled
+		if(owner.getEventsActivated().get(EventType.Load)){
+			cost *= 2;
+			owner.getEventsActivated().put(EventType.Load, false);
+		}
 		if (owner.canAfford(cost)) {
 			if (needTarget() == target.equals(owner))
 				return false;
@@ -116,7 +126,7 @@ public class Card {
 			for (Action action : getActions())
 				action.play(owner, target);
 			for (Event event : getEvents())
-				event.play(owner, target);
+				event.play(owner, target, this);
 			return true;
 		}
 		return false;

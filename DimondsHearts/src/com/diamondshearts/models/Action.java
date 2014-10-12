@@ -106,19 +106,79 @@ public class Action {
 	 * */
 	public void play(Player owner, Player target) {
 		Integer power = rank;
+		boolean actionDone = false;
 		switch (suit) {
-		case Club:			
-			target.setHeart(target.getHeart() - power);
+		case Club:
+			//Strength: the player's next Club card does double damage
+			if(owner.getEventsActivated().get(EventType.Strength)){
+				target.setHeart(target.getHeart() - power * 2);
+				owner.getEventsActivated().put(EventType.Strength, false);
+				actionDone = true;
+			}
+			//Weaken: the player’s next Club card does half damage
+			if(owner.getEventsActivated().get(EventType.Weaken)){
+				target.setHeart(target.getHeart() - power / 2);
+				owner.getEventsActivated().put(EventType.Weaken, false);
+				actionDone = true;
+			}
+			//Drain: the player's next Club card steals the target’s Hearts
+			if(owner.getEventsActivated().get(EventType.Drain)){
+				target.setHeart(target.getHeart() - power);
+				owner.setHeart(owner.getHeart() + power);
+				owner.getEventsActivated().put(EventType.Drain, false);
+				actionDone = true;
+			}
+			if(!actionDone){
+				if(!target.getEventsActivated().get(EventType.Shield)){
+					target.setHeart(target.getHeart() - power);
+				}else{
+					//Shield: protect player's from next attack, no damage done
+					target.getEventsActivated().put(EventType.Shield, false);
+				}
+			}
 			break;
 		case Heart:
-			owner.setHeart(owner.getHeart() + power);
+			if(owner.getEventsActivated().get(EventType.Fortitude)){
+				//Fortitude: the player's next Heart card heals twice as much
+				owner.setHeart(owner.getHeart() + power * 2);
+				owner.getEventsActivated().put(EventType.Fortitude, false);
+				actionDone = true;
+			}
+			if(owner.getEventsActivated().get(EventType.Curse)){
+				//Curse: the player’s next Heart card will do damage instead
+				owner.setHeart(owner.getHeart() - power);
+				owner.getEventsActivated().put(EventType.Curse, false);
+				actionDone = true;
+			}
+			if(!actionDone){
+				//no event
+				owner.setHeart(owner.getHeart() + power);
+			}
 			break;
 		case Spade:
-			Integer targetDiamond = target.getDiamond();
-			if (targetDiamond < power)
-				power = targetDiamond;
-			target.setDiamond(targetDiamond - power);
-			owner.setDiamond(owner.getDiamond() + power);
+			//Guilty: the player’s next Spade card steals nothing instead
+			if(!owner.getEventsActivated().get(EventType.Guilty)){
+				//not guilty
+				Integer targetDiamond = target.getDiamond();
+				if(owner.getEventsActivated().get(EventType.Stealth)){
+					//Stealth: the player's next Spade card steals twice as
+					//much
+					power *= 2;
+					if (targetDiamond < power)
+						power = targetDiamond;
+					target.setDiamond(targetDiamond - power);
+					owner.setDiamond(owner.getDiamond() + power);
+					owner.getEventsActivated().put(EventType.Stealth, false);
+				}else{
+					//no event
+					if (targetDiamond < power)
+						power = targetDiamond;
+					target.setDiamond(targetDiamond - power);
+					owner.setDiamond(owner.getDiamond() + power);
+				}
+			}else{
+				owner.getEventsActivated().put(EventType.Guilty, false);
+			}
 			break;
 		default:
 			break;
