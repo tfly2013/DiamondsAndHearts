@@ -5,17 +5,17 @@ package com.diamondshearts.models;
  * */
 public enum Suit {
 	/**A suit could be Hearts, Clubs, Diamonds, Spades, Suit's properties*/
-	Diamond("♦", "", 3),
+	Diamond("♦", "", -1),
 	Heart("♥", "", 1),
-	Club("♣", "", 3),
-	Spade("♠", "", 1);
+	Club("♣", "", 1.4),
+	Spade("♠", "", 1.2);
 
 	/**Suit name*/
 	private String name;
 	/**Suit description*/
 	private String description;
-	/**The frequency of a suit*/
-	private Integer frequency;
+	/**The value coefficient of a suit*/
+	private double valueCoefficient;
 
 	/**
 	 * Initialize a suit
@@ -26,9 +26,9 @@ public enum Suit {
 	 * @param freq
 	 * 			  The frequency of a suit
 	 * */
-	Suit(String name, String desc, Integer freq) {
+	Suit(String name, String desc, double cofficient) {
 		this.setName(name);
-		this.setFrequency(freq);
+		this.setValueCoefficient(cofficient);
 		this.setDescription(desc);
 	}
 
@@ -66,19 +66,16 @@ public enum Suit {
 	}
 
 	/**
-	 * Access the frequency of a suit
-	 * @return frequency
-	 * */
-	public Integer getFrequency() {
-		return frequency;
+	 * @return the valueCoefficient
+	 */
+	public double getValueCoefficient() {
+		return valueCoefficient;
 	}
 
 	/**
-	 * Modify the frequency of a suit
-	 * @param frequency
-	 * 				  The frequency of a suit
-	 * */
-	public void setFrequency(Integer frequency) {
-		this.frequency = frequency;
+	 * @param valueCoefficient the valueCoefficient to set
+	 */
+	public void setValueCoefficient(double valueCoefficient) {
+		this.valueCoefficient = valueCoefficient;
 	}
 }

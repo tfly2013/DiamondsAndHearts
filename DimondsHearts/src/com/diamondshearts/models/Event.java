@@ -1,6 +1,5 @@
 package com.diamondshearts.models;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -14,21 +13,15 @@ public class Event {
 	private EventType type;
 
 	/**Define statistical distribution of types*/
-	public static final EventType[] allTypes = EventType.class
+	private static final EventType[] allTypes = EventType.class
 			.getEnumConstants();
 
 	/**
 	 * Initialize an event
 	 * */
 	public Event() {
-		// select an event based on the given distribution
-		ArrayList<EventType> selection = new ArrayList<EventType>();
-		for (int i = 0; i < allTypes.length; i++) {
-			for (int j = 0; j < allTypes[i].getFrequency(); j++)
-				selection.add(allTypes[i]);
-		}
-		int choice = gen.nextInt(selection.size());
-		type = selection.get(choice);
+		int choice = gen.nextInt(allTypes.length);
+		type = allTypes[choice];
 	}
 
 	@Override
@@ -72,8 +65,17 @@ public class Event {
 	 * @param target
 	 * 				The targeted opponent
 	 * */
-	public void play(Player target) {
-		// TODO Auto-generated method stub
-		
+	public void play(Player owner, Player target, Card card) {
+		//Reaction: the player’s Club does damage to target but reacts back to himself
+		if(type.equals(EventType.Reaction)){
+			for (Action action : card.getActions()){
+				if(action.getSuit() == Suit.Club){
+					owner.setHeart(owner.getHeart() - action.getRank());
+				}
+			}
+		}else{
+			//actions does not immediately happen will be recorded
+			owner.getEventsActivated().put(type, true);
+		}
 	}
 }

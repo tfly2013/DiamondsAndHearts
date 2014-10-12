@@ -5,11 +5,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import com.diamondshearts.models.Action;
 import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Event;
+import com.diamondshearts.models.Suit;
 
 /**
  * Custom View that contains UI of a card.
@@ -22,9 +24,6 @@ public class CardView extends View {
 
 	/** Add paint on text */
 	private Paint textPaint;
-
-	/** Add paint on border */
-	private Paint borderPaint;
 
 	/** Add paint on background */
 	private Paint backgroundPaint;
@@ -46,6 +45,8 @@ public class CardView extends View {
 
 	/** Screen density in android or dots per inch(dpi) */
 	private float density;
+
+	private Drawable cardBoarder;
 
 	/**
 	 * Initialize a card view.
@@ -71,23 +72,19 @@ public class CardView extends View {
 		height = (int) density * 120;
 
 		// adjust the border width of the player view
-		float borderWith = 2 * density;
+		float borderWidth = 2 * density;
 
 		// create the rectangular border specifying its top, left, right, bottom
-		border = new RectF(borderWith, borderWith, width - borderWith, height
-				- borderWith);
+		border = new RectF(borderWidth, borderWidth, width - borderWidth,
+				height - borderWidth);
+
+		cardBoarder = getResources().getDrawable(R.drawable.card_border);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
-		textHeight = 15 * getResources().getDisplayMetrics().scaledDensity;
+		textHeight = 14 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
-
-		// Initialize border paint
-		borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-		borderPaint.setStyle(Paint.Style.STROKE);
-		borderPaint.setTextSize(textHeight);
-		borderPaint.setStrokeWidth(borderWith);
 
 		// Initialize background paint
 		backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -141,25 +138,33 @@ public class CardView extends View {
 	 * */
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
-		// Draw background and border
+		// Draw background
 		backgroundPaint.setColor(backgroundColor);
 		canvas.drawRoundRect(border, 10 * density, 10 * density,
 				backgroundPaint);
-		canvas.drawRoundRect(border, 10 * density, 10 * density, borderPaint);
-
+		
 		// Draw actions
 		assert (card != null);
+		float actionsY = 20 * density;
 		String actions = "";
 		for (Action action : card.getActions())
 			actions += action.getSuit().getName() + action.getRank() + " ";
-		actions = actions.trim();
-
+		actions.trim();
 		float actionsX = (width - getTextWidth(actions)) / 2;
-		float actionsY = 20 * density;
-		canvas.drawText(actions, actionsX, actionsY, textPaint);
-
+		for (Action action : card.getActions()) {
+			Suit suit = action.getSuit();
+			if (suit == Suit.Club || suit == Suit.Spade)
+				textPaint.setColor(Color.BLACK);
+			else
+				textPaint.setColor(Color.RED);
+			String text = suit.getName() + action.getRank() + " ";
+			canvas.drawText(text, actionsX, actionsY, textPaint);
+			actionsX += getTextWidth(text);
+		}
+		
 		// Draw events
-		float inteval = 2 * density;
+		textPaint.setColor(Color.BLACK);
+		float inteval = 10 * density;
 		float eventHeight = (textHeight + inteval) * card.getEvents().size()
 				- inteval;
 		float eventY = (height - actionsY - textHeight - eventHeight) / 2
@@ -170,6 +175,10 @@ public class CardView extends View {
 			canvas.drawText(text, eventX, eventY, textPaint);
 			eventY += textHeight + inteval;
 		}
+
+		// Draw border
+		cardBoarder.setBounds(0, 0, width, height);
+		cardBoarder.draw(canvas);
 	}
 
 	/**

@@ -5,21 +5,22 @@
     android:layout_height="match_parent" >
 
     <HorizontalScrollView
-        android:id="@+id/horizontalScrollView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/hand_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_centerHorizontal="false"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginStart="5dp" >
+        android:background="@drawable/hand_background"
+        android:scrollbars="none" >
 
         <LinearLayout
             android:id="@+id/hand_layout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal" />
     </HorizontalScrollView>
 
@@ -27,31 +28,40 @@
         android:id="@+id/game_field_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/horizontalScrollView"
+        android:layout_above="@id/hand_scroll_view"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
         android:background="@drawable/table" >
 
         <LinearLayout
             android:id="@+id/players_up_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="horizontal" />
 
         <LinearLayout
             android:id="@+id/players_down_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_below="@id/players_up_layout"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:orientation="horizontal" />
+
+        <TextView
+            android:id="@+id/mid_message_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/players_down_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:textAppearance="@style/MainText" />
 
         <LinearLayout
             android:id="@+id/current_player_layout"
@@ -59,16 +69,53 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal" />
 
-        <TextView
-            android:id="@+id/mid_message_view"
+        <HorizontalScrollView
+            android:id="@+id/card_played_scroll_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_above="@id/current_player_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none" >
+
+            <LinearLayout
+                android:id="@+id/card_played_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/draw_button"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_gravity="center_horizontal"
-            android:textAppearance="@style/MainText" />
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
+            android:onClick="onDrawButtonClicked"
+            android:text="@string/draw"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/skip_button"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:onClick="onSkipButtonClicked"
+            android:text="@string/skip"
+            android:textSize="15sp" />
     </RelativeLayout>
 
 </RelativeLayout>

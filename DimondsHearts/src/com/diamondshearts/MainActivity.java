@@ -74,7 +74,8 @@ public class MainActivity extends BaseGameActivity implements
 		apiAgent = getApiClient();
 		xStream = new XStream();
 		xStream.alias("table", Table.class);
-
+		
+		
 		// Setup sign in and sign out button
 		findViewById(R.id.sign_out_button).setOnClickListener(
 				new View.OnClickListener() {
@@ -317,12 +318,12 @@ public class MainActivity extends BaseGameActivity implements
 	public void onSignInSucceeded() {
 		setViewVisibility();
 
-		// if (mHelper.getTurnBasedMatch() != null) {
-		// // Handle players that come from a notification click. Go striaght
-		// // into game.
-		// updateMatch(mHelper.getTurnBasedMatch());
-		// return;
-		// }
+		if (mHelper.getTurnBasedMatch() != null) {
+			// Handle players that come from a notification click. Go striaght
+			// into game.
+			updateMatch(mHelper.getTurnBasedMatch());
+			return;
+		}
 
 		// Registering this activity as a handler for invitation and match
 		// events.
@@ -532,7 +533,8 @@ public class MainActivity extends BaseGameActivity implements
 		// Set current player
 		String playerId = Games.Players.getCurrentPlayerId(apiAgent);
 		String currnetParticipantId = match.getParticipantId(playerId);
-		Player currentPlayer = new Player(table, match.getParticipant(currnetParticipantId));
+		Player currentPlayer = new Player(table,
+				match.getParticipant(currnetParticipantId));
 		table.setCurrentPlayer(currentPlayer);
 		table.setPlayerThisTurn(currentPlayer);
 
@@ -610,13 +612,15 @@ public class MainActivity extends BaseGameActivity implements
 			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 			findViewById(R.id.menu_layout).setVisibility(View.GONE);
 		}
-		// Signed in
-		((TextView) findViewById(R.id.name_field))
-				.setText(getString(R.string.welcome)
-						+ Games.Players.getCurrentPlayer(getApiClient())
-								.getDisplayName());
-		findViewById(R.id.login_layout).setVisibility(View.GONE);
-		findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
+		else {
+			// Signed in
+			((TextView) findViewById(R.id.name_field))
+					.setText(getString(R.string.welcome)
+							+ Games.Players.getCurrentPlayer(getApiClient())
+									.getDisplayName());
+			findViewById(R.id.login_layout).setVisibility(View.GONE);
+			findViewById(R.id.menu_layout).setVisibility(View.VISIBLE);
+		}
 	}
 
 	/**
