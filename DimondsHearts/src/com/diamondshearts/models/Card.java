@@ -50,6 +50,37 @@ public class Card {
 	}
 
 	/**
+	 * Given a target, act according to actions and events
+	 * 
+	 * @param target
+	 *            The target opponent
+	 * */
+	public boolean play(Player target) {
+		Integer cost = getCost();
+		//Barter: the players next diamond cost is halved
+		if(owner.getEventsActivated().get(EventType.Barter)){
+			cost /= 2;
+			owner.getEventsActivated().put(EventType.Barter, false);
+		}
+		//Load: the players next diamond cost is doubled
+		if(owner.getEventsActivated().get(EventType.Load)){
+			cost *= 2;
+			owner.getEventsActivated().put(EventType.Load, false);
+		}
+		if (owner.canAfford(cost)) {
+			if (needTarget() == target.equals(owner))
+				return false;
+			owner.setDiamond(owner.getDiamond() - cost);
+			for (Action action : getActions())
+				action.play(owner, target);
+			for (Event event : getEvents())
+				event.play(owner, target, this);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Access the cost
 	 * 
 	 * @return cost
@@ -98,37 +129,6 @@ public class Card {
 	 * */
 	public void setEvents(HashSet<Event> events) {
 		this.events = events;
-	}
-
-	/**
-	 * Given a target, act according to actions and events
-	 * 
-	 * @param target
-	 *            The target opponent
-	 * */
-	public boolean play(Player target) {
-		Integer cost = getCost();
-		//Barter: the players next diamond cost is halved
-		if(owner.getEventsActivated().get(EventType.Barter)){
-			cost /= 2;
-			owner.getEventsActivated().put(EventType.Barter, false);
-		}
-		//Load: the players next diamond cost is doubled
-		if(owner.getEventsActivated().get(EventType.Load)){
-			cost *= 2;
-			owner.getEventsActivated().put(EventType.Load, false);
-		}
-		if (owner.canAfford(cost)) {
-			if (needTarget() == target.equals(owner))
-				return false;
-			owner.setDiamond(owner.getDiamond() - cost);
-			for (Action action : getActions())
-				action.play(owner, target);
-			for (Event event : getEvents())
-				event.play(owner, target, this);
-			return true;
-		}
-		return false;
 	}
 	
 	/**
