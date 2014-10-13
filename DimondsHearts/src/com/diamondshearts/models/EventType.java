@@ -37,13 +37,6 @@ public enum EventType {
 	}
 	
 	/**
-	 * Apply the effect of event
-	 * */
-	public void ApplyEvent() {
-		//TODO
-	}
-
-	/**
 	 * Access the name
 	 * @return name
 	 */

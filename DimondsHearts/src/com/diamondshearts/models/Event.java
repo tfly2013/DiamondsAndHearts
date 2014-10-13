@@ -24,6 +24,18 @@ public class Event {
 		type = allTypes[choice];
 	}
 
+	/**
+	 * Play against target opponent according to event
+	 * 
+	 * @param target
+	 *            The targeted opponent
+	 * */
+	public void play(Player owner, Player target, Card card) {
+		// actions does not immediately happen will be recorded
+		owner.getEventsActivated().put(type, true);
+
+	}
+	
 	@Override
 	/**
 	 * Check if card has same event
@@ -61,17 +73,5 @@ public class Event {
 	 * */
 	public EventType getType() {
 		return type;
-	}
-
-	/**
-	 * Play against target opponent according to event
-	 * 
-	 * @param target
-	 *            The targeted opponent
-	 * */
-	public void play(Player owner, Player target, Card card) {
-		// actions does not immediately happen will be recorded
-		owner.getEventsActivated().put(type, true);
-
 	}
 }

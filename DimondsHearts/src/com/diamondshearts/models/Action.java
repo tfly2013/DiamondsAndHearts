@@ -39,79 +39,7 @@ public class Action {
 		choice = gen.nextInt(rankDistribution.length);
 		setRank(rankDistribution[choice]);
 	}
-
-	@Override
-	/**
-	 * Check if card has equal action
-	 * @param o
-	 * 		   Card object
-	 * @return true/false
-	 * */
-	public boolean equals(Object o) {
-		if (o.getClass() == Action.class) {
-			Action tar = (Action) o;
-			return (tar.getRank() == rank) && (tar.getSuit() == suit);
-		}
-		return false;
-	}
-
-	/**
-	 * Access the rank
-	 * 
-	 * @return rank
-	 * */
-	public Integer getRank() {
-		return rank;
-	}
-
-	/**
-	 * Modify the rank
-	 * 
-	 * @param rank
-	 *            Rank of the action
-	 * */
-	public void setRank(Integer rank) {
-		this.rank = rank;
-	}
-
-	/**
-	 * Access the suit
-	 * 
-	 * @return suit
-	 * */
-	public Suit getSuit() {
-		return suit;
-	}
-
-	/**
-	 * Modify the suit
-	 * 
-	 * @param suit
-	 *            The suit
-	 * */
-	public void setSuit(Suit suit) {
-		this.suit = suit;
-	}
-
-	/**
-	 * Access the description
-	 * 
-	 * @return description
-	 * */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Modify the description of a card
-	 * 
-	 * @param description
-	 *            The description for a card
-	 * */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
+	
 	/**
 	 * Play against target opponent according to action
 	 * 
@@ -188,5 +116,77 @@ public class Action {
 		default:
 			break;
 		}
+	}
+	
+	@Override
+	/**
+	 * Check if card has equal action
+	 * @param o
+	 * 		   Card object
+	 * @return true/false
+	 * */
+	public boolean equals(Object o) {
+		if (o.getClass() == Action.class) {
+			Action tar = (Action) o;
+			return (tar.getRank() == rank) && (tar.getSuit() == suit);
+		}
+		return false;
+	}
+
+	/**
+	 * Access the rank
+	 * 
+	 * @return rank
+	 * */
+	public Integer getRank() {
+		return rank;
+	}
+
+	/**
+	 * Modify the rank
+	 * 
+	 * @param rank
+	 *            Rank of the action
+	 * */
+	public void setRank(Integer rank) {
+		this.rank = rank;
+	}
+
+	/**
+	 * Access the suit
+	 * 
+	 * @return suit
+	 * */
+	public Suit getSuit() {
+		return suit;
+	}
+
+	/**
+	 * Modify the suit
+	 * 
+	 * @param suit
+	 *            The suit
+	 * */
+	public void setSuit(Suit suit) {
+		this.suit = suit;
+	}
+
+	/**
+	 * Access the description
+	 * 
+	 * @return description
+	 * */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Modify the description of a card
+	 * 
+	 * @param description
+	 *            The description for a card
+	 * */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

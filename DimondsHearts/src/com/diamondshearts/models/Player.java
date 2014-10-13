@@ -129,8 +129,12 @@ public class Player {
 	 * 			  The cost of card
 	 * */
 	public void drawCard(int cost) {
-		// check if the card can be afforded
-		// deduct funds and append card
+		if (!this.canAfford(cost)) {
+			return; // could not afford card
+		}
+		this.diamond -= cost;
+		this.getTable().setDiamond(this.getTable().getDiamond() + cost);
+		hand.add(new Card(this));
 	}
 
 	/**
@@ -141,57 +145,12 @@ public class Player {
 		return (heart >= amount);
 	}
 
-	/**
-	 * Hit a target
-	 * @param target
-	 * 				Target player
-	 * @param power
-	 * 				According to action and event
-	 * */
-	public void hit(Player target, int power) {
-
-	}
-
-	/**
+		/**
 	 * Check if diamond is sufficient
 	 * @return true/false
 	 * */
 	public Boolean canAfford(int amount) {
 		return (this.diamond >= amount);
-	}
-
-	/**
-	 * Rob diamond from target
-	 * @param target
-	 * 			    Target player
-	 * @param power
-	 * 				According to action and event
-	 * */
-	public void rob(Player target, int power) {
-		if (target.diamond < power) {
-			power = target.diamond;
-			target.diamond = 0;
-		} else {
-			target.diamond -= power;
-		}
-		this.diamond += power;
-		return;
-	}
-
-	/**
-	 * Pay to the table by amount
-	 * @param table
-	 * 			   The table where player is currently playing the game
-	 * @param amount
-	 * 			   The amount of diamond is paid
-	 * */
-	public void pay(Table table, int amount) {
-		if (!this.canAfford(amount)) {
-			// ERROR
-		}
-		diamond -= amount;
-		table.setDiamond(table.getDiamond() + amount);
-		return;
 	}
 
 	/**
