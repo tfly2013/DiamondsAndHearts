@@ -1,11 +1,18 @@
 package com.diamondshearts;
 
+import java.util.ArrayList;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
+import android.view.DragEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +69,16 @@ public class GameActivity extends BaseGameActivity implements
 	/** The XStream object. */
 	private XStream xStream;
 
+	private SoundPool soundPool;
+
+	private int errorSoundID;
+	private int drawSoundID;
+	private int knockSoundID;
+	private int nextTurnSoundID;
+	private int skipSoundID;
+	private int tapSoundID;
+	private int untapSoundID;
+
 	@Override
 	/**
 	 * Initialize the activity and match data.
@@ -81,6 +98,14 @@ public class GameActivity extends BaseGameActivity implements
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
+		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+		drawSoundID = soundPool.load(this, R.raw.draw, 1);
+		errorSoundID = soundPool.load(this, R.raw.error, 1);
+		knockSoundID = soundPool.load(this, R.raw.knock, 1);
+		nextTurnSoundID = soundPool.load(this, R.raw.next_turn, 1);
+		skipSoundID = soundPool.load(this, R.raw.skip, 1);
+		tapSoundID = soundPool.load(this, R.raw.tap, 1);
+		untapSoundID = soundPool.load(this, R.raw.untap, 1);
 	}
 
 	/**
@@ -202,6 +227,7 @@ public class GameActivity extends BaseGameActivity implements
 		table = (Table) xStream.fromXML(tableData);
 		checkPreGame(match);
 		checkMatchStatus(match);
+		soundPool.play(nextTurnSoundID, 1, 1, 1, 0, 1);
 		updateUI();
 	}
 
@@ -229,7 +255,6 @@ public class GameActivity extends BaseGameActivity implements
 	 * 			  The ID of the match that has been removed
 	 */
 	public void onTurnBasedMatchRemoved(String arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -365,6 +390,7 @@ public class GameActivity extends BaseGameActivity implements
 		for (Player player : table.getPlayers()) {
 			if (!player.equals(currentPlayer)) {
 				PlayerView playerView = new PlayerView(this);
+				playerView.setOnDragListener(new PlayerViewDragListener());
 				playerView.setPlayer(player);
 				if (count < 2)
 					playersUpLayout.addView(playerView);
@@ -373,7 +399,15 @@ public class GameActivity extends BaseGameActivity implements
 				count++;
 			}
 		}
+		loadCurrentPlayer();
+	}
+
+	/**
+	 * Load playerViews for current player
+	 */
+	private void loadCurrentPlayer() {
 		PlayerView currentPlayerView = new PlayerView(this);
+		currentPlayerView.setOnDragListener(new PlayerViewDragListener());
 		currentPlayerView.setPlayer(currentPlayer);
 		currentPlayerLayout.removeAllViews();
 		currentPlayerLayout.addView(currentPlayerView);
@@ -430,7 +464,9 @@ public class GameActivity extends BaseGameActivity implements
 		if (currentPlayer.canAfford(3)) {
 			currentPlayer.setDiamond(currentPlayer.getDiamond() - 3);
 			currentPlayer.getHand().add(Card.draw(currentPlayer));
+			loadCurrentPlayer();
 			loadHands();
+			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
 			showMessage("I spend 3 diamond to draw a card.", 1000);
 		} else {
 			showMessage("I cant afford this.", 1000);
@@ -445,7 +481,100 @@ public class GameActivity extends BaseGameActivity implements
 	 * */
 	public void onSkipButtonClicked(View view) {
 		currentPlayer.setDiamond(currentPlayer.getDiamond() + 4);
+		loadCurrentPlayer();
 		finishTurn();
+		soundPool.play(skipSoundID, 1, 1, 1, 0, 1);
 		showMessage("I gain 4 diamond for skipping my turn.", 1000);
+	}
+
+	private class PlayerViewDragListener implements View.OnDragListener {
+		@Override
+		public boolean onDrag(View v, DragEvent event) {
+			switch (event.getAction()) {
+			// Signals the start of a drag and drop operation of a card.
+			case DragEvent.ACTION_DRAG_STARTED:
+				if (event.getLocalState().getClass() == CardView.class) {
+					soundPool.play(tapSoundID, 1, 1, 1, 0, 1);
+					return true;
+				}
+				return false;
+				// Signals to a View that the drag point has entered the
+				// bounding box of the player View.
+			case DragEvent.ACTION_DRAG_ENTERED:
+				PlayerView playerView = (PlayerView) v;
+				playerView.setBorderColor(Color.GREEN);
+				v.invalidate();
+				return true;
+				// Sent to a View after ACTION_DRAG_ENTERED if the drag
+				// shadow is still within the player View's bounding box.
+			case DragEvent.ACTION_DRAG_LOCATION:
+				return true;
+				// Signals that the user has moved the drag shadow
+				// outside the bounding box of the player View.
+			case DragEvent.ACTION_DRAG_EXITED:
+				playerView = (PlayerView) v;
+				playerView.resetColor();
+				v.invalidate();
+				return true;
+				// Signals to a View that the user has released the drag
+				// shadow, and the drag point is within the bounding box of the
+				// player View.
+			case DragEvent.ACTION_DROP:
+				playerView = (PlayerView) v;
+				CardView cardView = (CardView) event.getLocalState();
+				onDrop(playerView, cardView);
+				return true;
+				// Signals to a View that the drag and drop operation
+				// has concluded.
+			case DragEvent.ACTION_DRAG_ENDED:
+				cardView = (CardView) event.getLocalState();
+				cardView.setVisibility(View.VISIBLE);
+				soundPool.play(untapSoundID, 1, 1, 1, 0, 1);
+			default:
+				// Error!!
+				break;
+			}
+			return false;
+		}
+
+		/**
+		 * @param playerView
+		 * @param cardView
+		 */
+		private void onDrop(PlayerView playerView, CardView cardView) {
+			Card card = cardView.getCard();
+			Card.PlayResult result = card.play(playerView.getPlayer());
+			switch (result) {
+			case OK:
+				((ViewGroup) cardView.getParent()).removeView(cardView);
+				card.getOwner().getHand().remove(card);
+				card.setOwner(null);
+				Table table = playerView.getPlayer().getTable();
+				table.setPlayerLastHit(playerView.getPlayer());
+				ArrayList<Card> cardPlayed = table.getCardPlayed();
+				cardPlayed.add(card);
+				if (cardPlayed.size() > 10)
+					cardPlayed.remove(0);
+				soundPool.play(knockSoundID, 1, 1, 1, 0, 1);
+				finishTurn();
+				break;
+			case CantAfford:
+				soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
+				showMessage("I cant Afford this.", 1000);
+				break;
+			case NeedTarget:
+				soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
+				showMessage("This card need a enmey target.", 1000);
+				break;
+			case SelfTarget:
+				soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
+				showMessage("This card can only target yourself.", 1000);
+				break;
+
+			}
+			playerView.resetColor();
+			playerView.invalidate();
+		}
+
 	}
 }

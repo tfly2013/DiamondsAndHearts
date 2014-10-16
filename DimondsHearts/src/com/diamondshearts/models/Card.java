@@ -50,7 +50,7 @@ public class Card {
 	 * @param target
 	 *            The target opponent
 	 * */
-	public boolean play(Player target) {
+	public PlayResult play(Player target) {
 		Integer cost = getCost();
 		//Barter: the players next diamond cost is halved
 		if(owner.getEventsActivated().get(EventType.Barter)){
@@ -63,16 +63,18 @@ public class Card {
 			owner.getEventsActivated().put(EventType.Load, false);
 		}
 		if (owner.canAfford(cost)) {
-			if (needTarget() == target.equals(owner))
-				return false;
+			if (needTarget() && target.equals(owner))
+				return PlayResult.NeedTarget;
+			if (!needTarget() && !target.equals(owner))
+				return PlayResult.SelfTarget;
 			owner.setDiamond(owner.getDiamond() - cost);
 			for (Action action : getActions())
 				action.play(owner, target);
 			for (Event event : getEvents())
 				event.play(owner, target, this);
-			return true;
+			return PlayResult.OK;
 		}
-		return false;
+		return PlayResult.CantAfford;
 	}
 	
 	/**
@@ -180,8 +182,15 @@ public class Card {
 		for (Event event : card.getEvents()) {
 			value += event.getValue();
 		}
-		if (value >= -1 && value < 2)
+		if (value >= -1 && value <= 2)
 			return true;
 		return false;
+	}
+	
+	public enum PlayResult{
+		OK,
+		CantAfford,
+		NeedTarget,
+		SelfTarget
 	}
 }

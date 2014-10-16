@@ -1,7 +1,5 @@
 package com.diamondshearts;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,13 +7,9 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.view.DragEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.diamondshearts.models.Card;
 import com.diamondshearts.models.Player;
-import com.diamondshearts.models.Table;
 import com.google.android.gms.common.images.ImageManager;
 
 /**
@@ -104,86 +98,6 @@ public class PlayerView extends View {
 		backgroundPaint.setColor(Color.TRANSPARENT);
 		backgroundPaint.setStyle(Paint.Style.FILL);
 		backgroundPaint.setTextSize(textHeight);
-
-		// Setup OnDragListener to handle card drag to player
-		setOnDragListener(new OnDragListener() {
-			@Override
-			public boolean onDrag(View v, DragEvent event) {
-				switch (event.getAction()) {
-				// Signals the start of a drag and drop operation of a card.
-				case DragEvent.ACTION_DRAG_STARTED:
-					return event.getLocalState().getClass() == CardView.class;
-					// Signals to a View that the drag point has entered the
-					// bounding
-					// box of the player View.
-				case DragEvent.ACTION_DRAG_ENTERED:
-					PlayerView playerView = (PlayerView) v;
-					playerView.setBorderColor(Color.GREEN);
-					v.invalidate();
-					return true;
-					// Sent to a View after ACTION_DRAG_ENTERED if the drag
-					// shadow
-					// is still within the player View's bounding box.
-				case DragEvent.ACTION_DRAG_LOCATION:
-					return true;
-					// Signals that the user has moved the drag shadow outside
-					// the
-					// bounding box of the player View.
-				case DragEvent.ACTION_DRAG_EXITED:
-					playerView = (PlayerView) v;
-					playerView.resetColor();
-					v.invalidate();
-					return true;
-					// Signals to a View that the user has released the drag
-					// shadow,
-					// and the drag point is within the bounding box of the
-					// player
-					// View.
-				case DragEvent.ACTION_DROP:
-					playerView = (PlayerView) v;
-					CardView cardView = (CardView) event.getLocalState();
-					onDrop(playerView, cardView);
-					return true;
-					// Signals to a View that the drag and drop operation has
-					// concluded.
-				case DragEvent.ACTION_DRAG_ENDED:
-					cardView = (CardView) event.getLocalState();
-					cardView.setVisibility(VISIBLE);
-				default:
-					// Error!!
-					break;
-				}
-				return false;
-			}
-
-			/**
-			 * @param playerView
-			 * @param cardView
-			 */
-			private void onDrop(PlayerView playerView, CardView cardView) {
-				GameActivity activity = null;
-				Card card = cardView.getCard();
-				if (getContext().getClass() == GameActivity.class) {
-					activity = (GameActivity) getContext();
-					if (card.play(playerView.getPlayer())) {
-						((ViewGroup) cardView.getParent()).removeView(cardView);
-						card.getOwner().getHand().remove(card);
-						card.setOwner(null);
-						Table table = playerView.getPlayer().getTable();						
-						table.setPlayerLastHit(playerView.getPlayer());
-						ArrayList<Card> cardPlayed = table.getCardPlayed();
-						cardPlayed.add(card);
-						if (cardPlayed.size() > 10)
-							cardPlayed.remove(0);
-						activity.finishTurn();
-					} else {
-						activity.showMessage("I cant play like that.", 1000);
-					}
-					playerView.resetColor();
-					playerView.invalidate();
-				}
-			}
-		});
 	}
 
 	@Override
