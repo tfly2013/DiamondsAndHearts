@@ -16,12 +16,7 @@ public class Action {
 	private Suit suit;
 	/** Suit description */
 	private String description;
-
-	/**
-	 * Empty action constructor
-	 * */
-	public Action() {}
-
+	
 	/**
 	 * Initialize a action
 	 * @param suits
@@ -188,5 +183,9 @@ public class Action {
 	 * */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public double getValue(){
+		return getSuit().getValueCoefficient() * getRank();
 	}
 }

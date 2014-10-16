@@ -25,12 +25,7 @@ public class Player {
 	private Participant participant;
 	/**EventActivated map*/
 	private EnumMap<EventType, Boolean> eventsActivated;
-	
-	/**
-	 * Empty player constructor
-	 * */
-	public Player(){};
-	
+
 	/**
 	 * Initialize a player
 	 * @param table
@@ -124,20 +119,6 @@ public class Player {
 	}
 
 	/**
-	 * draw a card if can afford one
-	 * @param cost
-	 * 			  The cost of card
-	 * */
-	public void drawCard(int cost) {
-		if (!this.canAfford(cost)) {
-			return; // could not afford card
-		}
-		this.diamond -= cost;
-		this.getTable().setDiamond(this.getTable().getDiamond() + cost);
-		hand.add(new Card(this));
-	}
-
-	/**
 	 * Check if a player can survive
 	 * @return true/false
 	 * */
@@ -159,7 +140,7 @@ public class Player {
 	public void initialHand() {
 		hand = new ArrayList<Card>();
 		for (int i = 0; i < INITIALHAND; i++) {
-			hand.add(new Card(this));
+			hand.add(Card.draw(this));
 		}
 	}
 

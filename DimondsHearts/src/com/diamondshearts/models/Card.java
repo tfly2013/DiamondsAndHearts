@@ -19,17 +19,12 @@ public class Card {
 	private HashSet<Event> events = new HashSet<Event>();
 
 	/**
-	 * Empty Card constructor
-	 * */
-	public Card() {};
-
-	/**
 	 * Initialize a card
 	 * 
 	 * @param owner
 	 *            The owner who owns the cards
 	 * */
-	public Card(Player owner) {
+	private Card(Player owner) {
 		this.owner = owner;
 
 		ArrayList<Suit> suits = new ArrayList<Suit>(Arrays.asList(Suit.class
@@ -169,7 +164,24 @@ public class Card {
 	 * @return card
 	 * 				A new card
 	 * */
-	public static Card draw() {
-		return new Card();		
+	public static Card draw(Player player) {
+		Card card = new Card(player);
+		while (!evaluate(card)) {
+			card = new Card(player);
+		}		
+		return card;
+	}
+	
+	public static boolean evaluate(Card card){
+		double value = 0;
+		for (Action action : card.getActions()) {
+			value += action.getValue();
+		}
+		for (Event event : card.getEvents()) {
+			value += event.getValue();
+		}
+		if (value >= -1 && value < 2)
+			return true;
+		return false;
 	}
 }

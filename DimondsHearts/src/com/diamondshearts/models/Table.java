@@ -26,13 +26,6 @@ public class Table {
 	public boolean debug;
 
 	/**
-	 * Table Constructor for debug purpose
-	 * */
-	public Table() {
-		this(false);
-	}
-
-	/**
 	 * Initialize a table
 	 * @param debug
 	 * 			   Debug value set to be false atm

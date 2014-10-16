@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@drawable/menu_background" >
 
     <LinearLayout
         android:id="@+id/login_layout"
@@ -19,9 +20,10 @@
         android:visibility="visible" >
 
         <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/IconImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:contentDescription="@string/appicon"
             android:src="@drawable/ic_launcher" />
 
         <TextView
@@ -39,7 +41,7 @@
 
     <RelativeLayout
         android:id="@+id/menu_layout"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -51,21 +53,13 @@
             android:id="@+id/secret_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_marginBottom="30dp"
             android:orientation="vertical"
             android:visibility="visible"
             tools:context=".MainActivity"
             tools:ignore="UselessParent" >
-
-            <TextView
-                android:id="@+id/title_field"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_margin="@dimen/margin_medium"
-                android:text="@string/app_name"
-                android:textAppearance="@style/HelpText.Heading" />
 
             <TextView
                 android:id="@+id/name_field"
@@ -73,52 +67,61 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/margin_small"
-                android:text=""
                 android:textAppearance="@style/HelpText.Caption" />
 
             <Button
                 android:id="@+id/testGameButton"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:onClick="onTestGameClicked"
                 android:text="@string/test_game" />
 
             <Button
                 android:id="@+id/quickGameButon"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:onClick="onQuickGameClicked"
                 android:text="@string/quick_game" />
 
             <Button
                 android:id="@+id/newGameButton"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:onClick="onNewGameClicked"
                 android:text="@string/new_game" />
 
             <Button
                 android:id="@+id/checkGamesButton"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="5dp"
                 android:onClick="onCheckGamesClicked"
                 android:text="@string/check_games" />
 
             <Button
                 android:id="@+id/sign_out_button"
                 android:layout_width="200dp"
-                android:layout_height="wrap_content"
+                android:layout_height="60dp"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/sign_out" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/titleImageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/secret_layout"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/menu_title" />
     </RelativeLayout>
 
     <RelativeLayout

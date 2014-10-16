@@ -74,4 +74,8 @@ public class Event {
 	public EventType getType() {
 		return type;
 	}
+	
+	public double getValue(){
+		return type.getValue();
+	}
 }

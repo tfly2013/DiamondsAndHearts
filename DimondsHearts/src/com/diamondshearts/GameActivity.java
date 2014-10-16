@@ -91,18 +91,18 @@ public class GameActivity extends BaseGameActivity implements
 			finish();
 			return;
 		}
-		//Extra Turn: set the next participant the current one
+		// Extra Turn: set the next participant the current one
 		String nextParticipantId;
-		Player playerThisTurn = table.getPlayerThisTurn(); 
-		if(!playerThisTurn.getEventsActivated().get(EventType.ExtraTurn)){
+		Player playerThisTurn = table.getPlayerThisTurn();
+		if (!playerThisTurn.getEventsActivated().get(EventType.ExtraTurn)) {
 			nextParticipantId = table.getNextParticipantId();
-		}else{
+		} else {
 			nextParticipantId = playerThisTurn.getId();
 			playerThisTurn.getEventsActivated().put(EventType.ExtraTurn, false);
 		}
-		//Extra Card: obtain an extra card at end of the turn
-		if(playerThisTurn.getEventsActivated().get(EventType.ExtraCard)){
-			playerThisTurn.getHand().add(Card.draw());
+		// Extra Card: obtain an extra card at end of the turn
+		if (playerThisTurn.getEventsActivated().get(EventType.ExtraCard)) {
+			playerThisTurn.getHand().add(Card.draw(playerThisTurn));
 			playerThisTurn.getEventsActivated().put(EventType.ExtraCard, false);
 		}
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
@@ -183,8 +183,10 @@ public class GameActivity extends BaseGameActivity implements
 			table = new Table(true);
 		}
 		// Retrieve current logged in player Id
-		if (!table.debug)
+		if (!table.debug) {
 			checkPreGame(match);
+			checkMatchStatus(match);
+		}
 		updateUI();
 	}
 
@@ -199,7 +201,25 @@ public class GameActivity extends BaseGameActivity implements
 		String tableData = new String(match.getData());
 		table = (Table) xStream.fromXML(tableData);
 		checkPreGame(match);
+		checkMatchStatus(match);
 		updateUI();
+	}
+
+	private void checkMatchStatus(TurnBasedMatch match2) {
+		int status = match.getStatus();
+		switch (status) {
+		case TurnBasedMatch.MATCH_STATUS_CANCELED:
+			showWarning("Canceled!", "This game is canceled!");
+			this.finish();
+			return;
+		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
+			showWarning("Expired!", "This game is expired!");
+			this.finish();
+			return;
+		case TurnBasedMatch.MATCH_STATUS_COMPLETE:
+			// Show Score Board
+			return;
+		}
 	}
 
 	@Override
@@ -215,10 +235,11 @@ public class GameActivity extends BaseGameActivity implements
 
 	/**
 	 * Animating a message for a while in game activity
+	 * 
 	 * @param string
-	 * 				The message to display
+	 *            The message to display
 	 * @param duration
-	 * 				Time period
+	 *            Time period
 	 * */
 	public void showMessage(String string, long duration) {
 		midMessageView.setVisibility(View.VISIBLE);
@@ -270,10 +291,11 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Check if all players joined, if so, set the current player to
-	 * to take turn and start the game.
+	 * Check if all players joined, if so, set the current player to to take
+	 * turn and start the game.
+	 * 
 	 * @param match
-	 * 			  The turn based match
+	 *            The turn based match
 	 */
 	private void checkPreGame(TurnBasedMatch match) {
 		if (match.getAvailableAutoMatchSlots() > 0) {
@@ -292,10 +314,10 @@ public class GameActivity extends BaseGameActivity implements
 
 	/**
 	 * Check if all players have joined the game
+	 * 
 	 * @param match
-	 * 			   Turn base match
-	 * @return false/true
-	 * 			   True if all players joined
+	 *            Turn base match
+	 * @return false/true True if all players joined
 	 * */
 	private boolean isAllPlayersJoined(TurnBasedMatch match) {
 		for (Participant participant : match.getParticipants()) {
@@ -374,13 +396,15 @@ public class GameActivity extends BaseGameActivity implements
 		if (table.isMyTurn()) {
 			drawButton.setVisibility(View.VISIBLE);
 			skipButton.setVisibility(View.VISIBLE);
-			//Skip Turn: current player's turn is forced to be skipped
-			if(currentPlayer.getEventsActivated().get(EventType.SkipTurn)){
-				currentPlayer.getEventsActivated().put(EventType.SkipTurn, false);
+			// Skip Turn: current player's turn is forced to be skipped
+			if (!table.debug
+					&& currentPlayer.getEventsActivated().get(
+							EventType.SkipTurn)) {
+				currentPlayer.getEventsActivated().put(EventType.SkipTurn,
+						false);
 				finishTurn();
 			}
-		}
-		else {
+		} else {
 			drawButton.setVisibility(View.GONE);
 			skipButton.setVisibility(View.GONE);
 		}
@@ -398,13 +422,14 @@ public class GameActivity extends BaseGameActivity implements
 
 	/**
 	 * Press draw button to buy a card
+	 * 
 	 * @param view
-	 * 			  The view pressed
+	 *            The view pressed
 	 * */
 	public void onDrawButtonClicked(View view) {
 		if (currentPlayer.canAfford(3)) {
 			currentPlayer.setDiamond(currentPlayer.getDiamond() - 3);
-			currentPlayer.getHand().add(Card.draw());
+			currentPlayer.getHand().add(Card.draw(currentPlayer));
 			loadHands();
 			showMessage("I spend 3 diamond to draw a card.", 1000);
 		} else {
@@ -414,8 +439,9 @@ public class GameActivity extends BaseGameActivity implements
 
 	/**
 	 * Press skip button to skip a turn
+	 * 
 	 * @param view
-	 * 			  The view pressed 
+	 *            The view pressed
 	 * */
 	public void onSkipButtonClicked(View view) {
 		currentPlayer.setDiamond(currentPlayer.getDiamond() + 4);

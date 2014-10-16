@@ -74,8 +74,7 @@ public class MainActivity extends BaseGameActivity implements
 		apiAgent = getApiClient();
 		xStream = new XStream();
 		xStream.alias("table", Table.class);
-		
-		
+
 		// Setup sign in and sign out button
 		findViewById(R.id.sign_out_button).setOnClickListener(
 				new View.OnClickListener() {
@@ -290,7 +289,7 @@ public class MainActivity extends BaseGameActivity implements
 	 */
 	public void onQuickGameClicked(View view) {
 		// Create a auto match criteria
-		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 1, 0);
+		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 4, 0);
 		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
 				.setAutoMatchCriteria(autoMatchCriteria).build();
 
@@ -322,11 +321,12 @@ public class MainActivity extends BaseGameActivity implements
 	 */
 	public void onSignInSucceeded() {
 		setViewVisibility();
-
-		if (mHelper.getTurnBasedMatch() != null) {
+		TurnBasedMatch match = null;
+		if ((match = getGameHelper().getTurnBasedMatch()) != null) {
 			// Handle players that come from a notification click. Go striaght
 			// into game.
-			updateMatch(mHelper.getTurnBasedMatch());
+			updateMatch(match);
+			mHelper.clearTurnBasedMatch();
 			return;
 		}
 
@@ -537,7 +537,7 @@ public class MainActivity extends BaseGameActivity implements
 	private void initiateMatch(TurnBasedMatch match) {
 		this.match = match;
 
-		Table table = new Table();
+		Table table = new Table(false);
 		// Set players
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();
@@ -610,8 +610,7 @@ public class MainActivity extends BaseGameActivity implements
 			findViewById(R.id.login_layout).setVisibility(View.VISIBLE);
 			findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
 			findViewById(R.id.menu_layout).setVisibility(View.GONE);
-		}
-		else {
+		} else {
 			// Signed in
 			((TextView) findViewById(R.id.name_field))
 					.setText(getString(R.string.welcome)
@@ -678,8 +677,9 @@ public class MainActivity extends BaseGameActivity implements
 
 	/**
 	 * display game ui
+	 * 
 	 * @param match
-	 * 			   The turn based match
+	 *            The turn based match
 	 */
 	private void showGameUI(TurnBasedMatch match) {
 		Intent intent = new Intent(this, GameActivity.class);
