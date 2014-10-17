@@ -25,6 +25,8 @@ public class Player {
 	private Participant participant;
 	/**EventActivated map*/
 	private EnumMap<EventType, Boolean> eventsActivated;
+	
+	private boolean alive;
 
 	/**
 	 * Initialize a player
@@ -38,7 +40,8 @@ public class Player {
 		this.participant = participant;
 		eventsActivated = new EnumMap<EventType, Boolean>(EventType.class);
 		diamond = 30;
-		heart = 20;
+		heart = 30;
+		alive = true;
 		initialHand();
 	}
 
@@ -118,14 +121,6 @@ public class Player {
 		this.hand = hand;
 	}
 
-	/**
-	 * Check if a player can survive
-	 * @return true/false
-	 * */
-	public Boolean canSurvive(int amount) {
-		return (heart >= amount);
-	}
-
 		/**
 	 * Check if diamond is sufficient
 	 * @return true/false
@@ -194,5 +189,19 @@ public class Player {
 	 * */
 	public EnumMap<EventType, Boolean> getEventsActivated() {
 		return eventsActivated;
+	}
+
+	/**
+	 * @return the alive
+	 */
+	public boolean isAlive() {
+		return alive;
+	}
+
+	/**
+	 * @param alive the alive to set
+	 */
+	public void setAlive(boolean alive) {
+		this.alive = alive;
 	}
 }

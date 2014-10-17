@@ -95,33 +95,6 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Show a dialog that ask player for rematch.
-	 */
-	public void askForRematch() {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-		alertDialogBuilder.setMessage("Do you want a rematch?");
-
-		alertDialogBuilder
-				.setCancelable(false)
-				.setPositiveButton("Sure, rematch!",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-								rematch();
-							}
-						})
-				.setNegativeButton("No.",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int id) {
-							}
-						});
-
-		alertDialogBuilder.show();
-	}
-
-	/**
 	 * Dismiss the spinner showed.
 	 */
 	public void dismissSpinner() {
@@ -398,24 +371,6 @@ public class MainActivity extends BaseGameActivity implements
 	 * */
 	public void onTurnBasedMatchRemoved(String string) {
 		Toast.makeText(this, "An match was removed.", TOAST_DELAY).show();
-	}
-
-	/**
-	 * Call for rematch and wait for a response.
-	 */
-	public void rematch() {
-		showSpinner();
-		Games.TurnBasedMultiplayer
-				.rematch(apiAgent, match.getMatchId())
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.InitiateMatchResult result) {
-								processResult(result);
-							}
-						});
-		match = null;
 	}
 
 	/**
