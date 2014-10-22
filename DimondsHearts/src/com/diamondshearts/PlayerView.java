@@ -192,10 +192,10 @@ public class PlayerView extends View {
 	public void resetColor() {
 		if (!player.isAlive())
 			setBorderColor(Color.GRAY);
-		else if (player.getTable().isPlayerLastHit(player))
-			setBorderColor(0xFF33B5E5);
 		else if (player.getTable().isPlayerTurn(player))
 			setBorderColor(Color.RED);
+		else if (player.getTable().isPlayerLastHit(player))
+			setBorderColor(0xFF33B5E5);
 		else
 			setBorderColor(Color.TRANSPARENT);
 	}

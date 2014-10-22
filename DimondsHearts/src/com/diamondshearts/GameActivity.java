@@ -119,8 +119,10 @@ public class GameActivity extends BaseGameActivity implements
 										@Override
 										public void onResult(
 												UpdateMatchResult result) {
-											match = result.getMatch();
-											checkMatchStatus(match);
+											if (match != null) {
+												match = result.getMatch();
+												checkMatchStatus(match);
+											}
 										}
 									});
 					return true;
@@ -273,16 +275,17 @@ public class GameActivity extends BaseGameActivity implements
 			playerThisTurn.getEventsActivated().put(EventType.ExtraCard, false);
 		}
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
-		loadPlayers();
-		loadCardPlayed();
+		updateUI();
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				xStream.toXML(table).getBytes(), nextParticipantId)
 				.setResultCallback(new ResultCallback<UpdateMatchResult>() {
 					@Override
 					public void onResult(UpdateMatchResult result) {
-						match = result.getMatch();
-						checkMatchStatus(match);
+						if (match != null) {
+							match = result.getMatch();
+							checkMatchStatus(match);
+						}
 					}
 				});
 	}
@@ -340,7 +343,7 @@ public class GameActivity extends BaseGameActivity implements
 			loadCurrentPlayer();
 			loadHands();
 			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
-			showMessage("I spend 3 diamond to draw a card.", 1000);
+			showMessage("Spend 3 diamond to draw a card.", 1000);
 		} else {
 			showMessage("I cant afford this.", 1000);
 		}
@@ -352,7 +355,7 @@ public class GameActivity extends BaseGameActivity implements
 	 * */
 	public void onSignInFailed() {
 		showWarning("Sign in failed",
-				"Something wrong with your authentication, please sign in again.");
+				"Something wrong with your authentication, please sign in again.", true);
 		finish();
 	}
 
@@ -394,7 +397,7 @@ public class GameActivity extends BaseGameActivity implements
 		loadCurrentPlayer();
 		finishTurn();
 		soundPool.play(skipSoundID, 1, 1, 1, 0, 1);
-		showMessage("I gain 4 diamond for skipping my turn.", 1000);
+		showMessage("Gain 4 diamond for skipping turn.", 1000);
 	}
 
 	@Override
@@ -462,7 +465,7 @@ public class GameActivity extends BaseGameActivity implements
 	 * @param message
 	 *            The message to show in the dialog.
 	 */
-	public void showWarning(String title, String message) {
+	public void showWarning(String title, String message, final boolean finish) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
 		// set title
@@ -473,8 +476,8 @@ public class GameActivity extends BaseGameActivity implements
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int id) {
-						// if this button is clicked, maybe close current
-						// activity
+						if (finish)
+							GameActivity.this.finish();
 					}
 				});
 
@@ -486,12 +489,10 @@ public class GameActivity extends BaseGameActivity implements
 		int status = match.getStatus();
 		switch (status) {
 		case TurnBasedMatch.MATCH_STATUS_CANCELED:
-			showWarning("Canceled!", "This game is canceled!");
-			this.finish();
+			showWarning("Canceled!", "This game is canceled!",true);
 			return;
 		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
-			showWarning("Expired!", "This game is expired!");
-			this.finish();
+			showWarning("Expired!", "This game is expired!",true);
 			return;
 		case TurnBasedMatch.MATCH_STATUS_COMPLETE:
 			// TODO: show score board

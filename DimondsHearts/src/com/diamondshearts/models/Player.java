@@ -39,6 +39,8 @@ public class Player {
 		this.table = table;
 		this.participant = participant;
 		eventsActivated = new EnumMap<EventType, Boolean>(EventType.class);
+		for (EventType key : EventType.class.getEnumConstants())
+			eventsActivated.put(key, false);
 		diamond = 30;
 		heart = 30;
 		alive = true;
