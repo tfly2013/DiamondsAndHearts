@@ -32,7 +32,7 @@ public class Event {
 	 * */
 	public void play(Player owner, Player target, Card card) {
 		// actions does not immediately happen will be recorded
-		owner.getEventsActivated().put(type, true);
+		owner.getEffects().put(type, true);
 
 	}
 	
@@ -56,14 +56,12 @@ public class Event {
 	public String getName() {
 		return type.getName();
 	}
-
+	
 	/**
-	 * Access the description of event type
-	 * 
-	 * @return description
-	 * */
-	public String getDescription() {
-		return type.getDescription();
+	 * @return the icon
+	 */
+	public int getIcon() {
+		return type.getIcon();
 	}
 
 	/**

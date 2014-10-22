@@ -53,14 +53,14 @@ public class Card {
 	public PlayResult play(Player target) {
 		Integer cost = getCost();
 		//Barter: the players next diamond cost is halved
-		if(owner.getEventsActivated().get(EventType.Barter)){
+		if(owner.getEffects().get(EventType.Barter)){
 			cost /= 2;
-			owner.getEventsActivated().put(EventType.Barter, false);
+			owner.getEffects().put(EventType.Barter, false);
 		}
 		//Load: the players next diamond cost is doubled
-		if(owner.getEventsActivated().get(EventType.Load)){
+		if(owner.getEffects().get(EventType.Load)){
 			cost *= 2;
-			owner.getEventsActivated().put(EventType.Load, false);
+			owner.getEffects().put(EventType.Load, false);
 		}
 		if (owner.canAfford(cost)) {
 			if (needTarget() && target.equals(owner))
@@ -182,7 +182,7 @@ public class Card {
 		for (Event event : card.getEvents()) {
 			value += event.getValue();
 		}
-		if (value >= -1 && value <= 2)
+		if (value >= 2 && value <= 4)
 			return true;
 		return false;
 	}

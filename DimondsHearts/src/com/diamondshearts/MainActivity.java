@@ -543,17 +543,20 @@ public class MainActivity extends BaseGameActivity implements
 	private void processResult(TurnBasedMultiplayer.InitiateMatchResult result) {
 		TurnBasedMatch match = result.getMatch();
 		dismissSpinner();
-
-		if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
-			return;
+		if (match != null) {
+			if (!checkStatusCode(match, result.getStatus().getStatusCode())) {
+				return;
+			}
+			if (match.getData() != null) {
+				// This is a game that has already started
+				updateMatch(match);
+				return;
+			}
+			initiateMatch(match);
 		}
-
-		if (match.getData() != null) {
-			// This is a game that has already started
-			updateMatch(match);
-			return;
+		else {
+			showWarning("Try again", "Some error happened, please try again.");
 		}
-		initiateMatch(match);
 	}
 
 	/**

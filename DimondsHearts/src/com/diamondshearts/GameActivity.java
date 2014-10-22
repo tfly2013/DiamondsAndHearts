@@ -14,6 +14,7 @@ import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -178,15 +179,14 @@ public class GameActivity extends BaseGameActivity implements
 
 	}
 
-	/** Player Layout (Up) */
-	private LinearLayout playersUpLayout;
-
-	/** Player Layout (Down) */
-	private LinearLayout playersDownLayout;
+	/** Player Layout */
+	private LinearLayout playersLayout;
 
 	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
 
+	private HorizontalScrollView handScrollView;
+	
 	/** Layout of current player's hand */
 	private LinearLayout handLayout;
 
@@ -194,6 +194,8 @@ public class GameActivity extends BaseGameActivity implements
 	private TextView midMessageView;
 
 	private LinearLayout cardPlayedLayout;
+	
+	private HorizontalScrollView cardplayedScrollView;
 
 	private Button drawButton;
 
@@ -231,12 +233,13 @@ public class GameActivity extends BaseGameActivity implements
 		setContentView(R.layout.activity_game);
 
 		// Set up layouts
-		playersUpLayout = (LinearLayout) findViewById(R.id.players_up_layout);
-		playersDownLayout = (LinearLayout) findViewById(R.id.players_down_layout);
+		playersLayout = (LinearLayout) findViewById(R.id.players_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
+		handScrollView = (HorizontalScrollView) findViewById(R.id.hand_scroll_view);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
-		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
+		cardplayedScrollView = (HorizontalScrollView) findViewById(R.id.card_played_scroll_view);
+		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);		
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
 		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
@@ -261,18 +264,18 @@ public class GameActivity extends BaseGameActivity implements
 		String nextParticipantId;
 		Player playerThisTurn = table.getPlayerThisTurn();
 		if (playerThisTurn.isAlive()
-				&& playerThisTurn.getEventsActivated().get(EventType.ExtraTurn)) {
+				&& playerThisTurn.getEffects().get(EventType.ExtraTurn)) {
 			nextParticipantId = playerThisTurn.getId();
-			playerThisTurn.getEventsActivated().put(EventType.ExtraTurn, false);
+			playerThisTurn.getEffects().put(EventType.ExtraTurn, false);
 
 		} else {
 			nextParticipantId = table.getNextParticipantId();
 		}
 		// Extra Card: obtain an extra card at end of the turn
 		if (playerThisTurn.isAlive()
-				&& playerThisTurn.getEventsActivated().get(EventType.ExtraCard)) {
+				&& playerThisTurn.getEffects().get(EventType.ExtraCard)) {
 			playerThisTurn.getHand().add(Card.draw(playerThisTurn));
-			playerThisTurn.getEventsActivated().put(EventType.ExtraCard, false);
+			playerThisTurn.getEffects().put(EventType.ExtraCard, false);
 		}
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		updateUI();
@@ -342,6 +345,7 @@ public class GameActivity extends BaseGameActivity implements
 			currentPlayer.getHand().add(Card.draw(currentPlayer));
 			loadCurrentPlayer();
 			loadHands();
+			handScrollView.scrollTo(handScrollView.getWidth(), 0);
 			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
 			showMessage("Spend 3 diamond to draw a card.", 1000);
 		} else {
@@ -549,6 +553,7 @@ public class GameActivity extends BaseGameActivity implements
 			cardView.setCard(table.getCardPlayed().get(i));
 			cardPlayedLayout.addView(cardView);
 		}
+		cardplayedScrollView.scrollTo(cardplayedScrollView.getWidth(), 0);
 	}
 
 	/**
@@ -583,8 +588,7 @@ public class GameActivity extends BaseGameActivity implements
 	 */
 	private void loadPlayers() {
 		// Show players
-		playersUpLayout.removeAllViews();
-		playersDownLayout.removeAllViews();
+		playersLayout.removeAllViews();
 		Integer count = 0;
 		for (Player player : table.getPlayers()) {
 			if (!player.equals(currentPlayer)) {
@@ -594,10 +598,7 @@ public class GameActivity extends BaseGameActivity implements
 				else
 					playerView.setOnDragListener(null);
 				playerView.setPlayer(player);
-				if (count < 2)
-					playersUpLayout.addView(playerView);
-				else
-					playersDownLayout.addView(playerView);
+				playersLayout.addView(playerView);
 				count++;
 			}
 		}
@@ -623,9 +624,9 @@ public class GameActivity extends BaseGameActivity implements
 				finishTurn();
 			// Skip Turn: current player's turn is forced to be skipped
 			else if (!table.debug
-					&& currentPlayer.getEventsActivated().get(
+					&& currentPlayer.getEffects().get(
 							EventType.SkipTurn)) {
-				currentPlayer.getEventsActivated().put(EventType.SkipTurn,
+				currentPlayer.getEffects().put(EventType.SkipTurn,
 						false);
 				finishTurn();
 			} else {

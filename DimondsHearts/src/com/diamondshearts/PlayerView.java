@@ -1,5 +1,7 @@
 package com.diamondshearts;
 
+import java.util.Map.Entry;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.View;
 
+import com.diamondshearts.models.EventType;
 import com.diamondshearts.models.Player;
 import com.google.android.gms.common.images.ImageManager;
 
@@ -71,14 +74,14 @@ public class PlayerView extends View {
 		width = (int) density * 110;
 
 		// calculate the height of the player view
-		height = (int) density * 80;
+		height = (int) density * 100;
 
 		// adjust the border width of the player view
 		float borderWidth = 2 * density;
 
 		// create the rectangular border specifying its top, left, right, bottom
 		border = new RectF(borderWidth, borderWidth, width - borderWidth,
-				height - borderWidth);
+				height - borderWidth - 20 * density);
 
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -143,6 +146,20 @@ public class PlayerView extends View {
 			float labelY = startY + textHeight / 2 + 10 * density;
 			canvas.drawText(text, labelX, labelY, textPaint);
 			startY += 20 * density;
+		}
+
+		// Draw effects
+		float iconX = density;
+		for (Entry<EventType, Boolean> effectEntry : player.getEffects()
+				.entrySet()) {
+			if (effectEntry.getValue()) {
+				Drawable iconDrawable = getResources().getDrawable(
+						effectEntry.getKey().getIcon());
+				iconDrawable.setBounds((int) iconX, (int) (81 * density),
+						(int) (iconX + 18 * density), (int) (99 * density));
+				iconDrawable.draw(canvas);
+				iconX += 20 * density;
+			}
 		}
 	}
 

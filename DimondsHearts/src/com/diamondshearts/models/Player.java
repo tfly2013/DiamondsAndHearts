@@ -24,7 +24,7 @@ public class Player {
 	/**Participant in the game*/	
 	private Participant participant;
 	/**EventActivated map*/
-	private EnumMap<EventType, Boolean> eventsActivated;
+	private EnumMap<EventType, Boolean> effects;
 	
 	private boolean alive;
 
@@ -38,9 +38,9 @@ public class Player {
 	public Player(Table table, Participant participant) {
 		this.table = table;
 		this.participant = participant;
-		eventsActivated = new EnumMap<EventType, Boolean>(EventType.class);
+		effects = new EnumMap<EventType, Boolean>(EventType.class);
 		for (EventType key : EventType.class.getEnumConstants())
-			eventsActivated.put(key, false);
+			effects.put(key, false);
 		diamond = 30;
 		heart = 30;
 		alive = true;
@@ -189,8 +189,8 @@ public class Player {
 	 * @return eventActivated
 	 * 						A map of events might have been activated
 	 * */
-	public EnumMap<EventType, Boolean> getEventsActivated() {
-		return eventsActivated;
+	public EnumMap<EventType, Boolean> getEffects() {
+		return effects;
 	}
 
 	/**
