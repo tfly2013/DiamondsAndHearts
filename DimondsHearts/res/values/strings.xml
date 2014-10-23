@@ -31,5 +31,6 @@
     <string name="draw">Draw</string>
     <string name="skip">Skip</string>
     <string name="appicon">AppIcon</string>
+    <string name="rankings">Rankings</string>
 
 </resources>

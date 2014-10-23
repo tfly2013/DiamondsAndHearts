@@ -118,4 +118,45 @@
             android:textSize="15sp" />
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/scoreboard_layout"
+        android:layout_width="300dp"
+        android:layout_height="400dp"
+        android:layout_centerInParent="true"
+        android:background="@drawable/scoreboard_background"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/scoreboard_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="30dp"
+            android:text="@string/rankings"
+            android:textAppearance="@style/MainText"
+            android:textSize="28sp" />
+
+        <Button
+            android:id="@+id/scoreboard_done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:onClick="onScoreboardDoneButtonClicked"
+            android:text="@string/done" />
+
+        <ListView
+            android:id="@+id/rank_list_view"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/scoreboard_done_button"
+            android:layout_below="@id/scoreboard_title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp" />
+    </RelativeLayout>
+
 </RelativeLayout>

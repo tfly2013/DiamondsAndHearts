@@ -16,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.diamondshearts.models.Card;
@@ -112,6 +114,7 @@ public class GameActivity extends BaseGameActivity implements
 					if (winner != null)
 						results.add(new ParticipantResult(winner.getId(),
 								ParticipantResult.MATCH_RESULT_WIN, 1));
+					showScoreBoard();
 					Games.TurnBasedMultiplayer
 							.finishMatch(getApiClient(), match.getMatchId(),
 									xStream.toXML(table).getBytes(),
@@ -185,8 +188,10 @@ public class GameActivity extends BaseGameActivity implements
 	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
 
+	private RelativeLayout scoreboardLayout;
+
 	private HorizontalScrollView handScrollView;
-	
+
 	/** Layout of current player's hand */
 	private LinearLayout handLayout;
 
@@ -194,8 +199,10 @@ public class GameActivity extends BaseGameActivity implements
 	private TextView midMessageView;
 
 	private LinearLayout cardPlayedLayout;
-	
+
 	private HorizontalScrollView cardplayedScrollView;
+
+	private ListView rankingListView;
 
 	private Button drawButton;
 
@@ -235,11 +242,13 @@ public class GameActivity extends BaseGameActivity implements
 		// Set up layouts
 		playersLayout = (LinearLayout) findViewById(R.id.players_layout);
 		currentPlayerLayout = (LinearLayout) findViewById(R.id.current_player_layout);
+		scoreboardLayout = (RelativeLayout) findViewById(R.id.scoreboard_layout);
 		handScrollView = (HorizontalScrollView) findViewById(R.id.hand_scroll_view);
 		handLayout = (LinearLayout) findViewById(R.id.hand_layout);
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 		cardplayedScrollView = (HorizontalScrollView) findViewById(R.id.card_played_scroll_view);
-		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);		
+		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
+		rankingListView = (ListView) findViewById(R.id.rank_list_view);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
 		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
@@ -352,14 +361,21 @@ public class GameActivity extends BaseGameActivity implements
 			showMessage("I cant afford this.", 1000);
 		}
 	}
+	
+	public void onScoreboardDoneButtonClicked(View view) {
+		scoreboardLayout.setVisibility(View.GONE);
+		this.finish();
+	}
 
 	@Override
 	/**
 	 * Show warning for failing sign-in
 	 * */
 	public void onSignInFailed() {
-		showWarning("Sign in failed",
-				"Something wrong with your authentication, please sign in again.", true);
+		showWarning(
+				"Sign in failed",
+				"Something wrong with your authentication, please sign in again.",
+				true);
 		finish();
 	}
 
@@ -493,14 +509,27 @@ public class GameActivity extends BaseGameActivity implements
 		int status = match.getStatus();
 		switch (status) {
 		case TurnBasedMatch.MATCH_STATUS_CANCELED:
-			showWarning("Canceled!", "This game is canceled!",true);
+			showWarning("Canceled!", "This game is canceled!", true);
 			return;
 		case TurnBasedMatch.MATCH_STATUS_EXPIRED:
-			showWarning("Expired!", "This game is expired!",true);
+			showWarning("Expired!", "This game is expired!", true);
 			return;
 		case TurnBasedMatch.MATCH_STATUS_COMPLETE:
-			// TODO: show score board
+			showScoreBoard();
 			return;
+		}
+	}
+
+	private void showScoreBoard() {
+		scoreboardLayout.setVisibility(View.VISIBLE);
+		for (ParticipantResult result : table.getResults()) {
+			TextView resultTextView = new TextView(this);
+			resultTextView.setTextAppearance(this, R.style.MainText);
+			resultTextView.setText(result.getPlacing()
+					+ "  "
+					+ match.getParticipant(result.getParticipantId())
+							.getDisplayName());
+			rankingListView.addView(resultTextView);
 		}
 	}
 
@@ -624,10 +653,8 @@ public class GameActivity extends BaseGameActivity implements
 				finishTurn();
 			// Skip Turn: current player's turn is forced to be skipped
 			else if (!table.debug
-					&& currentPlayer.getEffects().get(
-							EventType.SkipTurn)) {
-				currentPlayer.getEffects().put(EventType.SkipTurn,
-						false);
+					&& currentPlayer.getEffects().get(EventType.SkipTurn)) {
+				currentPlayer.getEffects().put(EventType.SkipTurn, false);
 				finishTurn();
 			} else {
 				drawButton.setVisibility(View.VISIBLE);
