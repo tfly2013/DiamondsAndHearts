@@ -1,6 +1,8 @@
 package com.diamondshearts;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -16,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -202,7 +203,7 @@ public class GameActivity extends BaseGameActivity implements
 
 	private HorizontalScrollView cardplayedScrollView;
 
-	private ListView rankingListView;
+	private LinearLayout rankingLayout;
 
 	private Button drawButton;
 
@@ -248,7 +249,7 @@ public class GameActivity extends BaseGameActivity implements
 		midMessageView = (TextView) findViewById(R.id.mid_message_view);
 		cardplayedScrollView = (HorizontalScrollView) findViewById(R.id.card_played_scroll_view);
 		cardPlayedLayout = (LinearLayout) findViewById(R.id.card_played_layout);
-		rankingListView = (ListView) findViewById(R.id.rank_list_view);
+		rankingLayout = (LinearLayout) findViewById(R.id.ranking_layout);
 		drawButton = (Button) findViewById(R.id.draw_button);
 		skipButton = (Button) findViewById(R.id.skip_button);
 		soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
@@ -361,7 +362,7 @@ public class GameActivity extends BaseGameActivity implements
 			showMessage("I cant afford this.", 1000);
 		}
 	}
-	
+
 	public void onScoreboardDoneButtonClicked(View view) {
 		scoreboardLayout.setVisibility(View.GONE);
 		this.finish();
@@ -521,15 +522,26 @@ public class GameActivity extends BaseGameActivity implements
 	}
 
 	private void showScoreBoard() {
-		scoreboardLayout.setVisibility(View.VISIBLE);
-		for (ParticipantResult result : table.getResults()) {
-			TextView resultTextView = new TextView(this);
-			resultTextView.setTextAppearance(this, R.style.MainText);
-			resultTextView.setText(result.getPlacing()
-					+ "  "
-					+ match.getParticipant(result.getParticipantId())
-							.getDisplayName());
-			rankingListView.addView(resultTextView);
+		if (scoreboardLayout.getVisibility() == View.GONE) {
+			scoreboardLayout.setVisibility(View.VISIBLE);
+			rankingLayout.removeAllViews();
+			ArrayList<ParticipantResult> results = table.getResults();
+			Collections.sort(results, new Comparator<ParticipantResult>() {
+				@Override
+				public int compare(ParticipantResult lhs, ParticipantResult rhs) {
+					return ((Integer) lhs.getPlacing()).compareTo(rhs
+							.getPlacing());
+				}
+			});
+			for (ParticipantResult result : results) {
+				TextView resultTextView = new TextView(this);
+				resultTextView.setTextAppearance(this, R.style.MainText);
+				resultTextView.setText(result.getPlacing()
+						+ "  "
+						+ table.getPlayerById(result.getParticipantId())
+								.getName());
+				rankingLayout.addView(resultTextView);
+			}
 		}
 	}
 
