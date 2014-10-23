@@ -83,7 +83,7 @@ public class CardView extends View {
 		// Initialize text paint
 		textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		textPaint.setColor(textColor);
-		textHeight = 12 * getResources().getDisplayMetrics().scaledDensity;
+		textHeight = 13 * getResources().getDisplayMetrics().scaledDensity;
 		textPaint.setTextSize(textHeight);
 
 		// Initialize background paint
@@ -142,7 +142,7 @@ public class CardView extends View {
 		backgroundPaint.setColor(backgroundColor);
 		canvas.drawRoundRect(border, 10 * density, 10 * density,
 				backgroundPaint);
-		
+
 		// Draw actions
 		assert (card != null);
 		float actionsY = 20 * density;
@@ -161,7 +161,7 @@ public class CardView extends View {
 			canvas.drawText(text, actionsX, actionsY, textPaint);
 			actionsX += getTextWidth(text);
 		}
-		
+
 		// Draw events
 		textPaint.setColor(Color.BLACK);
 		float inteval = 10 * density;
@@ -171,8 +171,14 @@ public class CardView extends View {
 				+ actionsY + textHeight;
 		for (Event event : card.getEvents()) {
 			String text = event.getName();
-			float eventX = (width - getTextWidth(text)) / 2;
+			float eventX = (width - getTextWidth(text)) / 2 + 10 * density;
 			canvas.drawText(text, eventX, eventY, textPaint);
+			Drawable eventIcon = getResources().getDrawable(event.getIcon());
+			eventIcon.setBounds((int) ((eventX - 20 * density)),
+					(int) ((eventY - textHeight - 1 * density)),
+					(int) (eventX - 2 * density),
+					(int) ((eventY - textHeight + 17 * density)));
+			eventIcon.draw(canvas);
 			eventY += textHeight + inteval;
 		}
 

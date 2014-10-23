@@ -7,8 +7,8 @@ public enum Suit {
 	/**A suit could be Hearts, Clubs, Diamonds, Spades, Suit's properties*/
 	Diamond("♦", "", -1),
 	Heart("♥", "", 1),
-	Club("♣", "", 1.4),
-	Spade("♠", "", 1.2);
+	Club("♣", "", 1.2),
+	Spade("♠", "", 1.1);
 
 	/**Suit name*/
 	private String name;

@@ -345,7 +345,7 @@ public class GameActivity extends BaseGameActivity implements
 			currentPlayer.getHand().add(Card.draw(currentPlayer));
 			loadCurrentPlayer();
 			loadHands();
-			handScrollView.scrollTo(handScrollView.getWidth(), 0);
+			handScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
 			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
 			showMessage("Spend 3 diamond to draw a card.", 1000);
 		} else {
@@ -553,7 +553,7 @@ public class GameActivity extends BaseGameActivity implements
 			cardView.setCard(table.getCardPlayed().get(i));
 			cardPlayedLayout.addView(cardView);
 		}
-		cardplayedScrollView.scrollTo(cardplayedScrollView.getWidth(), 0);
+		cardplayedScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
 	}
 
 	/**
