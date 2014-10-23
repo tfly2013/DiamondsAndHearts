@@ -42,7 +42,7 @@ public class Player {
 		for (EventType key : EventType.class.getEnumConstants())
 			effects.put(key, false);
 		diamond = 30;
-		heart = 30;
+		heart = 1;
 		alive = true;
 		initialHand();
 	}
