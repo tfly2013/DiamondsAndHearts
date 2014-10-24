@@ -28,7 +28,6 @@ public class Table {
 	private ArrayList<ParticipantResult> results;
 	
 	private int cardDrawed;
-	public boolean debug;
 
 	/**
 	 * Initialize a table
@@ -36,19 +35,11 @@ public class Table {
 	 * @param debug
 	 *            Debug value set to be false atm
 	 * */
-	public Table(boolean debug) {
-		this.debug = debug;
+	public Table() {
 		turnCounter = 0;
 		cardPlayed = new ArrayList<Card>();
 		cardDrawed = 0;
 		results = new ArrayList<ParticipantResult>();
-		if (debug) {
-			players = new ArrayList<Player>();
-			for (int i = 0; i < 5; i++)
-				players.add(new Player(this, null));
-			setPlayerThisTurn(players.get(3));
-			currentPlayer = getPlayerThisTurn();
-		}
 	}
 
 	/**

@@ -319,8 +319,8 @@ public class MainActivity extends BaseGameActivity implements
 	 * @param view
 	 *            The button.
 	 */
-	public void onTestGameClicked(View view) {
-		Intent intent = new Intent(this, GameActivity.class);
+	public void onInstuctionClicked(View view) {
+		Intent intent = new Intent(this, InstructionActivity.class);
 		startActivity(intent);
 	}
 
@@ -492,7 +492,7 @@ public class MainActivity extends BaseGameActivity implements
 	private void initiateMatch(TurnBasedMatch match) {
 		this.match = match;
 
-		Table table = new Table(false);
+		Table table = new Table();
 		// Set players
 		ArrayList<Player> players = new ArrayList<Player>();
 		ArrayList<Participant> participants = match.getParticipants();

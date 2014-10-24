@@ -266,10 +266,6 @@ public class GameActivity extends BaseGameActivity implements
 	 * Called when a turn is finish
 	 * */
 	public void finishTurn() {
-		if (table.debug) {
-			finish();
-			return;
-		}
 		// Extra Turn: set the next participant the current one
 		String nextParticipantId;
 		Player playerThisTurn = table.getPlayerThisTurn();
@@ -310,11 +306,6 @@ public class GameActivity extends BaseGameActivity implements
 	 * Perform leave game if get positive result.
 	 */
 	public void onBackPressed() {
-		if (table.debug) {
-			finish();
-			return;
-		}
-
 		// Dialog to leave match
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		alertDialogBuilder
@@ -405,13 +396,11 @@ public class GameActivity extends BaseGameActivity implements
 			table = (Table) xStream.fromXML(tableData);
 		} else {
 			// Table for debugging
-			table = new Table(true);
+			table = new Table();
 		}
 		// Retrieve current logged in player Id
-		if (!table.debug) {
-			checkPreGame(match);
-			checkMatchStatus(match);
-		}
+		checkPreGame(match);
+		checkMatchStatus(match);
 		updateUI();
 	}
 
@@ -660,21 +649,16 @@ public class GameActivity extends BaseGameActivity implements
 	 * show round view too.
 	 */
 	private void updateUI() {
-		if (!table.debug) {
-			String currnetParticipantId = match.getParticipantId(Games.Players
-					.getCurrentPlayerId(getApiClient()));
-			currentPlayer = table.getPlayerById(currnetParticipantId);
-			table.setCurrentPlayer(currentPlayer);
-			table.setTurnCounter(table.getTurnCounter() + 1);
-		} else {
-			currentPlayer = table.getCurrentPlayer();
-		}
+		String currnetParticipantId = match.getParticipantId(Games.Players
+				.getCurrentPlayerId(getApiClient()));
+		currentPlayer = table.getPlayerById(currnetParticipantId);
+		table.setCurrentPlayer(currentPlayer);
+		table.setTurnCounter(table.getTurnCounter() + 1);
 		if (table.isMyTurn()) {
 			if (!currentPlayer.isAlive())
 				finishTurn();
 			// Skip Turn: current player's turn is forced to be skipped
-			else if (!table.debug
-					&& currentPlayer.getEffects().get(EventType.SkipTurn)) {
+			else if (currentPlayer.getEffects().get(EventType.SkipTurn)) {
 				currentPlayer.getEffects().put(EventType.SkipTurn, false);
 				finishTurn();
 			} else {

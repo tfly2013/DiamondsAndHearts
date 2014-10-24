@@ -12,7 +12,7 @@ public enum EventType {
 	SkipTurn("Skip Turn", R.drawable.event_skip_turn, -3), 
 	Shield("Shield", R.drawable.event_shield, 3), 
 	Barter("Barter", R.drawable.event_barter, 2), 
-	Strength("Strength", R.drawable.event_stealth, 5), 
+	Strength("Strength", R.drawable.event_strength, 5), 
 	Fortitude("Fortitude", R.drawable.event_fortitude, 5), 
 	Drain("Drain", R.drawable.event_drain, 6), 
 	Load("Load", R.drawable.event_load, -4), 
