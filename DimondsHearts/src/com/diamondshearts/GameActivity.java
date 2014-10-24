@@ -352,6 +352,7 @@ public class GameActivity extends BaseGameActivity implements
 	 * */
 	public void onDrawButtonClicked(View view) {
 		if (table.getCardDrawed() >= 3) {
+			soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
 			showMessage("Cant draw more card this turn.", 1000);
 			return;
 		}
@@ -365,6 +366,7 @@ public class GameActivity extends BaseGameActivity implements
 			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
 			showMessage("Spend 3 diamond to draw a card.", 1000);
 		} else {
+			soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
 			showMessage("I cant afford this.", 1000);
 		}
 	}

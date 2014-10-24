@@ -79,6 +79,6 @@ public class Event implements Comparable<Event> {
 
 	@Override
 	public int compareTo(Event another) {
-		return ((Double) getValue()).compareTo(another.getValue());
+		return -((Double)getValue()).compareTo(another.getValue());
 	}
 }

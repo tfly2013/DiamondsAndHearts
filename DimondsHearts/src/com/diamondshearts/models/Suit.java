@@ -5,9 +5,9 @@ package com.diamondshearts.models;
  * */
 public enum Suit {
 	/**A suit could be Hearts, Clubs, Diamonds, Spades, Suit's properties*/
-	Club("♣", "", 1.2),
-	Spade("♠", "", 1.1),
-	Heart("♥", "", 1),
+	Club("♣", "", 0.8),
+	Spade("♠", "", 1.2),
+	Heart("♥", "", 1.5),
 	Diamond("♦", "", -1),;
 
 	/**Suit name*/
