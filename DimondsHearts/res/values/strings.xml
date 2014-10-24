@@ -22,17 +22,37 @@
     <string name="welcome">Welcome,&#160;</string>
     <string name="diamond_label">&#9830;: </string>
     <string name="heart_label">&#9829;: </string>
-    <string name="hand_label">H: </string>
     <string name="diamond">&#9830;</string>
     <string name="heart">&#9829;</string>
     <string name="spade">&#9824;</string>
     <string name="club">&#9827;</string>
-    <string name="test_game">Test Game</string>
     <string name="draw">Draw</string>
     <string name="skip">Skip</string>
     <string name="appicon">AppIcon</string>
     <string name="rankings">Rankings</string>
     <string name="title_activity_instruction">Instruction</string>
-    <string name="instruction_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tempor dui eu pellentesque semper. Duis egestas non ligula at maximus. Fusce in arcu tempus, venenatis libero nec, tincidunt nulla. Suspendisse at urna at metus pharetra pretium nec scelerisque felis. Nam massa lectus, auctor sed metus ut, varius congue velit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Interdum et malesuada fames ac ante ipsum primis in faucibus.Vivamus accumsan mattis lacus, in ultrices ligula. Praesent sagittis neque eget mollis feugiat. Sed posuere, leo ac egestas efficitur, nisi arcu vestibulum purus, in porta nisl diam nec nulla. Fusce tempus mollis tincidunt. Nullam tristique, dui et egestas fermentum, nunc purus sollicitudin purus, a consequat neque justo quis mi. Fusce vulputate imperdiet tellus eget molestie. Proin porttitor, massa ut venenatis dictum, ipsum elit aliquet ante, vel mollis libero felis et elit. Quisque at pellentesque velit. Praesent at ipsum quis urna dictum congue et eu leo. Integer ultricies lorem a ullamcorper tincidunt. Curabitur convallis dictum condimentum. Etiam sit amet lacus tortor. Vestibulum lectus tellus, viverra eget eros ac, vestibulum lacinia eros. Curabitur mollis nulla ac urna ornare, eu maximus felis aliquet. In finibus fermentum nulla tempus eleifend. Aliquam porta nec nulla quis hendrerit. Pellentesque non elit eu enim viverra semper quis sit amet orci. Quisque eu nunc eget leo gravida eleifend sit amet ut sem. Vestibulum eu magna nisl. Fusce facilisis tortor magna, nec tempor turpis euismod vitae. Maecenas eget tortor vitae erat luctus porttitor in sed orci. Aliquam id tincidunt risus. Nullam vitae sapien eu quam ultrices pulvinar. Nunc neque mi, lobortis quis enim consequat, posuere aliquam tellus. Quisque id quam augue. In ullamcorper congue lorem, id tincidunt metus porta sed. Suspendisse et nisi venenatis, suscipit turpis et, rhoncus sem. In hac habitasse platea dictumst. Fusce dolor sem, dapibus quis tortor in, egestas lacinia urna. Donec sodales orci libero, at egestas arcu rhoncus at. Nullam ac turpis euismod, tempus magna ut, dignissim nisl. Phasellus tortor arcu, dictum in dolor nec, fermentum tincidunt purus. Quisque congue mi eget cursus pellentesque. Duis nec iaculis eros, blandit commodo orci. Vestibulum velit est, laoreet quis hendrerit rutrum, gravida eu massa. Vivamus at ultricies sem. Cras vitae feugiat eros, vel egestas lorem. Sed tincidunt augue nisi. Sed ipsum ligula, rutrum vel auctor a, condimentum sed libero.Mauris tincidunt tempus metus ut lobortis. Duis aliquet, enim eu commodo ornare, dui nibh ullamcorper lectus, varius bibendum metus tellus vel quam. Quisque pulvinar velit sit amet maximus pretium. Nunc sed bibendum ligula. Ut id bibendum orci. Suspendisse sit amet sem maximus, iaculis tellus in, efficitur nunc. Aenean ornare condimentum nisi, ac feugiat velit efficitur ut. Sed quis ante tellus. Curabitur a nunc in tortor tristique suscipit.</string>
+    <string name="instruction_text">Players have a hand of cards to play in each game. Cards have 1-3 actions and 0-2 effects. These actions on a card will take place when the card is played. Whenever there is no card for a player, he might press \"skip\" that turn to gain 4 diamonds. By that, they could press \"draw\" to buy a card with cost of 3 diamonds.\n\n
+If a card with a Clubs or Spades action is played, the player is prompted to choose which player to target. This may happen multiple times on a single card.\n\n
+Action modifiers will stay with the player until they take effect or the game ends. Clever timing of events and their corresponding actions make up most of the game\'s strategy.\n\n
+As for cards, the rules for actions have the followings:\n\n
+1. N of Hearts will heal the player N hearts\n
+2. N of Clubs will attack a chosen player for N damage\n
+3. N of Diamonds calls for N diamonds to be put on the table\n
+4. N of Spades will Steal N diamonds from a chosen player\n\n
+As for cards, the rules for effects have the followings:\n
+1. Extra turn - the player may play another card or draw a card\n
+2. Extra card - the player will obtain an extra card at the end of a turn\n
+3. Skip turn - the player\'s next turn is skipped\n
+4. Shield - protects the player from the next attack\n
+5. Drain - the player\'s next Club card steals the target\'s Hearts\n
+6. Barter - the players next diamond payment is halved\n
+7. Load - the player\'s next diamond payment is doubled\n
+8. Strength - the player\'s next Club card does double damage\n
+9. Weaken - the player\'s next Club card does half damage\n
+10. Stealth - the player\'s next Spade card steals twice as much\n
+11. Guilty - the player\'s next Spade card steals nothing\n
+12. Fortitude - the player\'s next Heart card heals twice as much\n
+13. Curse - the player\'s next Heart card will do damage to himself instead\n
+14. Reaction - the player\'s next Club card will do damage target and himself\n</string>
 
 </resources>
