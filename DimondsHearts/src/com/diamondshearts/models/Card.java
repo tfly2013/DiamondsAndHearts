@@ -2,8 +2,8 @@ package com.diamondshearts.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
+import java.util.TreeSet;
 
 /**
  * Cards have 1-3 actions and 0-2 effects
@@ -15,8 +15,8 @@ public class Card {
 	private Player owner;
 
 	/** Lists of actions and events initialized */
-	private HashSet<Action> actions = new HashSet<Action>();
-	private HashSet<Event> events = new HashSet<Event>();
+	private TreeSet<Action> actions = new TreeSet<Action>();
+	private TreeSet<Event> events = new TreeSet<Event>();
 
 	/**
 	 * Initialize a card
@@ -28,19 +28,20 @@ public class Card {
 		this.owner = owner;
 
 		ArrayList<Suit> suits = new ArrayList<Suit>(Arrays.asList(Suit.class
-				.getEnumConstants()));
-		
+				.getEnumConstants()));		
 		// add new actions
 		Integer actionsCount = gen.nextInt(3) + 1;
 		while (actions.size() < actionsCount) {
-			Action newAction = new Action(suits);			
-			actions.add(newAction);
-			suits.remove(newAction.getSuit());
+			Action action = new Action(suits);			
+			if (actions.add(action))
+				suits.remove(action.getSuit());
 		}
 		// add new events
 		Integer eventsCount = gen.nextInt(3);
-		while (events.size() < eventsCount)
-			events.add(new Event());
+		while (events.size() < eventsCount){
+			Event event = new Event();
+			events.add(event);
+		}
 
 	}
 
@@ -95,18 +96,8 @@ public class Card {
 	 * 
 	 * @return actions
 	 * */
-	public HashSet<Action> getActions() {
+	public TreeSet<Action> getActions() {
 		return actions;
-	}
-
-	/**
-	 * Modify the actions list
-	 * 
-	 * @param actions
-	 *            A list of actions.
-	 * */
-	public void setActions(HashSet<Action> actions) {
-		this.actions = actions;
 	}
 
 	/**
@@ -114,18 +105,8 @@ public class Card {
 	 * 
 	 * @return events
 	 * */
-	public HashSet<Event> getEvents() {
+	public TreeSet<Event> getEvents() {
 		return events;
-	}
-
-	/**
-	 * Modify the list of events
-	 * 
-	 * @param events
-	 *            A list of events
-	 * */
-	public void setEvents(HashSet<Event> events) {
-		this.events = events;
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import java.util.Random;
  * Events vary greatly, and add a significant amount of strategy to the game,
  * such as turn modifiers and action modifiers
  * */
-public class Event {
+public class Event implements Comparable<Event> {
 	/** Random number */
 	private static Random gen = new Random();
 	/** Event type */
@@ -35,7 +35,7 @@ public class Event {
 		owner.getEffects().put(type, true);
 
 	}
-	
+
 	@Override
 	/**
 	 * Check if card has same event
@@ -43,7 +43,7 @@ public class Event {
 	public boolean equals(Object o) {
 		if (o.getClass() == Event.class) {
 			Event tar = (Event) o;
-			return (tar.getName().equals(getName()));
+			return (tar.getType()).equals(getType());
 		}
 		return false;
 	}
@@ -56,7 +56,7 @@ public class Event {
 	public String getName() {
 		return type.getName();
 	}
-	
+
 	/**
 	 * @return the icon
 	 */
@@ -72,8 +72,13 @@ public class Event {
 	public EventType getType() {
 		return type;
 	}
-	
-	public double getValue(){
+
+	public double getValue() {
 		return type.getValue();
+	}
+
+	@Override
+	public int compareTo(Event another) {
+		return ((Double) getValue()).compareTo(another.getValue());
 	}
 }

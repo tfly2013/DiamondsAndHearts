@@ -7,19 +7,20 @@ import com.diamondshearts.R;
  * */
 public enum EventType {
 	/** EventType properties */
-	ExtraTurn("Extra turn", R.drawable.event_extra_turn, 5), ExtraCard(
-			"Extra card", R.drawable.event_extra_card, 1), SkipTurn(
-			"Skip Turn", R.drawable.event_skip_turn, -3), Shield("Shield",
-			R.drawable.event_shield, 3), Barter("Barter",
-			R.drawable.event_barter, 2), Strength("Strength",
-			R.drawable.event_stealth, 5), Fortitude("Fortitude",
-			R.drawable.event_fortitude, 5), Drain("Drain",
-			R.drawable.event_drain, 6), Load("Load", R.drawable.event_load, -4), Stealth(
-			"Stealth", R.drawable.event_stealth, 5), Curse("Curse",
-			R.drawable.event_curse, -5), Weaken("Weaken",
-			R.drawable.event_weaken, -3), Guilty("Guilty",
-			R.drawable.event_guilty, -5), Reaction("Reaction",
-			R.drawable.event_reaction, -4);
+	ExtraTurn("Extra turn", R.drawable.event_extra_turn, 5), 
+	ExtraCard("Extra card", R.drawable.event_extra_card, 1), 
+	SkipTurn("Skip Turn", R.drawable.event_skip_turn, -3), 
+	Shield("Shield", R.drawable.event_shield, 3), 
+	Barter("Barter", R.drawable.event_barter, 2), 
+	Strength("Strength", R.drawable.event_stealth, 5), 
+	Fortitude("Fortitude", R.drawable.event_fortitude, 5), 
+	Drain("Drain", R.drawable.event_drain, 6), 
+	Load("Load", R.drawable.event_load, -4), 
+	Stealth("Stealth", R.drawable.event_stealth, 5), 
+	Curse("Curse", R.drawable.event_curse, -5), 
+	Weaken("Weaken", R.drawable.event_weaken, -3), 
+	Guilty("Guilty", R.drawable.event_guilty, -5), 
+	Reaction("Reaction", R.drawable.event_reaction, -4);
 
 	/** Name of event */
 	private String name;

@@ -26,6 +26,8 @@ public class Table {
 	private ArrayList<Card> cardPlayed;
 
 	private ArrayList<ParticipantResult> results;
+	
+	private int cardDrawed;
 	public boolean debug;
 
 	/**
@@ -38,6 +40,7 @@ public class Table {
 		this.debug = debug;
 		turnCounter = 0;
 		cardPlayed = new ArrayList<Card>();
+		cardDrawed = 0;
 		results = new ArrayList<ParticipantResult>();
 		if (debug) {
 			players = new ArrayList<Player>();
@@ -266,5 +269,19 @@ public class Table {
 			if (player.isAlive())
 				count++;
 		return count;
+	}
+
+	/**
+	 * @return the cardDrawed
+	 */
+	public int getCardDrawed() {
+		return cardDrawed;
+	}
+
+	/**
+	 * @param cardDrawed the cardDrawed to set
+	 */
+	public void setCardDrawed(int cardDrawed) {
+		this.cardDrawed = cardDrawed;
 	}
 }

@@ -7,7 +7,7 @@ import java.util.Random;
  * An action is a represented by a suit (Hearts, Clubs, Diamonds, Spades) and a
  * number from 1 to 9
  * */
-public class Action {
+public class Action implements Comparable<Action> {
 	/** Random number for */
 	private static Random gen = new Random();
 	/** Action rank */
@@ -16,11 +16,12 @@ public class Action {
 	private Suit suit;
 	/** Suit description */
 	private String description;
-	
+
 	/**
 	 * Initialize a action
+	 * 
 	 * @param suits
-	 * 			   Suits enum
+	 *            Suits enum
 	 * */
 	public Action(ArrayList<Suit> suits) {
 		// select a suit based on the given distribution
@@ -34,7 +35,7 @@ public class Action {
 		choice = gen.nextInt(rankDistribution.length);
 		setRank(rankDistribution[choice]);
 	}
-	
+
 	/**
 	 * Play against target opponent according to action
 	 * 
@@ -83,10 +84,9 @@ public class Action {
 				// Curse: the player’s next Heart card will do damage instead
 				owner.setHeart(owner.getHeart() - power);
 				owner.getEffects().put(EventType.Curse, false);
-			}
-			else {
+			} else {
 				owner.setHeart(owner.getHeart() + power);
-			}			
+			}
 			break;
 		case Spade:
 			// Guilty: the player’s next Spade card steals nothing instead
@@ -112,7 +112,7 @@ public class Action {
 			break;
 		}
 	}
-	
+
 	@Override
 	/**
 	 * Check if card has equal action
@@ -123,7 +123,7 @@ public class Action {
 	public boolean equals(Object o) {
 		if (o.getClass() == Action.class) {
 			Action tar = (Action) o;
-			return (tar.getRank() == rank) && (tar.getSuit() == suit);
+			return (tar.getRank().equals(rank)) && (tar.getSuit().equals(suit));
 		}
 		return false;
 	}
@@ -184,8 +184,13 @@ public class Action {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
-	public double getValue(){
+
+	public double getValue() {
 		return getSuit().getValueCoefficient() * getRank();
+	}
+
+	@Override
+	public int compareTo(Action another) {
+		return suit.compareTo(another.getSuit());
 	}
 }

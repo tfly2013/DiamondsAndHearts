@@ -289,6 +289,7 @@ public class GameActivity extends BaseGameActivity implements
 		}
 		table.setPlayerThisTurn(table.getPlayerById(nextParticipantId));
 		updateUI();
+		table.setCardDrawed(0);
 		// Update a match with new turn data
 		Games.TurnBasedMultiplayer.takeTurn(getApiClient(), match.getMatchId(),
 				xStream.toXML(table).getBytes(), nextParticipantId)
@@ -350,9 +351,14 @@ public class GameActivity extends BaseGameActivity implements
 	 *            The view pressed
 	 * */
 	public void onDrawButtonClicked(View view) {
+		if (table.getCardDrawed() >= 3) {
+			showMessage("Cant draw more card this turn.", 1000);
+			return;
+		}
 		if (currentPlayer.canAfford(3)) {
 			currentPlayer.setDiamond(currentPlayer.getDiamond() - 3);
 			currentPlayer.getHand().add(Card.draw(currentPlayer));
+			table.setCardDrawed(table.getCardDrawed() + 1);
 			loadCurrentPlayer();
 			loadHands();
 			handScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
@@ -535,11 +541,12 @@ public class GameActivity extends BaseGameActivity implements
 			});
 			for (ParticipantResult result : results) {
 				TextView resultTextView = new TextView(this);
+				Player player = table.getPlayerById(result.getParticipantId());
 				resultTextView.setTextAppearance(this, R.style.MainText);
-				resultTextView.setText(result.getPlacing()
-						+ "  "
-						+ table.getPlayerById(result.getParticipantId())
-								.getName());
+				resultTextView.setText(result.getPlacing() + "  "
+						+ player.getName());
+				if (player.equals(currentPlayer))
+					resultTextView.setTextColor(Color.RED);
 				rankingLayout.addView(resultTextView);
 			}
 		}

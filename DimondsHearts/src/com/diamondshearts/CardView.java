@@ -171,16 +171,18 @@ public class CardView extends View {
 				+ actionsY + textHeight;
 		for (Event event : card.getEvents()) {
 			String text = event.getName();
+			int color = event.getValue() > 0 ? Color.RED : Color.BLACK;
 			float eventX = (width - getTextWidth(text)) / 2 + 10 * density;
+			textPaint.setColor(color);
 			canvas.drawText(text, eventX, eventY, textPaint);
 			Drawable eventIcon = getResources().getDrawable(event.getIcon());
-			eventIcon.setBounds((int) ((eventX - 20 * density)),
-					(int) ((eventY - textHeight - 1 * density)),
-					(int) (eventX - 2 * density),
+			eventIcon.setBounds((int) ((eventX - 20 * density)), (int) ((eventY
+					- textHeight - 1 * density)), (int) (eventX - 2 * density),
 					(int) ((eventY - textHeight + 17 * density)));
 			eventIcon.draw(canvas);
 			eventY += textHeight + inteval;
 		}
+		textPaint.setColor(Color.BLACK);
 
 		// Draw border
 		cardBoarder.setBounds(0, 0, width, height);
