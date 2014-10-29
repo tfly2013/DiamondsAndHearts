@@ -79,15 +79,6 @@
                 android:text="@string/instruction" />
 
             <Button
-                android:id="@+id/quickGameButon"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="5dp"
-                android:onClick="onQuickGameClicked"
-                android:text="@string/quick_game" />
-
-            <Button
                 android:id="@+id/newGameButton"
                 android:layout_width="200dp"
                 android:layout_height="60dp"

@@ -33,6 +33,14 @@ public enum Suit {
 	}
 
 	/**
+	 * Access the frequency of a suit
+	 * @return description
+	 * */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
 	 * Access the name of a suit
 	 * @return name
 	 * */
@@ -41,20 +49,11 @@ public enum Suit {
 	}
 
 	/**
-	 * Modify the name of a suit
-	 * @param name
-	 * 			  Suit name
-	 * */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * Access the frequency of a suit
-	 * @return description
-	 * */
-	public String getDescription() {
-		return description;
+	 * Access the value coefficient
+	 * @return the valueCoefficient
+	 */
+	public double getValueCoefficient() {
+		return valueCoefficient;
 	}
 
 	/**
@@ -66,11 +65,12 @@ public enum Suit {
 	}
 
 	/**
-	 * Access the value coefficient
-	 * @return the valueCoefficient
-	 */
-	public double getValueCoefficient() {
-		return valueCoefficient;
+	 * Modify the name of a suit
+	 * @param name
+	 * 			  Suit name
+	 * */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

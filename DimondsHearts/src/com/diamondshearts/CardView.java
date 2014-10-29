@@ -108,28 +108,6 @@ public class CardView extends View {
 		});
 	}
 
-	/**
-	 * Change the background Color of player view
-	 */
-	@Override
-	public void setBackgroundColor(int color) {
-		backgroundColor = color;
-	}
-
-	@Override
-	/**
-	 * Called to determine the size requirements for this view and all of its children.
-	 * @param widthMeasureSpec
-	 * 						 The width requirement
-	 * @param heightMeasureSpec
-	 * 						 The height requirement
-	 * */
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
-				resolveSize(height, heightMeasureSpec));
-	}
-
 	@Override
 	/**
 	 * Called when the view should render its content.
@@ -189,6 +167,29 @@ public class CardView extends View {
 		cardBoarder.draw(canvas);
 	}
 
+	@Override
+	/**
+	 * Called to determine the size requirements for this view and all of its children.
+	 * @param widthMeasureSpec
+	 * 						 The width requirement
+	 * @param heightMeasureSpec
+	 * 						 The height requirement
+	 * */
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+		setMeasuredDimension(resolveSize(width, widthMeasureSpec),
+				resolveSize(height, heightMeasureSpec));
+	}
+
+	/**
+	 * Access the card
+	 * 
+	 * @return card The card
+	 * */
+	public Card getCard() {
+		return card;
+	}
+
 	/**
 	 * Return the text width of a string
 	 * 
@@ -207,12 +208,11 @@ public class CardView extends View {
 	}
 
 	/**
-	 * Access the card
-	 * 
-	 * @return card The card
-	 * */
-	public Card getCard() {
-		return card;
+	 * Change the background Color of player view
+	 */
+	@Override
+	public void setBackgroundColor(int color) {
+		backgroundColor = color;
 	}
 
 	/**

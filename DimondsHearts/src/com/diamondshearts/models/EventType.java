@@ -39,6 +39,13 @@ public enum EventType {
 	}
 
 	/**
+	 * @return the icon
+	 */
+	public int getIcon() {
+		return icon;
+	}
+
+	/**
 	 * Access the name
 	 * 
 	 * @return name
@@ -54,12 +61,5 @@ public enum EventType {
 	 * */
 	public Integer getValue() {
 		return value;
-	}
-
-	/**
-	 * @return the icon
-	 */
-	public int getIcon() {
-		return icon;
 	}
 }

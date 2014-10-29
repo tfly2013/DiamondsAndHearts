@@ -55,10 +55,7 @@ public class MainActivity extends BaseGameActivity implements
 
 	/** The current match, null if not loaded. */
 	public TurnBasedMatch match;
-
-	/** The table state of game, null if not loaded. */
-	// public Table table;
-
+	
 	/** The XStream object. */
 	private XStream xStream;
 
@@ -92,6 +89,14 @@ public class MainActivity extends BaseGameActivity implements
 
 					}
 				});
+	}
+
+	/**
+	 * Check all concurrent and ongoing games
+	 * */
+	public void checkGames() {
+		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
+		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
 	}
 
 	/**
@@ -181,11 +186,14 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
-	 * Check all concurrent and ongoing games
-	 * */
-	public void checkGames() {
-		Intent intent = Games.TurnBasedMultiplayer.getInboxIntent(apiAgent);
-		startActivityForResult(intent, RC_LOOK_AT_MATCHES);
+	 * DEBUG ONLY. Start a test game.
+	 * 
+	 * @param view
+	 *            The button.
+	 */
+	public void onInstuctionClicked(View view) {
+		Intent intent = new Intent(this, InstructionActivity.class);
+		startActivity(intent);
 	}
 
 	@Override
@@ -254,32 +262,6 @@ public class MainActivity extends BaseGameActivity implements
 		startActivityForResult(intent, RC_SELECT_PLAYERS);
 	}
 
-	/**
-	 * Create a one-on-one auto-match game (2 players game)
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onQuickGameClicked(View view) {
-		// Create a auto match criteria
-		Bundle autoMatchCriteria = RoomConfig.createAutoMatchCriteria(1, 4, 0);
-		TurnBasedMatchConfig tbmc = TurnBasedMatchConfig.builder()
-				.setAutoMatchCriteria(autoMatchCriteria).build();
-
-		// Start the match
-		showSpinner();
-		Games.TurnBasedMultiplayer
-				.createMatch(apiAgent, tbmc)
-				.setResultCallback(
-						new ResultCallback<TurnBasedMultiplayer.InitiateMatchResult>() {
-							@Override
-							public void onResult(
-									TurnBasedMultiplayer.InitiateMatchResult result) {
-								processResult(result);
-							}
-						});
-	}
-
 	@Override
 	/**
 	 * Show sign in layout when sign in failed
@@ -311,17 +293,6 @@ public class MainActivity extends BaseGameActivity implements
 		// players get.
 		Games.TurnBasedMultiplayer.registerMatchUpdateListener(getApiClient(),
 				this);
-	}
-
-	/**
-	 * DEBUG ONLY. Start a test game.
-	 * 
-	 * @param view
-	 *            The button.
-	 */
-	public void onInstuctionClicked(View view) {
-		Intent intent = new Intent(this, InstructionActivity.class);
-		startActivity(intent);
 	}
 
 	@Override
@@ -580,6 +551,18 @@ public class MainActivity extends BaseGameActivity implements
 	}
 
 	/**
+	 * display game ui
+	 * 
+	 * @param match
+	 *            The turn based match
+	 */
+	private void showGameUI(TurnBasedMatch match) {
+		Intent intent = new Intent(this, GameActivity.class);
+		intent.putExtra("com.diamondshearts.match", match);
+		startActivity(intent);
+	}
+
+	/**
 	 * This is the main function that gets called when players choose a match
 	 * from the inbox, or else create a match and want to start it.
 	 * 
@@ -631,17 +614,5 @@ public class MainActivity extends BaseGameActivity implements
 					"Still waiting for invitations.\n\nBe patient!");
 			return;
 		}
-	}
-
-	/**
-	 * display game ui
-	 * 
-	 * @param match
-	 *            The turn based match
-	 */
-	private void showGameUI(TurnBasedMatch match) {
-		Intent intent = new Intent(this, GameActivity.class);
-		intent.putExtra("com.diamondshearts.match", match);
-		startActivity(intent);
 	}
 }

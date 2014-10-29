@@ -24,16 +24,10 @@ public class Event implements Comparable<Event> {
 		type = allTypes[choice];
 	}
 
-	/**
-	 * Play against target opponent according to event
-	 * 
-	 * @param target
-	 *            The targeted opponent
-	 * */
-	public void play(Player owner, Player target, Card card) {
-		// actions does not immediately happen will be recorded
-		owner.getEffects().put(type, true);
-
+	@Override
+	/** Compare two cards */
+	public int compareTo(Event another) {
+		return -((Double)getValue()).compareTo(another.getValue());
 	}
 
 	@Override
@@ -49,19 +43,19 @@ public class Event implements Comparable<Event> {
 	}
 
 	/**
+	 * @return the icon
+	 */
+	public int getIcon() {
+		return type.getIcon();
+	}
+
+	/**
 	 * Access the name of event type
 	 * 
 	 * @return name
 	 * */
 	public String getName() {
 		return type.getName();
-	}
-
-	/**
-	 * @return the icon
-	 */
-	public int getIcon() {
-		return type.getIcon();
 	}
 
 	/**
@@ -78,9 +72,15 @@ public class Event implements Comparable<Event> {
 		return type.getValue();
 	}
 
-	@Override
-	/** Compare two cards */
-	public int compareTo(Event another) {
-		return -((Double)getValue()).compareTo(another.getValue());
+	/**
+	 * Play against target opponent according to event
+	 * 
+	 * @param target
+	 *            The targeted opponent
+	 * */
+	public void play(Player owner, Player target, Card card) {
+		// actions does not immediately happen will be recorded
+		owner.getEffects().put(type, true);
+
 	}
 }

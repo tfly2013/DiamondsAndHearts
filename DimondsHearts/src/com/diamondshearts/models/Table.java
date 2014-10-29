@@ -42,6 +42,51 @@ public class Table {
 		results = new ArrayList<ParticipantResult>();
 	}
 
+	/** Count the number of players still alive
+	 * @return number of alive players*/
+	public int countAlivedPlayers() {
+		int count = 0;
+		for (Player player : players)
+			if (player.isAlive())
+				count++;
+		return count;
+	}
+
+	/**
+	 * Get the card drawn
+	 * @return the cardDrawed
+	 */
+	public int getCardDrawed() {
+		return cardDrawed;
+	}
+
+	/**
+	 * Access the all cards played
+	 * 
+	 * @return the cardPlayed All cards played
+	 */
+	public ArrayList<Card> getCardPlayed() {
+		return cardPlayed;
+	}
+
+	/**
+	 * Access the current player
+	 * 
+	 * @return current player
+	 * */
+	public Player getCurrentPlayer() {
+		return currentPlayer;
+	}
+
+	/**
+	 * Access the number of diamonds on the table
+	 * 
+	 * @return diamond
+	 * */
+	public Integer getDiamond() {
+		return diamond;
+	}
+
 	/**
 	 * Get the next participant.
 	 * 
@@ -62,110 +107,6 @@ public class Table {
 	}
 
 	/**
-	 * Access the number of diamonds on the table
-	 * 
-	 * @return diamond
-	 * */
-	public Integer getDiamond() {
-		return diamond;
-	}
-
-	/**
-	 * Modify the number of diamonds on the table
-	 * 
-	 * @param diamond
-	 *            The number of diamonds
-	 * */
-	public void setDiamond(Integer diamond) {
-		this.diamond = diamond;
-	}
-
-	/**
-	 * Access the players
-	 * 
-	 * @return players The players
-	 * */
-	public ArrayList<Player> getPlayers() {
-		return players;
-	}
-
-	/**
-	 * Modify the players
-	 * 
-	 * @param players
-	 *            The players
-	 * */
-	public void setPlayers(ArrayList<Player> players) {
-		this.players = players;
-	}
-
-	/**
-	 * Access the current player
-	 * 
-	 * @return current player
-	 * */
-	public Player getCurrentPlayer() {
-		return currentPlayer;
-	}
-
-	/**
-	 * Modify the current player
-	 * 
-	 * @param currentPlayer
-	 *            The current player
-	 * */
-	public void setCurrentPlayer(Player currentPlayer) {
-		this.currentPlayer = currentPlayer;
-	}
-
-	/**
-	 * Access the turn counter
-	 * 
-	 * @return turnCounter
-	 * */
-	public Integer getTurnCounter() {
-		return turnCounter;
-	}
-
-	/**
-	 * Modify the turn counter
-	 * 
-	 * @param turn
-	 *            counter
-	 * */
-	public void setTurnCounter(Integer turnCounter) {
-		this.turnCounter = turnCounter;
-	}
-
-	/**
-	 * Calculate the number of rounds
-	 * 
-	 * @return rounds
-	 * */
-	public Integer getRound() {
-		return turnCounter / players.size() + 1;
-	}
-
-	/**
-	 * Access the player of this turn
-	 * 
-	 * @return the playerThisTurn
-	 */
-	public Player getPlayerThisTurn() {
-		return playerThisTurn;
-	}
-
-	/**
-	 * Modify the player in this turn
-	 * 
-	 * @param playerThisTurn
-	 *            the playerThisTurn to set
-	 */
-	public void setPlayerThisTurn(Player playerThisTurn) {
-		this.playerThisTurn = playerThisTurn;
-	}
-
-	/**
 	 * Map player id to the player
 	 * 
 	 * @param id
@@ -181,32 +122,55 @@ public class Table {
 	}
 
 	/**
+	 * Access the players
+	 * 
+	 * @return players The players
+	 * */
+	public ArrayList<Player> getPlayers() {
+		return players;
+	}
+
+	/**
+	 * Access the player of this turn
+	 * 
+	 * @return the playerThisTurn
+	 */
+	public Player getPlayerThisTurn() {
+		return playerThisTurn;
+	}
+
+	/**
+	 * @return the results
+	 */
+	public ArrayList<ParticipantResult> getResults() {
+		return results;
+	}
+
+	/**
+	 * Calculate the number of rounds
+	 * 
+	 * @return rounds
+	 * */
+	public Integer getRound() {
+		return turnCounter / players.size() + 1;
+	}
+
+	/**
+	 * Access the turn counter
+	 * 
+	 * @return turnCounter
+	 * */
+	public Integer getTurnCounter() {
+		return turnCounter;
+	}
+
+	/**
 	 * Check if it is the current player's turn
 	 * 
 	 * @return true/false This might be the current player's turn
 	 * */
 	public boolean isMyTurn() {
 		return isPlayerTurn(currentPlayer);
-	}
-
-	/**
-	 * Check if it is the player's turn
-	 * 
-	 * @param player
-	 *            The player
-	 * */
-	public boolean isPlayerTurn(Player player) {
-		return !preGame && player.equals(playerThisTurn);
-	}
-
-	/**
-	 * Modify the last player who was hit
-	 * 
-	 * @param playerTLastHit
-	 *            the playerTLastHit to set
-	 */
-	public void setPlayerLastHit(Player playerTLastHit) {
-		this.playerTLastHit = playerTLastHit;
 	}
 
 	/**
@@ -220,12 +184,80 @@ public class Table {
 	}
 
 	/**
+	 * Check if it is the player's turn
+	 * 
+	 * @param player
+	 *            The player
+	 * */
+	public boolean isPlayerTurn(Player player) {
+		return !preGame && player.equals(playerThisTurn);
+	}
+
+	/**
 	 * Get preGame boolean
 	 * 
 	 * @return pregame the pregame
 	 */
 	public boolean isPreGame() {
 		return preGame;
+	}
+
+	/**
+	 * Set the card drawn
+	 * @param cardDrawed the cardDrawed to set
+	 */
+	public void setCardDrawed(int cardDrawed) {
+		this.cardDrawed = cardDrawed;
+	}
+
+	/**
+	 * Modify the current player
+	 * 
+	 * @param currentPlayer
+	 *            The current player
+	 * */
+	public void setCurrentPlayer(Player currentPlayer) {
+		this.currentPlayer = currentPlayer;
+	}
+
+	/**
+	 * Modify the number of diamonds on the table
+	 * 
+	 * @param diamond
+	 *            The number of diamonds
+	 * */
+	public void setDiamond(Integer diamond) {
+		this.diamond = diamond;
+	}
+
+	/**
+	 * Modify the last player who was hit
+	 * 
+	 * @param playerTLastHit
+	 *            the playerTLastHit to set
+	 */
+	public void setPlayerLastHit(Player playerTLastHit) {
+		this.playerTLastHit = playerTLastHit;
+	}
+
+	/**
+	 * Modify the players
+	 * 
+	 * @param players
+	 *            The players
+	 * */
+	public void setPlayers(ArrayList<Player> players) {
+		this.players = players;
+	}
+
+	/**
+	 * Modify the player in this turn
+	 * 
+	 * @param playerThisTurn
+	 *            the playerThisTurn to set
+	 */
+	public void setPlayerThisTurn(Player playerThisTurn) {
+		this.playerThisTurn = playerThisTurn;
 	}
 
 	/**
@@ -239,44 +271,12 @@ public class Table {
 	}
 
 	/**
-	 * Access the all cards played
+	 * Modify the turn counter
 	 * 
-	 * @return the cardPlayed All cards played
-	 */
-	public ArrayList<Card> getCardPlayed() {
-		return cardPlayed;
-	}
-
-	/**
-	 * @return the results
-	 */
-	public ArrayList<ParticipantResult> getResults() {
-		return results;
-	}
-
-	/** Count the number of players still alive
-	 * @return number of alive players*/
-	public int countAlivedPlayers() {
-		int count = 0;
-		for (Player player : players)
-			if (player.isAlive())
-				count++;
-		return count;
-	}
-
-	/**
-	 * Get the card drawn
-	 * @return the cardDrawed
-	 */
-	public int getCardDrawed() {
-		return cardDrawed;
-	}
-
-	/**
-	 * Set the card drawn
-	 * @param cardDrawed the cardDrawed to set
-	 */
-	public void setCardDrawed(int cardDrawed) {
-		this.cardDrawed = cardDrawed;
+	 * @param turn
+	 *            counter
+	 * */
+	public void setTurnCounter(Integer turnCounter) {
+		this.turnCounter = turnCounter;
 	}
 }

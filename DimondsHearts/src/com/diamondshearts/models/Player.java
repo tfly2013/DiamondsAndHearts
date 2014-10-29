@@ -47,6 +47,14 @@ public class Player {
 		initialHand();
 	}
 
+	/**
+ * Check if diamond is sufficient
+ * @return true/false
+ * */
+public Boolean canAfford(int amount) {
+	return (this.diamond >= amount);
+}
+
 	@Override
 	/**
 	 * Check if two players are the same person
@@ -63,16 +71,6 @@ public class Player {
 	}
 
 	/**
-	 * Access the name of the player
-	 * @return name
-	 * */
-	public String getName() {
-		if (participant == null)
-			return "TestPlayer";
-		return participant.getDisplayName();
-	}
-
-	/**
 	 * Access the diamond
 	 * @return diamond
 	 * */
@@ -81,29 +79,12 @@ public class Player {
 	}
 
 	/**
-	 * Modify the number of diamonds
-	 * @param diamond
-	 * 				 The number of diamonds
+	 * A data structure where key is various event types and values are booleans
+	 * @return eventActivated
+	 * 						A map of events might have been activated
 	 * */
-	public void setDiamond(Integer diamond) {
-		this.diamond = diamond;
-	}
-
-	/**
-	 * Access the number of hearts
-	 * @return heart
-	 * */
-	public Integer getHeart() {
-		return heart;
-	}
-
-	/**
-	 * Modify the number of hearts
-	 * @param heart
-	 * 			   The number of hearts
-	 * */
-	public void setHeart(Integer heart) {
-		this.heart = heart;
+	public EnumMap<EventType, Boolean> getEffects() {
+		return effects;
 	}
 
 	/**
@@ -115,43 +96,11 @@ public class Player {
 	}
 
 	/**
-	 * Modify the hand
-	 * @param hand
-	 * 			  The hand
+	 * Access the number of hearts
+	 * @return heart
 	 * */
-	public void setHand(ArrayList<Card> hand) {
-		this.hand = hand;
-	}
-
-		/**
-	 * Check if diamond is sufficient
-	 * @return true/false
-	 * */
-	public Boolean canAfford(int amount) {
-		return (this.diamond >= amount);
-	}
-
-	/**
-	 * Add new cards into the hand to initialize the hand
-	 * */
-	public void initialHand() {
-		hand = new ArrayList<Card>();
-		for (int i = 0; i < INITIALHAND; i++) {
-			hand.add(Card.draw(this));
-		}
-	}
-
-	/**
-	 * Add diamond, hearts and hand information onto the label
-	 * @return labels
-	 * 				 The label of a player
-	 * */
-	public ArrayList<String> getLabels() {
-		ArrayList<String> labels = new ArrayList<String>();
-		labels.add("♦: " + diamond);
-		labels.add("♥: " + heart);
-		labels.add("H: " + hand.size());
-		return labels;
+	public Integer getHeart() {
+		return heart;
 	}
 
 	/**
@@ -166,14 +115,6 @@ public class Player {
 	}
 
 	/**
-	 * Access the table
-	 * @return the table
-	 */
-	public Table getTable() {
-		return table;
-	}
-	
-	/**
 	 * Access the player image from server
 	 * @return Uri
 	 * 			  The player profile image uri
@@ -184,13 +125,45 @@ public class Player {
 		return participant.getIconImageUri();
 	}
 
+		/**
+		 * Add diamond, hearts and hand information onto the label
+		 * @return labels
+		 * 				 The label of a player
+		 * */
+		public ArrayList<String> getLabels() {
+			ArrayList<String> labels = new ArrayList<String>();
+			labels.add("♦: " + diamond);
+			labels.add("♥: " + heart);
+			labels.add("H: " + hand.size());
+			return labels;
+		}
+
 	/**
-	 * A data structure where key is various event types and values are booleans
-	 * @return eventActivated
-	 * 						A map of events might have been activated
+	 * Access the name of the player
+	 * @return name
 	 * */
-	public EnumMap<EventType, Boolean> getEffects() {
-		return effects;
+	public String getName() {
+		if (participant == null)
+			return "TestPlayer";
+		return participant.getDisplayName();
+	}
+
+	/**
+	 * Access the table
+	 * @return the table
+	 */
+	public Table getTable() {
+		return table;
+	}
+
+	/**
+	 * Add new cards into the hand to initialize the hand
+	 * */
+	public void initialHand() {
+		hand = new ArrayList<Card>();
+		for (int i = 0; i < INITIALHAND; i++) {
+			hand.add(Card.draw(this));
+		}
 	}
 
 	/**
@@ -199,11 +172,38 @@ public class Player {
 	public boolean isAlive() {
 		return alive;
 	}
-
+	
 	/**
 	 * @param alive the alive to set
 	 */
 	public void setAlive(boolean alive) {
 		this.alive = alive;
+	}
+
+	/**
+	 * Modify the number of diamonds
+	 * @param diamond
+	 * 				 The number of diamonds
+	 * */
+	public void setDiamond(Integer diamond) {
+		this.diamond = diamond;
+	}
+
+	/**
+	 * Modify the hand
+	 * @param hand
+	 * 			  The hand
+	 * */
+	public void setHand(ArrayList<Card> hand) {
+		this.hand = hand;
+	}
+
+	/**
+	 * Modify the number of hearts
+	 * @param heart
+	 * 			   The number of hearts
+	 * */
+	public void setHeart(Integer heart) {
+		this.heart = heart;
 	}
 }

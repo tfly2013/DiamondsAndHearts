@@ -36,6 +36,61 @@ public class Action implements Comparable<Action> {
 		setRank(rankDistribution[choice]);
 	}
 
+	@Override
+	/** Compare suits of two cards
+	 * @return comparison result */
+	public int compareTo(Action another) {
+		return suit.compareTo(another.getSuit());
+	}
+
+	@Override
+	/**
+	 * Check if card has equal action
+	 * @param o
+	 * 		   Card object
+	 * @return true/false
+	 * */
+	public boolean equals(Object o) {
+		if (o.getClass() == Action.class) {
+			Action tar = (Action) o;
+			return (tar.getRank().equals(rank)) && (tar.getSuit().equals(suit));
+		}
+		return false;
+	}
+
+	/**
+	 * Access the description
+	 * 
+	 * @return description
+	 * */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * Access the rank
+	 * 
+	 * @return rank
+	 * */
+	public Integer getRank() {
+		return rank;
+	}
+
+	/**
+	 * Access the suit
+	 * 
+	 * @return suit
+	 * */
+	public Suit getSuit() {
+		return suit;
+	}
+
+	/** Get the value coefficient of selected suit
+	 * @return value */
+	public double getValue() {
+		return getSuit().getValueCoefficient() * getRank();
+	}
+
 	/**
 	 * Play against target opponent according to action
 	 * 
@@ -113,28 +168,14 @@ public class Action implements Comparable<Action> {
 		}
 	}
 
-	@Override
 	/**
-	 * Check if card has equal action
-	 * @param o
-	 * 		   Card object
-	 * @return true/false
-	 * */
-	public boolean equals(Object o) {
-		if (o.getClass() == Action.class) {
-			Action tar = (Action) o;
-			return (tar.getRank().equals(rank)) && (tar.getSuit().equals(suit));
-		}
-		return false;
-	}
-
-	/**
-	 * Access the rank
+	 * Modify the description of a card
 	 * 
-	 * @return rank
+	 * @param description
+	 *            The description for a card
 	 * */
-	public Integer getRank() {
-		return rank;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -148,15 +189,6 @@ public class Action implements Comparable<Action> {
 	}
 
 	/**
-	 * Access the suit
-	 * 
-	 * @return suit
-	 * */
-	public Suit getSuit() {
-		return suit;
-	}
-
-	/**
 	 * Modify the suit
 	 * 
 	 * @param suit
@@ -164,37 +196,5 @@ public class Action implements Comparable<Action> {
 	 * */
 	public void setSuit(Suit suit) {
 		this.suit = suit;
-	}
-
-	/**
-	 * Access the description
-	 * 
-	 * @return description
-	 * */
-	public String getDescription() {
-		return description;
-	}
-
-	/**
-	 * Modify the description of a card
-	 * 
-	 * @param description
-	 *            The description for a card
-	 * */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	/** Get the value coefficient of selected suit
-	 * @return value */
-	public double getValue() {
-		return getSuit().getValueCoefficient() * getRank();
-	}
-
-	@Override
-	/** Compare suits of two cards
-	 * @return comparison result */
-	public int compareTo(Action another) {
-		return suit.compareTo(another.getSuit());
 	}
 }

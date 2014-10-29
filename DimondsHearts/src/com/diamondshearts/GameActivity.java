@@ -362,7 +362,7 @@ public class GameActivity extends BaseGameActivity implements
 			table.setCardDrawed(table.getCardDrawed() + 1);
 			loadCurrentPlayer();
 			loadHands();
-			handScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+			handScrollView.fullScroll(View.FOCUS_RIGHT);
 			soundPool.play(drawSoundID, 1, 1, 1, 0, 1);
 			showMessage("Spend 3 diamond to draw a card.", 1000);
 		} else {
@@ -527,31 +527,6 @@ public class GameActivity extends BaseGameActivity implements
 		}
 	}
 
-	private void showScoreBoard() {
-		if (scoreboardLayout.getVisibility() == View.GONE) {
-			scoreboardLayout.setVisibility(View.VISIBLE);
-			rankingLayout.removeAllViews();
-			ArrayList<ParticipantResult> results = table.getResults();
-			Collections.sort(results, new Comparator<ParticipantResult>() {
-				@Override
-				public int compare(ParticipantResult lhs, ParticipantResult rhs) {
-					return ((Integer) lhs.getPlacing()).compareTo(rhs
-							.getPlacing());
-				}
-			});
-			for (ParticipantResult result : results) {
-				TextView resultTextView = new TextView(this);
-				Player player = table.getPlayerById(result.getParticipantId());
-				resultTextView.setTextAppearance(this, R.style.MainText);
-				resultTextView.setText(result.getPlacing() + "  "
-						+ player.getName());
-				if (player.equals(currentPlayer))
-					resultTextView.setTextColor(Color.RED);
-				rankingLayout.addView(resultTextView);
-			}
-		}
-	}
-
 	/**
 	 * Check if all players joined, if so, set the current player to to take
 	 * turn and start the game.
@@ -601,7 +576,7 @@ public class GameActivity extends BaseGameActivity implements
 			cardView.setCard(table.getCardPlayed().get(i));
 			cardPlayedLayout.addView(cardView);
 		}
-		cardplayedScrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+		cardplayedScrollView.fullScroll(View.FOCUS_RIGHT);
 	}
 
 	/**
@@ -651,6 +626,31 @@ public class GameActivity extends BaseGameActivity implements
 			}
 		}
 		loadCurrentPlayer();
+	}
+
+	private void showScoreBoard() {
+		if (scoreboardLayout.getVisibility() == View.GONE) {
+			scoreboardLayout.setVisibility(View.VISIBLE);
+			rankingLayout.removeAllViews();
+			ArrayList<ParticipantResult> results = table.getResults();
+			Collections.sort(results, new Comparator<ParticipantResult>() {
+				@Override
+				public int compare(ParticipantResult lhs, ParticipantResult rhs) {
+					return ((Integer) lhs.getPlacing()).compareTo(rhs
+							.getPlacing());
+				}
+			});
+			for (ParticipantResult result : results) {
+				TextView resultTextView = new TextView(this);
+				Player player = table.getPlayerById(result.getParticipantId());
+				resultTextView.setTextAppearance(this, R.style.MainText);
+				resultTextView.setText(result.getPlacing() + "  "
+						+ player.getName());
+				if (player.equals(currentPlayer))
+					resultTextView.setTextColor(Color.RED);
+				rankingLayout.addView(resultTextView);
+			}
+		}
 	}
 
 	/**
