@@ -24,9 +24,9 @@ public class Table {
 	private boolean preGame;
 	/** All cards have been played since the game starts */
 	private ArrayList<Card> cardPlayed;
-
+	/** List of gameplay results */
 	private ArrayList<ParticipantResult> results;
-	
+	/** Number of cards drawn */
 	private int cardDrawed;
 
 	/**
@@ -254,6 +254,8 @@ public class Table {
 		return results;
 	}
 
+	/** Count the number of players still alive
+	 * @return number of alive players*/
 	public int countAlivedPlayers() {
 		int count = 0;
 		for (Player player : players)
@@ -263,6 +265,7 @@ public class Table {
 	}
 
 	/**
+	 * Get the card drawn
 	 * @return the cardDrawed
 	 */
 	public int getCardDrawed() {
@@ -270,6 +273,7 @@ public class Table {
 	}
 
 	/**
+	 * Set the card drawn
 	 * @param cardDrawed the cardDrawed to set
 	 */
 	public void setCardDrawed(int cardDrawed) {

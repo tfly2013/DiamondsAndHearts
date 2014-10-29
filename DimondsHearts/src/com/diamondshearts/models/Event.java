@@ -73,11 +73,13 @@ public class Event implements Comparable<Event> {
 		return type;
 	}
 
+	/** Evaluate the value of a type */
 	public double getValue() {
 		return type.getValue();
 	}
 
 	@Override
+	/** Compare two cards */
 	public int compareTo(Event another) {
 		return -((Double)getValue()).compareTo(another.getValue());
 	}

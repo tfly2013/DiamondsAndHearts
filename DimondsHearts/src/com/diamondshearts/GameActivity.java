@@ -92,7 +92,9 @@ public class GameActivity extends BaseGameActivity implements
 		}
 
 		/**
+		 * Check if the game is finished for the player
 		 * @param player
+		 * 				The player
 		 * @return If the match is finished.
 		 */
 		private boolean checkFinished(Player player) {
@@ -137,6 +139,7 @@ public class GameActivity extends BaseGameActivity implements
 		}
 
 		/**
+		 * Check if a card has been placed upon a player view
 		 * @param playerView
 		 * @param cardView
 		 */
@@ -175,12 +178,10 @@ public class GameActivity extends BaseGameActivity implements
 				soundPool.play(errorSoundID, 1, 1, 1, 0, 1);
 				showMessage("This card can only target yourself.", 1000);
 				break;
-
 			}
 			playerView.resetColor();
 			playerView.invalidate();
 		}
-
 	}
 
 	/** Player Layout */
@@ -189,8 +190,10 @@ public class GameActivity extends BaseGameActivity implements
 	/** Current Player Layout */
 	private LinearLayout currentPlayerLayout;
 
+	/** score-board layout*/
 	private RelativeLayout scoreboardLayout;
 
+	/** Horizontal scroll view*/
 	private HorizontalScrollView handScrollView;
 
 	/** Layout of current player's hand */
@@ -199,14 +202,19 @@ public class GameActivity extends BaseGameActivity implements
 	/** The text view to show round */
 	private TextView midMessageView;
 
+	/** Played cards layout */
 	private LinearLayout cardPlayedLayout;
 
+	/** Horizontal scroll view for cards played*/
 	private HorizontalScrollView cardplayedScrollView;
 
+	/** Ranking layout on score-board */
 	private LinearLayout rankingLayout;
 
+	/** Draw button */
 	private Button drawButton;
 
+	/** Skip button */
 	private Button skipButton;
 
 	/** The table state of game */
@@ -221,6 +229,7 @@ public class GameActivity extends BaseGameActivity implements
 	/** The XStream object. */
 	private XStream xStream;
 
+	/** Various sound effects */
 	private SoundPool soundPool;
 	private int errorSoundID;
 	private int drawSoundID;

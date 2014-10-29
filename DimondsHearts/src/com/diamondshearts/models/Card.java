@@ -155,6 +155,10 @@ public class Card {
 		return card;
 	}
 	
+	/** Systematic evaluation approach
+	 *  that balances the power of a new card
+	 *  @param card
+	 *  @return true/false if the card should be generated*/
 	public static boolean evaluate(Card card){
 		double value = 0;
 		for (Action action : card.getActions()) {
@@ -168,6 +172,7 @@ public class Card {
 		return false;
 	}
 	
+	/** All play results */
 	public enum PlayResult{
 		OK,
 		CantAfford,

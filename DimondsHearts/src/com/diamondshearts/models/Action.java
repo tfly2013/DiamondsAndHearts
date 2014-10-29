@@ -185,11 +185,15 @@ public class Action implements Comparable<Action> {
 		this.description = description;
 	}
 
+	/** Get the value coefficient of selected suit
+	 * @return value */
 	public double getValue() {
 		return getSuit().getValueCoefficient() * getRank();
 	}
 
 	@Override
+	/** Compare suits of two cards
+	 * @return comparison result */
 	public int compareTo(Action another) {
 		return suit.compareTo(another.getSuit());
 	}
