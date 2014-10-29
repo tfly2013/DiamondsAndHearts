@@ -18,7 +18,10 @@ Make sure Eclipse Android ADT and EGit plugin are installed, then follow these i
 ### Running ###
 To run the Project:
 
-* Select project DiamondsHearts
+* Plug in a Phone with updated Android version
+* On smart phone, go to Settings -> Developer options
+* Tick "USB debugging"  
+* Select project Diamonds&Hearts
 * Run As -> Android Application
 * Select a phone to run with
 * Click OK
